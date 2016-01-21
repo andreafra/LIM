@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>LIM</title>
+    <link rel="stylesheet" href="app/css/style.css" type="text/css">
+  </head>
+  <body class="background" style="-webkit-app-region: drag">
+    <header id="header">
+      <div id="window-menu">
+        <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
+        <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
+        <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
+      </div>
+    </header>
+    <div id="content">
+    </div>
+    <div id="settings_container" class="hidden">
+      <div id="settings_panel">
+        <a id="settings_panel_close" class="btn">
+          <i class="material-icons">close</i>
+        </a>
+        <h1>Impostazioni</h1>
+        <ul class="settings_list">
+          <li class="settings_list_heading">File</li>
+          <li class="settings_list_element">
+            <i class="material-icons">save</i>
+            <span>Salva</span>
+          </li>
+          <li class="settings_list_element">
+            <i class="material-icons">save</i>
+            <span>Save As...</span>
+          </li>
+          <li class="settings_list_element">
+            <i class="material-icons">folder</i>
+            <span>Apri...</span>
+          </li>
+          <li class="settings_list_heading">Page</li>
+          <li class="settings_list_circular_picker">
+            <span class="white"></span>
+            <span class="black"></span>
+            <span class="green"></span>
+            <span class="transparent"></span>
+            <span class="custom"></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <footer id="footer">
+      <ul class="toolbar_left">
+        <li class="toolbar_button" id="pencil">
+          <i class="material-icons">edit</i>
+        </li>
+        <li class="toolbar_spacer" id="pencil">
+        </li>
+        <li class="toolbar_button">
+          <span class="circular_button" id="pencil_black"></span>
+        </li>
+        <li class="toolbar_button">
+          <span class="circular_button" id="pencil_blue"></span>
+        </li>
+        <li class="toolbar_button">
+          <span class="circular_button" id="pencil_red"></span>
+        </li>
+        <li class="toolbar_button">
+          <span class="circular_button" id="pencil_green"></span>
+        </li>
+        <li class="toolbar_button">
+          <span class="circular_button" id="pencil_other"></span>
+        </li>
+      </ul>
+      <div class="toolbar_center">
+        <button id="settings_panel_open" class="btn btn-menu"><i class="material-icons">more_horiz</i></button>
+      </div>
+      <ul class="toolbar_right">
+      </ul>
+
+    </footer>
+    <script src="app/js/canvas.js"></script>
+    <script>
+    // closmasat
+      const ipcRenderer = require('electron').ipcRenderer;
+      var closeBtn = document.querySelector('#menu-close');
+      var maximBtn = document.querySelector('#menu-maximize');
+      var minimBtn = document.querySelector('#menu-minimize');
+      var closeSettings = document.querySelector('#settings_panel_close');
+      var openSettings = document.querySelector('#settings_panel_open');
+      closeBtn.addEventListener('click', function () {
+        ipcRenderer.send('close-main-window');
+      });
+      maximBtn.addEventListener('click', function () {
+        ipcRenderer.send('maximize-main-window');
+      });
+      minimBtn.addEventListener('click', function () {
+        ipcRenderer.send('minimize-main-window');
+      });
+      closeSettings.addEventListener('click', function() {
+        document.getElementById('settings_container').classList.add('hidden');
+      });
+      openSettings.addEventListener('click', function() {
+        document.getElementById('settings_container').classList.remove('hidden');
+      });
+    </script>
+  </body>
+</html>

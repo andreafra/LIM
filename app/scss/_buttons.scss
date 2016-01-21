@@ -1,0 +1,53 @@
+.btn {
+  text-align: center;
+  -webkit-app-region: no-drag;
+  padding: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 24px;
+  width: 24px;
+  border-radius: 2px;
+  cursor: pointer;
+  &:focus {
+    outline: none;
+  }
+  &:hover {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  }
+  &:active {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+}
+.btn-menu {
+  height: $header_height/4*3;
+  width: $header_height/4*3;
+  margin-top: $header_height/8;
+  margin-right: $header_height/8;
+  border-radius: $header_height/8;
+  background: #fff;
+  border: none;
+  box-shadow: none;
+}
+
+@each $color, $name in $colors {
+  .btn-#{$name} {
+    background-color: $color;
+  }
+  .btn-#{$name}-hover {
+    &:hover {
+      background-color: $color;
+      @if $color != $white {
+        color: $white;
+      } @else {
+        color: $black;
+      }
+    }
+    &:active {
+      background-color: darken($color, 20);
+      @if $color != $white {
+        color: $white;
+      } @else {
+        color: $black;
+      }
+    }
+  }
+}
