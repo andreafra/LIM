@@ -27,7 +27,7 @@ app.on('ready', function() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    transparent:true,
+    transparent:false,
     fullscreen:false,
     frame: false,
     minWidth: 800,
