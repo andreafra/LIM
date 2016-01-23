@@ -1,7 +1,7 @@
 /* LIM */
 @import "colors";
 @import "materialIcons";
-
+@import "animations";
 $header_height: 40px;
 
 body {
@@ -194,7 +194,7 @@ footer {
     margin-left: 15px;
     margin-right: 15px;
 }
-#pencil {
+#pencil, #rubber {
   height: $header_height;
   width: 40px;
   img {
@@ -213,7 +213,8 @@ footer {
     border-top: 12px solid transparent;
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
-    border-bottom: 12px solid transparent;
+    border-bottom: 12px solid $black;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 

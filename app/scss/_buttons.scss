@@ -50,6 +50,21 @@
     }
   }
 }
+.btn-hidden {
+  animation: btn-hide 0.2s;
+  animation-fill-mode: forwards;
+}
+.btn-visible {
+  animation: btn-show 0.2s;
+  animation-fill-mode: forwards;
+}
+
+.btn-active {
+  margin-bottom: 20px;
+  #pencil_color {
+    top: 0px !important;
+  }
+}
 
 @each $color, $name in $colors {
   .btn-#{$name} {
@@ -72,11 +87,5 @@
         color: $black;
       }
     }
-  }
-}
-.btn-active {
-  margin-bottom: 20px;
-  #pencil_color {
-    top: 0px !important;
   }
 }

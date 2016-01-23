@@ -30,6 +30,24 @@
   /* Support for IE. */
   font-feature-settings: 'liga'; }
 
+@keyframes btn-hide {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    display: block; }
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+    display: none; } }
+@keyframes btn-show {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+    display: none; }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    display: block; } }
 body {
   position: fixed;
   top: 0;
@@ -200,14 +218,14 @@ footer {
   margin-left: 15px;
   margin-right: 15px; }
 
-#pencil {
+#pencil, #rubber {
   height: 40px;
   width: 40px; }
-  #pencil img {
+  #pencil img, #rubber img {
     position: relative;
     height: 100px;
     z-index: 401; }
-  #pencil #pencil_color {
+  #pencil #pencil_color, #rubber #pencil_color {
     display: block;
     position: absolute;
     z-index: 400;
@@ -218,7 +236,8 @@ footer {
     border-top: 12px solid transparent;
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
-    border-bottom: 12px solid transparent; }
+    border-bottom: 12px solid #212121;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
 
 #pencil_black {
   background: black; }
@@ -286,6 +305,19 @@ footer {
     .btn-toolbar .btn-circular:active {
       box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
 
+.btn-hidden {
+  animation: btn-hide 0.2s;
+  animation-fill-mode: forwards; }
+
+.btn-visible {
+  animation: btn-show 0.2s;
+  animation-fill-mode: forwards; }
+
+.btn-active {
+  margin-bottom: 20px; }
+  .btn-active #pencil_color {
+    top: 0px !important; }
+
 .btn-azure {
   background-color: #36D3FF; }
 
@@ -345,10 +377,5 @@ footer {
 .btn-white-hover:active {
   background-color: #cccccc;
   color: #212121; }
-
-.btn-active {
-  margin-bottom: 20px; }
-  .btn-active #pencil_color {
-    top: 0px !important; }
 
 /*# sourceMappingURL=style.css.map */
