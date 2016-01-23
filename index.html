@@ -47,16 +47,19 @@
       </div>
     </div>
     <footer id="footer">
-      <ul class="toolbar_left">
+      <ul class="toolbar-left">
         <!-- Tool Picker -->
-        <li class="btn-toolbar btn-active" id="pencil">
+        <li class="btn-toolbar btn-toolbar-tool btn-active" id="pencil">
           <img src="app/img/pencil.png">
           <span id="pencil_color"></span>
         </li>
-        <li class="btn-toolbar" id="rubber">
+        <li class="btn-toolbar btn-toolbar-tool" id="rubber">
           <img src="app/img/rubber.png">
         </li>
-        <li class="toolbar_spacer">
+        <li class="btn-toolbar btn-toolbar-tool" id="ruler">
+          <img src="app/img/ruler.png">
+        </li>
+        <li class="toolbar-spacer">
         <!-- Color Picker -->
         </li>
         <li class="btn-toolbar btn-toolbar-color">
@@ -75,10 +78,10 @@
           <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" id="pencil_other">
         </li>
       </ul>
-      <div class="toolbar_center">
+      <div class="toolbar-center">
         <button id="settings_panel_open" class="btn btn-menu"><i class="material-icons">more_horiz</i></button>
       </div>
-      <ul class="toolbar_right">
+      <ul class="toolbar-right">
       </ul>
 
     </footer>

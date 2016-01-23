@@ -184,6 +184,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   var pencil = document.getElementById("pencil");
   var pencilColor = document.getElementById("pencil_color");
   var rubber = document.getElementById("rubber");
+  var ruler = document.getElementById("ruler");
+  var allTools = [pencil, rubber, ruler];
 
   var blackColor = document.getElementById("pencil_black");
   var blueColor = document.getElementById("pencil_blue");
@@ -191,6 +193,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   var greenColor = document.getElementById("pencil_green");
   var otherColor = document.getElementById("pencil_other");
   var allColors = [blackColor, blueColor, redColor, greenColor, otherColor];
+
   var pencilOldColor, pencilOldWidth;
 
   function clearButtonSelection(buttons) {
@@ -202,7 +205,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
-    clearButtonSelection([pencil, rubber]);
+    clearButtonSelection(allTools);
     this.classList.add("btn-active");
     var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
     for (var i = _colorButtons.length - 1; i >= 0; i--) {
@@ -216,7 +219,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     toolSelected = "pencil";
   });
   rubber.addEventListener("click", function(e) {
-    clearButtonSelection([pencil, rubber]);
+    clearButtonSelection(allTools);
     this.classList.add("btn-active");
     var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
     for (var i = _colorButtons.length - 1; i >= 0; i--) {
@@ -234,7 +237,20 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     toolSelected = "rubber";
   });
-
+  ruler.addEventListener("click", function(e) {
+      clearButtonSelection(allTools);
+      this.classList.add("btn-active");
+      var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
+      for (var i = _colorButtons.length - 1; i >= 0; i--) {
+        _colorButtons[i].classList.remove("btn-hidden");
+        _colorButtons[i].classList.add("btn-visible");
+      };
+      if (toolSelected === "rubber") {
+        lineColor = pencilOldColor;
+        lineWidth = pencilOldWidth;
+      }
+      toolSelected = "ruler";
+    });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
     if (toolSelected !== "rubber") {

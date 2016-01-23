@@ -60,6 +60,9 @@ body {
   -webkit-user-select: none;
   font-family: Roboto, Helvetica, Arial, sans-serif; }
 
+img {
+  -webkit-user-drag: none !important; }
+
 header, footer {
   background-color: #eeeeee;
   z-index: 1000; }
@@ -196,7 +199,7 @@ footer {
   align-self: center;
   box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
 
-.toolbar_left {
+.toolbar-left {
   position: absolute;
   display: flex;
   margin: 0;
@@ -208,24 +211,24 @@ footer {
   width: 200px;
   padding-left: 20px; }
 
-.toolbar_center {
+.toolbar-center {
   position: relative;
   width: 50px;
   margin-left: auto;
   margin-right: auto; }
 
-.toolbar_spacer {
+.toolbar-spacer {
   margin-left: 15px;
   margin-right: 15px; }
 
-#pencil, #rubber {
+.btn-toolbar-tool {
   height: 40px;
   width: 40px; }
-  #pencil img, #rubber img {
+  .btn-toolbar-tool img {
     position: relative;
     height: 100px;
     z-index: 401; }
-  #pencil #pencil_color, #rubber #pencil_color {
+  .btn-toolbar-tool #pencil_color {
     display: block;
     position: absolute;
     z-index: 400;
@@ -271,7 +274,7 @@ footer {
   height: 24px;
   width: 24px;
   border-radius: 2px;
-  cursor: pointer; }
+  cursor: default; }
   .btn:focus {
     outline: none; }
   .btn:hover {

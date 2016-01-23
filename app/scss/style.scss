@@ -17,6 +17,10 @@ body {
   font-family: Roboto, Helvetica, Arial, sans-serif;
 }
 
+img {
+  -webkit-user-drag: none !important;
+}
+
 header, footer {
   background-color: $gray;
   z-index: 1000;
@@ -172,7 +176,7 @@ footer {
   box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
 }
 
-.toolbar_left {
+.toolbar-left {
   position: absolute;
   display: flex;
   margin: 0;
@@ -184,17 +188,17 @@ footer {
   width: 200px;
   padding-left: 20px;
 }
-.toolbar_center {
+.toolbar-center {
   position: relative;
   width: 50px;
   margin-left: auto;
   margin-right: auto;
 }
-.toolbar_spacer {
+.toolbar-spacer {
     margin-left: 15px;
     margin-right: 15px;
 }
-#pencil, #rubber {
+.btn-toolbar-tool {
   height: $header_height;
   width: 40px;
   img {
