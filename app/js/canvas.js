@@ -131,16 +131,16 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function endDrawing(e, touch) {
 	//Handle points
-	var pointSize = 4;
-	var _x, _y;
-    if (touch) {
-      _x = e.changedTouchs[0].clientX - DrawPaddingX;
-      _y = e.changedTouchs[0].clientY - DrawPaddingY;
-    } else {
-      _x = e.clientX - DrawPaddingX;
-      _y = e.clientY - DrawPaddingY;
-    }
 	if(!hasMoved) {
+		var pointSize = 4;
+		var _x, _y;
+		if (touch) {
+		  _x = e.changedTouchs[0].clientX - DrawPaddingX;
+		  _y = e.changedTouchs[0].clientY - DrawPaddingY;
+		} else {
+		  _x = e.clientX - DrawPaddingX;
+		  _y = e.clientY - DrawPaddingY;
+		}
 		ctx.beginPath();
 		ctx.arc(_x, _y, pointSize, 0, 2 * Math.PI, false);
 		ctx.fillStyle = lineColor;
