@@ -191,10 +191,34 @@ footer {
   padding-left: 20px; }
 
 .toolbar_center {
-  position: relative; }
+  position: relative;
+  width: 50px;
+  margin-left: auto;
+  margin-right: auto; }
 
 .toolbar_spacer {
-  width: 30px; }
+  margin-left: 15px;
+  margin-right: 15px; }
+
+#pencil {
+  height: 40px;
+  width: 40px; }
+  #pencil img {
+    position: relative;
+    height: 100px;
+    z-index: 401; }
+  #pencil #pencil_color {
+    display: block;
+    position: absolute;
+    z-index: 400;
+    top: 10px;
+    margin-left: 4.5px;
+    height: 0;
+    width: 0;
+    border-top: 12px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid transparent; }
 
 #pencil_black {
   background: black; }
@@ -323,6 +347,8 @@ footer {
   color: #212121; }
 
 .btn-active {
-  margin-bottom: 10px; }
+  margin-bottom: 20px; }
+  .btn-active #pencil_color {
+    top: 0px !important; }
 
 /*# sourceMappingURL=style.css.map */

@@ -156,6 +156,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   }, 0);
 
   var pencil = document.getElementById("pencil");
+  var pencilColor = document.getElementById("pencil_color");
   var pencilSelected = false;
 
   pencil.addEventListener("click", function(e) {
@@ -180,6 +181,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     lineColor = "black";
     clearButtonSelection([blackColor, blueColor, redColor, greenColor, otherColor]);
     this.classList.add("btn-active");
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
 
     console.log("Draw in: "+lineColor);
   }, 0);
@@ -187,6 +189,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     lineColor = "#2962ff";
     clearButtonSelection([blackColor, blueColor, redColor, greenColor, otherColor]);
     this.classList.add("btn-active");
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
 
     console.log("Draw in: "+lineColor);
   }, 0);
@@ -194,6 +197,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     lineColor = "#f44336";
     clearButtonSelection([blackColor, blueColor, redColor, greenColor, otherColor]);
     this.classList.add("btn-active");
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
 
     console.log("Draw in: "+lineColor);
   }, 0);
@@ -201,7 +205,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     lineColor = "#4caf50";
     clearButtonSelection([blackColor, blueColor, redColor, greenColor, otherColor]);
     this.classList.add("btn-active");
-    
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
+
     console.log("Draw in: "+lineColor);
   }, 0);
 }, false ); // document.ready?

@@ -186,9 +186,35 @@ footer {
 }
 .toolbar_center {
   position: relative;
+  width: 50px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .toolbar_spacer {
-  width: 30px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+#pencil {
+  height: $header_height;
+  width: 40px;
+  img {
+    position: relative;
+    height: $header_height * 2.5;
+    z-index: 401;
+  }
+  #pencil_color {
+    display: block;
+    position: absolute;
+    z-index: 400;
+    top: 10px;
+    margin-left: 4.5px;
+    height: 0;
+    width: 0;
+    border-top: 12px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid transparent;
+  }
 }
 
 #pencil_black {

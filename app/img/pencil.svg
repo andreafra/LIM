@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="90px" height="399px" viewBox="0 0 90 399" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Artboard-1" sketch:type="MSArtboardGroup" transform="translate(-151.000000, -91.000000)" stroke="#000000" stroke-width="10">
+            <path d="M151,204 C151,204 151,216.327004 196,216.327004 C241,216.327004 241,204 241,204 L241,475.723226 C241,475.723226 241,488 196,488 C151,488 151,475.723226 151,475.723226 L151,204 Z" id="Rectangle-1" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+            <path d="M183.800417,113.828094 C187.189534,104.220678 191.882511,101 196.225649,101 C200.568787,101 205.299411,104.148204 209.201808,113.828094 C219.313711,140.452826 236.095292,190.422419 236.095292,190.422419 C236.095292,190.422419 238.536815,203.979492 196.225649,203.979492 C153.914483,203.979492 156.017186,190.422419 156.017186,190.422419 C156.017186,190.422419 173.869611,139.248554 183.800417,113.828094 Z" id="Triangle-1" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+            <path d="M175.760742,134 C175.760742,134 177,143.071289 196.060547,143.071289 C215.121094,143.071289 216.541992,134 216.541992,134" id="Path-1" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>
