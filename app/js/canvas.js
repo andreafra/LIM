@@ -63,6 +63,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
 
   var isDrawing, pages = [ ];
+  var hasMoved = false;
 
   // The current page in the pages[]
   var currentPage = 0;
@@ -70,6 +71,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   function startDrawing(e, touch) {
     isDrawing = true;
+	hasMoved = false; //Not yet
     var _x, _y, _points = [ ];
     if (touch) {
       _x = e.changedTouchs[0].clientX - DrawPaddingX;
@@ -88,6 +90,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   function moveDrawing(e, touch) {
     if (!isDrawing) return;
 
+	hasMoved = true;
     var _x, _y;
     var _lines = thisFile.pages[0].lines
     var _points = _lines[_lines.length-1].points
@@ -126,8 +129,29 @@ document.addEventListener( "DOMContentLoaded", function() {
     ctx.lineTo(p1.x, p1.y);
     ctx.stroke();
   }
-  function endDrawing() {
+  function endDrawing(e, touch) {
+	//Handle points
+	var pointSize = 4;
+	var _x, _y;
+    if (touch) {
+      _x = e.changedTouchs[0].clientX - DrawPaddingX;
+      _y = e.changedTouchs[0].clientY - DrawPaddingY;
+    } else {
+      _x = e.clientX - DrawPaddingX;
+      _y = e.clientY - DrawPaddingY;
+    }
+	if(!hasMoved) {
+		ctx.beginPath();
+		ctx.arc(_x, _y, pointSize, 0, 2 * Math.PI, false);
+		ctx.fillStyle = lineColor;
+		ctx.fill();
+	}
+	
+	//Questi _x e _y teoricamente li hai già salvati in StartDrawing?
+	//Penso di si perchè se non ti muovi la posizione del puntatore è uguale onmousedown e onmouseup
+	
     isDrawing = false;
+	hasMoved = false;
     console.log(thisFile);
 
   }
@@ -139,8 +163,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     moveDrawing(e, false);
   };
 
-  canvas.onmouseup = function() {
-    endDrawing();
+  canvas.onmouseup = function(e) {
+    endDrawing(e, false);
   };
   // TOUCH SUPPORT
   canvas.addEventListener("touchstart", function(e) {
@@ -152,7 +176,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   }, 0);
 
   canvas.addEventListener("touchend", function(e) {
-    endDrawing();
+    endDrawing(e, true);
   }, 0);
 
   var pencil = document.getElementById("pencil");
