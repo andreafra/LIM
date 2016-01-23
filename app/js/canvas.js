@@ -168,20 +168,40 @@ document.addEventListener( "DOMContentLoaded", function() {
   var greenColor = document.getElementById("pencil_green");
   var otherColor = document.getElementById("pencil_other");
 
+  function clearButtonSelection(buttons) {
+    var colors = buttons;
+    for (var i = colors.length - 1; i >= 0; i--) {
+      colors[i].classList.remove("btn-active");
+    }
+  }
+
+
   blackColor.addEventListener("click", function(e) {
     lineColor = "black";
+    clearButtonSelection([blackColor, blueColor, redColor, greenColor, otherColor]);
+    this.classList.add("btn-active");
+
     console.log("Draw in: "+lineColor);
   }, 0);
   blueColor.addEventListener("click", function(e) {
     lineColor = "#2962ff";
+    clearButtonSelection([blackColor, blueColor, redColor, greenColor, otherColor]);
+    this.classList.add("btn-active");
+
     console.log("Draw in: "+lineColor);
   }, 0);
   redColor.addEventListener("click", function(e) {
     lineColor = "#f44336";
+    clearButtonSelection([blackColor, blueColor, redColor, greenColor, otherColor]);
+    this.classList.add("btn-active");
+
     console.log("Draw in: "+lineColor);
   }, 0);
   greenColor.addEventListener("click", function(e) {
     lineColor = "#4caf50";
+    clearButtonSelection([blackColor, blueColor, redColor, greenColor, otherColor]);
+    this.classList.add("btn-active");
+    
     console.log("Draw in: "+lineColor);
   }, 0);
 }, false ); // document.ready?

@@ -196,22 +196,6 @@ footer {
 .toolbar_spacer {
   width: 30px; }
 
-.toolbar_button {
-  align-self: center;
-  margin-right: 10px; }
-  .toolbar_button .circular_button {
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 15px;
-    border: 2px solid #eeeeee;
-    box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-    .toolbar_button .circular_button:hover {
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
-    .toolbar_button .circular_button:active {
-      box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
-
 #pencil_black {
   background: black; }
 
@@ -260,6 +244,23 @@ footer {
   background: #fff;
   border: none;
   box-shadow: none; }
+
+.btn-toolbar {
+  align-self: center;
+  margin-right: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .btn-toolbar .btn-circular {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 15px;
+    border: 2px solid #eeeeee;
+    box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .btn-toolbar .btn-circular:hover {
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
+    .btn-toolbar .btn-circular:active {
+      box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
 
 .btn-azure {
   background-color: #36D3FF; }
@@ -320,5 +321,8 @@ footer {
 .btn-white-hover:active {
   background-color: #cccccc;
   color: #212121; }
+
+.btn-active {
+  margin-bottom: 10px; }
 
 /*# sourceMappingURL=style.css.map */
