@@ -254,7 +254,8 @@ footer {
 #pencil_other {
   background-image: url("../img/colors.png");
   background-position: center;
-  background-clip: border-box; }
+  background-clip: border-box;
+  font-size: 0; }
 
 .background {
   background-color: #fff; }

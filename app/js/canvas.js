@@ -132,31 +132,31 @@ document.addEventListener( "DOMContentLoaded", function() {
     ctx.stroke();
   }
   function endDrawing(e, touch) {
-	//Handle points
-	if(!hasMoved) {
-		var pointSize = 4;
-		var _x, _y;
-		if (touch) {
-		  _x = e.changedTouchs[0].clientX - DrawPaddingX;
-		  _y = e.changedTouchs[0].clientY - DrawPaddingY;
-		} else {
-		  _x = e.clientX - DrawPaddingX;
-		  _y = e.clientY - DrawPaddingY;
-		}
-		ctx.beginPath();
-		ctx.arc(_x, _y, pointSize, 0, 2 * Math.PI, false);
-		ctx.fillStyle = lineColor;
-		ctx.fill();
-	}
+  	//Handle points
+  	if(!hasMoved) {
+  		var pointSize = 4;
+  		var _x, _y;
+  		if (touch) {
+  		  _x = e.changedTouchs[0].clientX - DrawPaddingX;
+  		  _y = e.changedTouchs[0].clientY - DrawPaddingY;
+  		} else {
+  		  _x = e.clientX - DrawPaddingX;
+  		  _y = e.clientY - DrawPaddingY;
+  		}
+  		ctx.beginPath();
+  		ctx.arc(_x, _y, pointSize, 0, 2 * Math.PI, false);
+  		ctx.fillStyle = lineColor;
+  		ctx.fill();
+  	}
 	
-	//Questi _x e _y teoricamente li hai già salvati in StartDrawing?
-	//Penso di si perchè se non ti muovi la posizione del puntatore è uguale onmousedown e onmouseup
+	 //Questi _x e _y teoricamente li hai già salvati in StartDrawing?
+	 //Penso di si perchè se non ti muovi la posizione del puntatore è uguale onmousedown e onmouseup
 	
     isDrawing = false;
-	hasMoved = false;
-    console.log(thisFile);
-
+    hasMoved = false;
   }
+
+
   canvas.onmousedown = function(e) {
     startDrawing(e, false);
   };
@@ -199,6 +199,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       colors[i].classList.remove("btn-active");
     }
   }
+
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     clearButtonSelection([pencil, rubber]);
@@ -262,6 +263,14 @@ document.addEventListener( "DOMContentLoaded", function() {
   greenColor.addEventListener("click", function(e) {
     if (toolSelected !== "rubber") {
       lineColor = "#4caf50";
+      clearButtonSelection(allColors);
+      this.classList.add("btn-active");
+      pencilColor.style.borderBottom = "12px solid " + lineColor;
+    }
+  });
+  otherColor.addEventListener("click", function() {
+    if (toolSelected !== "rubber") {
+      lineColor = this.getAttribute("value");
       clearButtonSelection(allColors);
       this.classList.add("btn-active");
       pencilColor.style.borderBottom = "12px solid " + lineColor;

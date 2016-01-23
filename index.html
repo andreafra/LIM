@@ -72,7 +72,7 @@
           <span class="btn-circular" id="pencil_green"></span>
         </li>
         <li class="btn-toolbar btn-toolbar-color">
-          <span class="btn-circular" id="pencil_other"></span>
+          <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" id="pencil_other">
         </li>
       </ul>
       <div class="toolbar_center">
@@ -83,8 +83,8 @@
 
     </footer>
     <script src="app/js/canvas.js"></script>
+    <script src="app/lib/jscolor.min.js"></script>
     <script>
-    // closmasat
       const ipcRenderer = require('electron').ipcRenderer;
       var closeBtn = document.querySelector('#menu-close');
       var maximBtn = document.querySelector('#menu-maximize');
@@ -106,6 +106,10 @@
       openSettings.addEventListener('click', function() {
         document.getElementById('settings_container').classList.remove('hidden');
       });
+      // COLOR PICKER
+      function updateColor(picker) {
+        document.getElementById("pencil_other").setAttribute("value", "#"+picker);
+      }
     </script>
   </body>
 </html>
