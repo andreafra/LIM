@@ -71,8 +71,9 @@ document.addEventListener( "DOMContentLoaded", function() {
 
 
   function startDrawing(e, touch) {
+    if (toolSelected === "ruler") return;
     isDrawing = true;
-	hasMoved = false; //Not yet
+    hasMoved = false; //Not yet
     var _x, _y, _points = [ ];
     if (touch) {
       _x = e.changedTouchs[0].clientX - DrawPaddingX;
@@ -85,10 +86,12 @@ document.addEventListener( "DOMContentLoaded", function() {
     _points.push({ x: _x, y: _y });
     thisFile.pages[0].lines.push({
       points: _points,
-      color: ctx.strokeStyle
+      color: ctx.strokeStyle,
+      width: ctx.lineWidth
     });
   }
   function moveDrawing(e, touch) {
+    if (toolSelected === "ruler") return;
     if (!isDrawing) return;
 
 	hasMoved = true;
@@ -132,6 +135,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     ctx.stroke();
   }
   function endDrawing(e, touch) {
+    if (toolSelected === "ruler") return;
   	//Handle points
   	if(!hasMoved) {
   		var pointSize = 4;
@@ -151,7 +155,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 	
 	 //Questi _x e _y teoricamente li hai già salvati in StartDrawing?
 	 //Penso di si perchè se non ti muovi la posizione del puntatore è uguale onmousedown e onmouseup
-	
+
     isDrawing = false;
     hasMoved = false;
   }
@@ -284,12 +288,16 @@ document.addEventListener( "DOMContentLoaded", function() {
       pencilColor.style.borderBottom = "12px solid " + lineColor;
     }
   });
-  otherColor.addEventListener("click", function() {
-    if (toolSelected !== "rubber") {
-      lineColor = this.getAttribute("value");
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+  otherColor.addEventListener("mouseup", function() {
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
+    console.log('CIAO 1')
+    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
+      console.log('CIAO 2')
+      if (toolSelected !== "rubber") {
+        lineColor = otherColor.getAttribute("value");
+        pencilColor.style.borderBottom = "12px solid " + lineColor;
+      }
+    });
   });
 }); // document.ready?
