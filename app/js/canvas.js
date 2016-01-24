@@ -207,15 +207,29 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   }
 
-  // TOOL PICKER
-  pencil.addEventListener("click", function(e) {
-    clearButtonSelection(allTools);
-    this.classList.add("btn-active");
+  function showColorButtons(){
     var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
     for (var i = _colorButtons.length - 1; i >= 0; i--) {
       _colorButtons[i].classList.remove("btn-hidden");
       _colorButtons[i].classList.add("btn-visible");
+      _colorButtons[i].style.pointerEvents = 'auto';
     };
+  }
+
+  function hideColorButtons(){
+    var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
+    for (var i = _colorButtons.length - 1; i >= 0; i--) {
+      _colorButtons[i].classList.remove("btn-visible");
+      _colorButtons[i].classList.add("btn-hidden");
+      _colorButtons[i].style.pointerEvents = 'none';
+    };
+  }
+
+  // TOOL PICKER
+  pencil.addEventListener("click", function(e) {
+    clearButtonSelection(allTools);
+    this.classList.add("btn-active");
+    showColorButtons();
     if (toolSelected === "rubber") {
       lineColor = pencilOldColor;
       lineWidth = pencilOldWidth;
@@ -225,11 +239,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   rubber.addEventListener("click", function(e) {
     clearButtonSelection(allTools);
     this.classList.add("btn-active");
-    var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = _colorButtons.length - 1; i >= 0; i--) {
-      _colorButtons[i].classList.remove("btn-visible");
-      _colorButtons[i].classList.add("btn-hidden");
-    };
+    hideColorButtons();
     // backup old color & width
     if (toolSelected !== "rubber") {
       pencilOldColor = lineColor;
@@ -244,11 +254,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   ruler.addEventListener("click", function(e) {
       clearButtonSelection(allTools);
       this.classList.add("btn-active");
-      var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
-      for (var i = _colorButtons.length - 1; i >= 0; i--) {
-        _colorButtons[i].classList.remove("btn-hidden");
-        _colorButtons[i].classList.add("btn-visible");
-      };
+      showColorButtons();
       if (toolSelected === "rubber") {
         lineColor = pencilOldColor;
         lineWidth = pencilOldWidth;
@@ -257,36 +263,28 @@ document.addEventListener( "DOMContentLoaded", function() {
     });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
-    if (toolSelected !== "rubber") {
-      lineColor = "black";
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+    lineColor = "black";
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
   });
   blueColor.addEventListener("click", function(e) {
-    if (toolSelected !== "rubber") {
-      lineColor = "#2962ff";
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+    lineColor = "#2962ff";
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
   });
   redColor.addEventListener("click", function(e) {
-    if (toolSelected !== "rubber") {
-     lineColor = "#f44336";
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+    lineColor = "#f44336";
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
   });
   greenColor.addEventListener("click", function(e) {
-    if (toolSelected !== "rubber") {
-      lineColor = "#4caf50";
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+    lineColor = "#4caf50";
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
   });
   otherColor.addEventListener("mouseup", function() {
     clearButtonSelection(allColors);
