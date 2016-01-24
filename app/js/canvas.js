@@ -138,7 +138,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     if (toolSelected === "ruler") return;
   	//Handle points
   	if(!hasMoved) {
-  		var pointSize = 4;
   		var _x, _y;
   		if (touch) {
   		  _x = e.changedTouchs[0].clientX - DrawPaddingX;
@@ -148,9 +147,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   		  _y = e.clientY - DrawPaddingY;
   		}
   		ctx.beginPath();
-  		ctx.arc(_x, _y, pointSize, 0, 2 * Math.PI, false);
+  		ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
   		ctx.fillStyle = lineColor;
-  		ctx.fill();
+      ctx.shadowColor = lineColor;
+      ctx.strokeStyle = lineColor;
+      ctx.fill();
   	}
 	
 	 //Questi _x e _y teoricamente li hai già salvati in StartDrawing?
