@@ -24,9 +24,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     //      color: "#fff"}
     // ]
   }
-  // al momento diciamo che lo apriamo per la prima volta
-  // quando ci sarà un loadFile() lo setteremo false
-  var firstTimeOpened = true;
 
   var content = document.getElementById("content");
   var header_height = document.getElementById('header').clientHeight;
@@ -61,12 +58,18 @@ document.addEventListener( "DOMContentLoaded", function() {
   // Fixed Line Properties
   ctx.shadowBlur = 0.5;
   ctx.imageSmoothingEnabled = true;
+
+  //default values
+  var lineColor = "black";
+  var lineWidth = 4;
+  ctx.strokeStyle = lineColor;
+  ctx.shadowColor = lineColor;
+  ctx.lineWidth = lineWidth;
   //ctx.translate(0.5,0.5);
 
   var toolSelected = "pencil"; // can be "pencil", "rubber", "ruler"
 
-  var lineColor = "black";
-  var lineWidth = 4;
+  
 
   var isDrawing, pages = [ ];
   var hasMoved = false;
@@ -160,8 +163,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       ctx.fill();
   	}
 	
-	 //Questi _x e _y teoricamente li hai già salvati in StartDrawing?
-	 //Penso di si perchè se non ti muovi la posizione del puntatore è uguale onmousedown e onmouseup
+	 //These points are already saved in startDrawing. No need to save here.
 
     isDrawing = false;
     hasMoved = false;
@@ -342,13 +344,76 @@ document.addEventListener( "DOMContentLoaded", function() {
   var saveFile = require('./app/js/save');
 
   saveButton.addEventListener("click", function() {
-    if (firstTimeOpened) {
+    if (thisFile.settings.name=="unnamed") {
       saveFile.SaveAs(thisFile);
-      firstTimeOpened = false;
       console.log('saved as!')
     } else {
       saveFile.Save(thisFile);
       console.log('saved!')
     }
   });
+
+  //LOAD
+  var loadButton = document.getElementById("load");
+  var loadFile = require('./app/js/load');
+
+  loadButton.addEventListener("click", function(){
+    loadFile.Load(loadIntoCanvas);
+  });
+
+  function loadIntoCanvas(file){
+    if(file != null && file != undefined)
+    {
+      console.log("loading file " + file.settings.name);
+      thisFile = file;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      document.getElementById('settings_container').classList.add('hidden'); //hide settings menu
+
+      //DRAW
+      var _lines = thisFile.pages[0].lines
+
+      for(var line = 0; line < _lines.length; line++)
+      {
+        var _line = _lines[line];
+        var _points = _line.points;
+        if(_points.length==1){  //draw a dot
+          _x=_points[0].x;
+          _y=_points[0].y;
+          ctx.beginPath();
+          ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
+          ctx.fillStyle = lineColor;
+          ctx.shadowColor = lineColor;
+          ctx.strokeStyle = lineColor;
+          ctx.fill();
+        }
+        else {  //draw a line
+          var p1 = _points[0];
+          var p2 = _points[1];
+
+          ctx.shadowBlur = 0.5;
+          ctx.imageSmoothingEnabled = true;
+          ctx.strokeStyle = _line.color;
+          ctx.shadowColor = _line.color;
+          ctx.lineWidth = _line.width+2; //bypass shadows not stacking, thus resulting in a smaller line
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+
+          for (var i = 1, len = _points.length; i < len; i++) {
+            // we pick the point between pi+1 & pi+2 as the
+            // end point and p1 as our control point
+            var midPoint = midPointBtw(p1, p2);
+            ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+            p1 = _points[i];
+            p2 = _points[i+1];
+          }
+          // Draw last line as a straight line while
+          // we wait for the next point to be able to calculate
+          // the bezier control point
+          ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+        }
+      }
+    }
+    else console.log("error loading file: " + file);
+  }
 }); // document.ready?
