@@ -115,6 +115,7 @@ footer {
     height: 32px;
     padding: 8px 4px 0px 4px;
     cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     i {
       height: 32px;
       width: 32px;
