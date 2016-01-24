@@ -84,19 +84,20 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     // save points
     _points.push({ x: _x, y: _y });
-    thisFile.pages[0].lines.push({
+    thisFile.pages[currentPage].lines.push({
       points: _points,
       color: ctx.strokeStyle,
       width: ctx.lineWidth
     });
   }
+
   function moveDrawing(e, touch) {
     if (toolSelected === "ruler") return;
     if (!isDrawing) return;
 
 	hasMoved = true;
     var _x, _y;
-    var _lines = thisFile.pages[0].lines
+    var _lines = thisFile.pages[currentPage].lines
     var _points = _lines[_lines.length-1].points
     if (touch) {
       canvas.style.cursor = "none";
@@ -185,6 +186,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   canvas.addEventListener("touchend", function(e) {
     endDrawing();
   });
+
+  var saveAsButton = document.getElementById("save_as");
+  var saveButton = document.getElementById("save");
 
   var pencil = document.getElementById("pencil");
   var pencilColor = document.getElementById("pencil_color");
@@ -300,5 +304,33 @@ document.addEventListener( "DOMContentLoaded", function() {
   otherColor.addEventListener("click", function() {
      //Voglio che il colore venga settato all'ultimo colore scelto quanto clicko
     setColor(otherColor.getAttribute("value"));
+  });
+
+  //SAVE
+  const dialog = require('electron').remote.require('dialog');
+  const app = require('electron').remote.require('app');
+  var fs = require('fs'); 
+  saveAsButton.addEventListener("click", function(e) {
+    dialog.showSaveDialog(
+    { 
+      filters: [ { name: 'lesson', extensions: ['lesson'] } ]
+    },
+    function (fileName){
+      if(fileName == undefined) return;
+      fs.writeFile(fileName, JSON.stringify(thisFile), function (err) {
+        if(err!=null) console.log("Error saving file: " + err);
+      });
+    });
+  });
+
+  saveButton.addEventListener("click", function(e) {
+    var today = new Date();
+    var dateString = today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();
+    fs.writeFile(app.getPath("documents")+"/"+dateString+".lesson", JSON.stringify(thisFile), function(err) {
+      if(err==null){
+        dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: "Lesson has been saved to Documents folder as " + dateString + ".lesson"});
+      }
+      else console.log("Error saving file: " + err);
+    });
   });
 }); // document.ready?
