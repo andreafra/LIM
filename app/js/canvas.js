@@ -38,6 +38,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var canvas = document.getElementById("canvas");
 
+  canvas.style.background = thisFile.settings.canvas.background;
+
   var DrawPaddingX = canvas.offsetLeft;
   var DrawPaddingY = canvas.offsetTop;
 
@@ -200,8 +202,13 @@ document.addEventListener( "DOMContentLoaded", function() {
   var blueColor = document.getElementById("pencil_blue");
   var redColor = document.getElementById("pencil_red");
   var greenColor = document.getElementById("pencil_green");
-  var otherColor = document.getElementById("pencil_other");
-  var allColors = [blackColor, blueColor, redColor, greenColor, otherColor];
+  var customColor = document.getElementById("pencil_other");
+  var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
+
+  var whiteBackground = document.getElementById("background_white");
+  var blackBackground = document.getElementById("background_black");
+  var greenBackground = document.getElementById("background_green");
+  var customBackground = document.getElementById("background_custom");
 
   var pencilOldColor, pencilOldWidth;
 
@@ -235,6 +242,10 @@ document.addEventListener( "DOMContentLoaded", function() {
     pencilColor.style.borderBottom = "12px solid " + lineColor;
   }
 
+  function setBackgroundColor(color) {
+     thisFile.settings.canvas.background = color;
+     canvas.style.background = thisFile.settings.canvas.background
+  }
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     clearButtonSelection(allTools);
@@ -256,21 +267,21 @@ document.addEventListener( "DOMContentLoaded", function() {
       pencilOldWidth = lineWidth;
     }
     // apply new color & width
-    lineColor = "white";
+    lineColor = thisFile.settings.canvas.background;
     lineWidth = 30;
 
     toolSelected = "rubber";
   });
   ruler.addEventListener("click", function(e) {
-      clearButtonSelection(allTools);
-      this.classList.add("btn-active");
-      showColorButtons();
-      if (toolSelected === "rubber") {
-        lineColor = pencilOldColor;
-        lineWidth = pencilOldWidth;
-      }
-      toolSelected = "ruler";
-    });
+    clearButtonSelection(allTools);
+    this.classList.add("btn-active");
+    showColorButtons();
+    if (toolSelected === "rubber") {
+      lineColor = pencilOldColor;
+      lineWidth = pencilOldWidth;
+    }
+    toolSelected = "ruler";
+  });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
     setColor("black");
@@ -292,19 +303,38 @@ document.addEventListener( "DOMContentLoaded", function() {
     clearButtonSelection(allColors);
     this.classList.add("btn-active");
   });
-  otherColor.addEventListener("mouseup", function() {
+  customColor.addEventListener("mouseup", function() {
     clearButtonSelection(allColors);
     this.classList.add("btn-active");
-    console.log('CIAO 1')
     document.getElementById("body").lastChild.addEventListener("mouseup", function() {
-      console.log('CIAO 2')
-      setColor(otherColor.getAttribute("value"));
+      setColor(customColor.getAttribute("value"));
     });
   });
-  otherColor.addEventListener("click", function() {
-    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicko
-    setColor(otherColor.getAttribute("value"));
+  customColor.addEventListener("click", function() {
+    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
+    setColor(customColor.getAttribute("value"));
   });
+
+  // BACKGROUND COLOR PICKER
+  whiteBackground.addEventListener("click", function(e) {
+    setBackgroundColor("white");
+  });
+  blackBackground.addEventListener("click", function(e) {
+    setBackgroundColor("black");
+  });
+  greenBackground.addEventListener("click", function(e) {
+    setBackgroundColor("#567E3A");
+  });
+  customBackground.addEventListener("mouseup", function() {
+    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
+      setBackgroundColor(customBackground.getAttribute("value"));
+    });
+  });
+  customBackground.addEventListener("click", function() {
+    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
+    setColor(customColor.getAttribute("value"));
+  });
+
 
   //SAVE
   var saveButton = document.getElementById("save");

@@ -33,11 +33,11 @@
           </li>
           <li class="settings_list_heading">Page</li>
           <li class="settings_list_circular_picker">
-            <span class="white"></span>
-            <span class="black"></span>
-            <span class="green"></span>
-            <span class="transparent"></span>
-            <span class="custom"></span>
+            <span id="background_white"></span>
+            <span id="background_black"></span>
+            <span id="background_green"></span>
+            <span id="background_transparent"></span>
+            <input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff" id="background_custom"></span>
           </li>
         </ul>
       </div>
@@ -90,6 +90,7 @@
       var minimBtn = document.querySelector('#menu-minimize');
       var closeSettings = document.querySelector('#settings_panel_close');
       var openSettings = document.querySelector('#settings_panel_open');
+      
       closeBtn.addEventListener('click', function () {
         ipcRenderer.send('close-main-window');
       });
@@ -108,6 +109,9 @@
       // COLOR PICKER
       function updateColor(picker) {
         document.getElementById("pencil_other").setAttribute("value", "#"+picker);
+      }
+      function updateBackgroundColor(picker) {
+        document.getElementById("background_custom").setAttribute("value", "#"+picker);
       }
     </script>
   </body>
