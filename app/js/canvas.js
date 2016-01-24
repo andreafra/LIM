@@ -225,6 +225,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     };
   }
 
+  function setColor(color){
+    lineColor = color;
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
+  }
+
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     clearButtonSelection(allTools);
@@ -263,28 +268,24 @@ document.addEventListener( "DOMContentLoaded", function() {
     });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
-    lineColor = "black";
+    setColor("black");
     clearButtonSelection(allColors);
     this.classList.add("btn-active");
-    pencilColor.style.borderBottom = "12px solid " + lineColor;
   });
   blueColor.addEventListener("click", function(e) {
-    lineColor = "#2962ff";
+    setColor("#2962ff");
     clearButtonSelection(allColors);
     this.classList.add("btn-active");
-    pencilColor.style.borderBottom = "12px solid " + lineColor;
   });
   redColor.addEventListener("click", function(e) {
-    lineColor = "#f44336";
+    setColor("#f44336");
     clearButtonSelection(allColors);
     this.classList.add("btn-active");
-    pencilColor.style.borderBottom = "12px solid " + lineColor;
   });
   greenColor.addEventListener("click", function(e) {
-    lineColor = "#4caf50";
+    setColor("#4caf50");
     clearButtonSelection(allColors);
     this.classList.add("btn-active");
-    pencilColor.style.borderBottom = "12px solid " + lineColor;
   });
   otherColor.addEventListener("mouseup", function() {
     clearButtonSelection(allColors);
@@ -292,10 +293,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     console.log('CIAO 1')
     document.getElementById("body").lastChild.addEventListener("mouseup", function() {
       console.log('CIAO 2')
-      if (toolSelected !== "rubber") {
-        lineColor = otherColor.getAttribute("value");
-        pencilColor.style.borderBottom = "12px solid " + lineColor;
-      }
+      setColor(otherColor.getAttribute("value"));
     });
+  });
+  otherColor.addEventListener("click", function() {
+     //Voglio che il colore venga settato all'ultimo colore scelto quanto clicko
+    setColor(otherColor.getAttribute("value"));
   });
 }); // document.ready?
