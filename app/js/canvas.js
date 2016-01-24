@@ -7,8 +7,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var thisFile = {
     settings: {
-      name: "text",
-      date: "date",
+      name: "unnamed",
+      date: new Date().getTime(),
       canvas: {
         x: 10,
         y: 20,
@@ -24,6 +24,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     //      color: "#fff"}
     // ]
   }
+  // al momento diciamo che lo apriamo per la prima volta
+  // quando ci sarà un loadFile() lo setteremo false
+  var firstTimeOpened = true;
 
   var content = document.getElementById("content");
   var header_height = document.getElementById('header').clientHeight;
@@ -187,9 +190,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     endDrawing();
   });
 
-  var saveAsButton = document.getElementById("save_as");
-  var saveButton = document.getElementById("save");
-
   var pencil = document.getElementById("pencil");
   var pencilColor = document.getElementById("pencil_color");
   var rubber = document.getElementById("rubber");
@@ -302,35 +302,23 @@ document.addEventListener( "DOMContentLoaded", function() {
     });
   });
   otherColor.addEventListener("click", function() {
-     //Voglio che il colore venga settato all'ultimo colore scelto quanto clicko
+    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicko
     setColor(otherColor.getAttribute("value"));
   });
 
   //SAVE
-  const dialog = require('electron').remote.require('dialog');
-  const app = require('electron').remote.require('app');
-  var fs = require('fs'); 
-  saveAsButton.addEventListener("click", function(e) {
-    dialog.showSaveDialog(
-    { 
-      filters: [ { name: 'lesson', extensions: ['lesson'] } ]
-    },
-    function (fileName){
-      if(fileName == undefined) return;
-      fs.writeFile(fileName, JSON.stringify(thisFile), function (err) {
-        if(err!=null) console.log("Error saving file: " + err);
-      });
-    });
-  });
+  var saveButton = document.getElementById("save");
 
-  saveButton.addEventListener("click", function(e) {
-    var today = new Date();
-    var dateString = today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();
-    fs.writeFile(app.getPath("documents")+"/"+dateString+".lesson", JSON.stringify(thisFile), function(err) {
-      if(err==null){
-        dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: "Lesson has been saved to Documents folder as " + dateString + ".lesson"});
-      }
-      else console.log("Error saving file: " + err);
-    });
+  var saveFile = require('./app/js/save');
+
+  saveButton.addEventListener("click", function() {
+    if (firstTimeOpened) {
+      saveFile.SaveAs(thisFile);
+      firstTimeOpened = false;
+      console.log('saved as!')
+    } else {
+      saveFile.Save(thisFile);
+      console.log('saved!')
+    }
   });
 }); // document.ready?
