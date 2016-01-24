@@ -138,7 +138,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     if (toolSelected === "ruler") return;
   	//Handle points
   	if(!hasMoved) {
-  		var pointSize = 4;
   		var _x, _y;
   		if (touch) {
   		  _x = e.changedTouchs[0].clientX - DrawPaddingX;
@@ -148,9 +147,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   		  _y = e.clientY - DrawPaddingY;
   		}
   		ctx.beginPath();
-  		ctx.arc(_x, _y, pointSize, 0, 2 * Math.PI, false);
+  		ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
   		ctx.fillStyle = lineColor;
-  		ctx.fill();
+      ctx.shadowColor = lineColor;
+      ctx.strokeStyle = lineColor;
+      ctx.fill();
   	}
 	
 	 //Questi _x e _y teoricamente li hai già salvati in StartDrawing?
@@ -207,15 +208,34 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   }
 
-  // TOOL PICKER
-  pencil.addEventListener("click", function(e) {
-    clearButtonSelection(allTools);
-    this.classList.add("btn-active");
+  function showColorButtons(){
     var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
     for (var i = _colorButtons.length - 1; i >= 0; i--) {
       _colorButtons[i].classList.remove("btn-hidden");
       _colorButtons[i].classList.add("btn-visible");
+      _colorButtons[i].style.pointerEvents = 'auto';
     };
+  }
+
+  function hideColorButtons(){
+    var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
+    for (var i = _colorButtons.length - 1; i >= 0; i--) {
+      _colorButtons[i].classList.remove("btn-visible");
+      _colorButtons[i].classList.add("btn-hidden");
+      _colorButtons[i].style.pointerEvents = 'none';
+    };
+  }
+
+  function setColor(color){
+    lineColor = color;
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
+  }
+
+  // TOOL PICKER
+  pencil.addEventListener("click", function(e) {
+    clearButtonSelection(allTools);
+    this.classList.add("btn-active");
+    showColorButtons();
     if (toolSelected === "rubber") {
       lineColor = pencilOldColor;
       lineWidth = pencilOldWidth;
@@ -225,11 +245,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   rubber.addEventListener("click", function(e) {
     clearButtonSelection(allTools);
     this.classList.add("btn-active");
-    var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = _colorButtons.length - 1; i >= 0; i--) {
-      _colorButtons[i].classList.remove("btn-visible");
-      _colorButtons[i].classList.add("btn-hidden");
-    };
+    hideColorButtons();
     // backup old color & width
     if (toolSelected !== "rubber") {
       pencilOldColor = lineColor;
@@ -244,11 +260,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   ruler.addEventListener("click", function(e) {
       clearButtonSelection(allTools);
       this.classList.add("btn-active");
-      var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
-      for (var i = _colorButtons.length - 1; i >= 0; i--) {
-        _colorButtons[i].classList.remove("btn-hidden");
-        _colorButtons[i].classList.add("btn-visible");
-      };
+      showColorButtons();
       if (toolSelected === "rubber") {
         lineColor = pencilOldColor;
         lineWidth = pencilOldWidth;
@@ -257,36 +269,24 @@ document.addEventListener( "DOMContentLoaded", function() {
     });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
-    if (toolSelected !== "rubber") {
-      lineColor = "black";
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+    setColor("black");
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
   });
   blueColor.addEventListener("click", function(e) {
-    if (toolSelected !== "rubber") {
-      lineColor = "#2962ff";
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+    setColor("#2962ff");
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
   });
   redColor.addEventListener("click", function(e) {
-    if (toolSelected !== "rubber") {
-     lineColor = "#f44336";
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+    setColor("#f44336");
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
   });
   greenColor.addEventListener("click", function(e) {
-    if (toolSelected !== "rubber") {
-      lineColor = "#4caf50";
-      clearButtonSelection(allColors);
-      this.classList.add("btn-active");
-      pencilColor.style.borderBottom = "12px solid " + lineColor;
-    }
+    setColor("#4caf50");
+    clearButtonSelection(allColors);
+    this.classList.add("btn-active");
   });
   otherColor.addEventListener("mouseup", function() {
     clearButtonSelection(allColors);
@@ -294,10 +294,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     console.log('CIAO 1')
     document.getElementById("body").lastChild.addEventListener("mouseup", function() {
       console.log('CIAO 2')
-      if (toolSelected !== "rubber") {
-        lineColor = otherColor.getAttribute("value");
-        pencilColor.style.borderBottom = "12px solid " + lineColor;
-      }
+      setColor(otherColor.getAttribute("value"));
     });
+  });
+  otherColor.addEventListener("click", function() {
+     //Voglio che il colore venga settato all'ultimo colore scelto quanto clicko
+    setColor(otherColor.getAttribute("value"));
   });
 }); // document.ready?
