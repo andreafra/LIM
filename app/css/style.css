@@ -83,6 +83,7 @@ footer {
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 800;
   box-shadow: 0 -2px 2px 0 rgba(0, 0, 0, 0.14), 0 -1px 5px 0 rgba(0, 0, 0, 0.12), 0 -3px 1px -2px rgba(0, 0, 0, 0.2); }
 
 #window-menu {
@@ -106,9 +107,10 @@ footer {
   left: 0;
   right: 0;
   bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   padding-top: 40px;
   justify-content: center;
-  z-index: 1500; }
+  z-index: 900; }
 
 #settings_panel {
   position: relative;
@@ -169,27 +171,28 @@ footer {
     display: flex;
     justify-content: space-between;
     padding-top: 10px; }
-    .settings_list .settings_list_circular_picker span {
+    .settings_list .settings_list_circular_picker span, .settings_list .settings_list_circular_picker input {
       display: block;
       width: 24px;
       height: 24px;
       border-radius: 15px;
       border: 2px solid #eeeeee;
       box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
+      font-size: 0;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-      .settings_list .settings_list_circular_picker span:hover {
+      .settings_list .settings_list_circular_picker span:hover, .settings_list .settings_list_circular_picker input:hover {
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
-      .settings_list .settings_list_circular_picker span:active {
+      .settings_list .settings_list_circular_picker span:active, .settings_list .settings_list_circular_picker input:active {
         box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
-    .settings_list .settings_list_circular_picker .white {
+    .settings_list .settings_list_circular_picker #background_white {
       background-color: #ffffff; }
-    .settings_list .settings_list_circular_picker .black {
+    .settings_list .settings_list_circular_picker #background_black {
       background-color: #212121; }
-    .settings_list .settings_list_circular_picker .green {
+    .settings_list .settings_list_circular_picker #background_green {
       background-color: #567E3A; }
-    .settings_list .settings_list_circular_picker .transparent {
+    .settings_list .settings_list_circular_picker #background_transparent {
       background-image: url("../img/nocolor.png"); }
-    .settings_list .settings_list_circular_picker .custom {
+    .settings_list .settings_list_circular_picker #background_custom {
       background-image: url("../img/colors.png");
       background-position: center;
       background-clip: border-box; }
