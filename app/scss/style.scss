@@ -170,6 +170,21 @@ footer {
       background-position: center;
       background-clip: border-box;
     }
+    #background_none {
+      background-image: none;
+    }
+    #background_squared {
+      background-image: url("../img/grid/squared-dark.png");
+    }
+    #background_squared_marked {
+      background-image: url("../img/grid/squared-marked-dark.png");
+    }
+    #background_lines {
+      background-image: url("../img/grid/lines-dark.png");
+    }
+    #background_dots {
+      background-image: url("../img/grid/dots-dark.png");
+    }
   }
 }
 
@@ -178,6 +193,7 @@ footer {
   position: relative;
   align-self: center;
   box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
+  background-repeat: repeat;
 }
 
 .toolbar-left {

@@ -12,7 +12,8 @@ document.addEventListener( "DOMContentLoaded", function() {
       canvas: {
         x: 10,
         y: 20,
-        background: "#fff"
+        backgroundColor: "#fff",
+        backgroundImage: "none"
       }
     },
     pages: [
@@ -21,7 +22,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     // pages: [
     //   lines: [
     //     {points: [{x:0,y:0}],
-    //      color: "#fff"}
+    //      color: "#fff", width: 4}
     // ]
   }
 
@@ -35,7 +36,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var canvas = document.getElementById("canvas");
 
-  canvas.style.background = thisFile.settings.canvas.background;
+  canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+  canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
   var DrawPaddingX = canvas.offsetLeft;
   var DrawPaddingY = canvas.offsetTop;
@@ -217,6 +219,13 @@ document.addEventListener( "DOMContentLoaded", function() {
   var greenBackground = document.getElementById("background_green");
   var customBackground = document.getElementById("background_custom");
 
+  var noneBackground = document.getElementById("background_none");
+  var squaredBackground = document.getElementById("background_squared");
+  var squaredMarkedBackground = document.getElementById("background_squared_marked");
+  var linesBackground = document.getElementById("background_lines");
+  var dotsBackground = document.getElementById("background_dots");
+
+
   var pencilOldColor, pencilOldWidth;
 
   function clearButtonSelection(buttons) {
@@ -252,9 +261,14 @@ document.addEventListener( "DOMContentLoaded", function() {
      lineWidth = width;
   }
   function setBackgroundColor(color) {
-     thisFile.settings.canvas.background = color;
-     canvas.style.background = thisFile.settings.canvas.background;
+     thisFile.settings.canvas.backgroundColor = color;
+     canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
   }
+  function setBackgroundImage(image) { // NO .PNG
+     thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
+     canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+  }
+
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     clearButtonSelection(allTools);
@@ -360,6 +374,55 @@ document.addEventListener( "DOMContentLoaded", function() {
     setBackgroundColor(customBackground.getAttribute("value"));
   });
 
+  function isDark (color) {
+    var c = color.substring(1);      // strip #
+    var rgb = parseInt(c, 16);   // convert rrggbb to decimal
+    var r = (rgb >> 16) & 0xff;  // extract red
+    var g = (rgb >>  8) & 0xff;  // extract green
+    var b = (rgb >>  0) & 0xff;  // extract blue
+
+    var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+    if (luma > 40) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  noneBackground.addEventListener("click", function() {
+    setBackgroundImage("none");
+  });
+  squaredBackground.addEventListener("click", function() {
+    if(isDark(canvas.style.backgroundColor)) {
+      setBackgroundImage("squared-light");
+    } else {
+      setBackgroundImage("squared-dark");
+    }
+    console.log(isDark(canvas.style.backgroundColor))
+  });
+  squaredMarkedBackground.addEventListener("click", function() {
+    if(isDark(canvas.style.backgroundColor)) {
+      setBackgroundImage("squared-marked-light");
+    } else {
+      setBackgroundImage("squared-marked-dark");
+    }
+  });
+  linesBackground.addEventListener("click", function() {
+    if(isDark(canvas.style.backgroundColor)) {
+      setBackgroundImage("lines-light");
+    } else {
+      setBackgroundImage("lines-dark");
+    }
+  });
+  dotsBackground.addEventListener("click", function() {
+    if(isDark(canvas.style.backgroundColor)) {
+      setBackgroundImage("dots-light");
+    } else {
+      setBackgroundImage("dots-dark");
+    }
+  });
+
 
   //SAVE
   var saveButton = document.getElementById("save");
@@ -385,7 +448,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
 
   function loadIntoCanvas(file){
-    if(file != null && file != undefined)
+    if(file !== null && file !== undefined)
     {
       console.log("loading file " + file.settings.name);
       thisFile = file;
@@ -399,7 +462,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       {
         var _line = _lines[line];
         var _points = _line.points;
-        if(_points.length==1){  //draw a dot
+        if(_points.length === 1){  //draw a dot
           _x=_points[0].x;
           _y=_points[0].y;
           ctx.beginPath();

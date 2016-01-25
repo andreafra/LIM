@@ -196,12 +196,23 @@ footer {
       background-image: url("../img/colors.png");
       background-position: center;
       background-clip: border-box; }
+    .settings_list .settings_list_circular_picker #background_none {
+      background-image: none; }
+    .settings_list .settings_list_circular_picker #background_squared {
+      background-image: url("../img/grid/squared-dark.png"); }
+    .settings_list .settings_list_circular_picker #background_squared_marked {
+      background-image: url("../img/grid/squared-marked-dark.png"); }
+    .settings_list .settings_list_circular_picker #background_lines {
+      background-image: url("../img/grid/lines-dark.png"); }
+    .settings_list .settings_list_circular_picker #background_dots {
+      background-image: url("../img/grid/dots-dark.png"); }
 
 /* end of settings */
 #canvas {
   position: relative;
   align-self: center;
-  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
+  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  background-repeat: repeat; }
 
 .toolbar-left {
   position: absolute;
