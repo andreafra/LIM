@@ -356,10 +356,10 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
   // BACKGROUND COLOR PICKER
   whiteBackground.addEventListener("click", function(e) {
-    setBackgroundColor("white");
+    setBackgroundColor("#ffffff");
   });
   blackBackground.addEventListener("click", function(e) {
-    setBackgroundColor("black");
+    setBackgroundColor("#000000");
   });
   greenBackground.addEventListener("click", function(e) {
     setBackgroundColor("#567E3A");
@@ -399,6 +399,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     } else {
       setBackgroundImage("squared-dark");
     }
+    console.log(canvas.style.backgroundColor)
     console.log(isDark(canvas.style.backgroundColor))
   });
   squaredMarkedBackground.addEventListener("click", function() {
