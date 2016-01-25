@@ -7,8 +7,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var thisFile = {
     settings: {
-      name: "text",
-      date: "date",
+      name: "unnamed",
+      date: new Date().getTime(),
       canvas: {
         x: 10,
         y: 20,
@@ -35,6 +35,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var canvas = document.getElementById("canvas");
 
+  canvas.style.background = thisFile.settings.canvas.background;
+
   var DrawPaddingX = canvas.offsetLeft;
   var DrawPaddingY = canvas.offsetTop;
 
@@ -56,12 +58,18 @@ document.addEventListener( "DOMContentLoaded", function() {
   // Fixed Line Properties
   ctx.shadowBlur = 0.5;
   ctx.imageSmoothingEnabled = true;
+
+  //default values
+  var lineColor = "black";
+  var lineWidth = 4;
+  ctx.strokeStyle = lineColor;
+  ctx.shadowColor = lineColor;
+  ctx.lineWidth = lineWidth;
   //ctx.translate(0.5,0.5);
 
   var toolSelected = "pencil"; // can be "pencil", "rubber", "ruler"
 
-  var lineColor = "black";
-  var lineWidth = 4;
+  
 
   var isDrawing, pages = [ ];
   var hasMoved = false;
@@ -84,19 +92,20 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     // save points
     _points.push({ x: _x, y: _y });
-    thisFile.pages[0].lines.push({
+    thisFile.pages[currentPage].lines.push({
       points: _points,
       color: ctx.strokeStyle,
       width: ctx.lineWidth
     });
   }
+
   function moveDrawing(e, touch) {
     if (toolSelected === "ruler") return;
     if (!isDrawing) return;
 
 	hasMoved = true;
     var _x, _y;
-    var _lines = thisFile.pages[0].lines
+    var _lines = thisFile.pages[currentPage].lines
     var _points = _lines[_lines.length-1].points
     if (touch) {
       canvas.style.cursor = "none";
@@ -154,8 +163,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       ctx.fill();
   	}
 	
-	 //Questi _x e _y teoricamente li hai già salvati in StartDrawing?
-	 //Penso di si perchè se non ti muovi la posizione del puntatore è uguale onmousedown e onmouseup
+	 //These points are already saved in startDrawing. No need to save here.
 
     isDrawing = false;
     hasMoved = false;
@@ -196,8 +204,13 @@ document.addEventListener( "DOMContentLoaded", function() {
   var blueColor = document.getElementById("pencil_blue");
   var redColor = document.getElementById("pencil_red");
   var greenColor = document.getElementById("pencil_green");
-  var otherColor = document.getElementById("pencil_other");
-  var allColors = [blackColor, blueColor, redColor, greenColor, otherColor];
+  var customColor = document.getElementById("pencil_other");
+  var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
+
+  var whiteBackground = document.getElementById("background_white");
+  var blackBackground = document.getElementById("background_black");
+  var greenBackground = document.getElementById("background_green");
+  var customBackground = document.getElementById("background_custom");
 
   var pencilOldColor, pencilOldWidth;
 
@@ -231,6 +244,10 @@ document.addEventListener( "DOMContentLoaded", function() {
     pencilColor.style.borderBottom = "12px solid " + lineColor;
   }
 
+  function setBackgroundColor(color) {
+     thisFile.settings.canvas.background = color;
+     canvas.style.background = thisFile.settings.canvas.background
+  }
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     clearButtonSelection(allTools);
@@ -252,21 +269,21 @@ document.addEventListener( "DOMContentLoaded", function() {
       pencilOldWidth = lineWidth;
     }
     // apply new color & width
-    lineColor = "white";
+    lineColor = thisFile.settings.canvas.background;
     lineWidth = 30;
 
     toolSelected = "rubber";
   });
   ruler.addEventListener("click", function(e) {
-      clearButtonSelection(allTools);
-      this.classList.add("btn-active");
-      showColorButtons();
-      if (toolSelected === "rubber") {
-        lineColor = pencilOldColor;
-        lineWidth = pencilOldWidth;
-      }
-      toolSelected = "ruler";
-    });
+    clearButtonSelection(allTools);
+    this.classList.add("btn-active");
+    showColorButtons();
+    if (toolSelected === "rubber") {
+      lineColor = pencilOldColor;
+      lineWidth = pencilOldWidth;
+    }
+    toolSelected = "ruler";
+  });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
     setColor("black");
@@ -288,17 +305,115 @@ document.addEventListener( "DOMContentLoaded", function() {
     clearButtonSelection(allColors);
     this.classList.add("btn-active");
   });
-  otherColor.addEventListener("mouseup", function() {
+  customColor.addEventListener("mouseup", function() {
     clearButtonSelection(allColors);
     this.classList.add("btn-active");
-    console.log('CIAO 1')
     document.getElementById("body").lastChild.addEventListener("mouseup", function() {
-      console.log('CIAO 2')
-      setColor(otherColor.getAttribute("value"));
+      setColor(customColor.getAttribute("value"));
     });
   });
-  otherColor.addEventListener("click", function() {
-     //Voglio che il colore venga settato all'ultimo colore scelto quanto clicko
-    setColor(otherColor.getAttribute("value"));
+  customColor.addEventListener("click", function() {
+    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
+    setColor(customColor.getAttribute("value"));
   });
+
+  // BACKGROUND COLOR PICKER
+  whiteBackground.addEventListener("click", function(e) {
+    setBackgroundColor("white");
+  });
+  blackBackground.addEventListener("click", function(e) {
+    setBackgroundColor("black");
+  });
+  greenBackground.addEventListener("click", function(e) {
+    setBackgroundColor("#567E3A");
+  });
+  customBackground.addEventListener("mouseup", function() {
+    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
+      setBackgroundColor(customBackground.getAttribute("value"));
+    });
+  });
+  customBackground.addEventListener("click", function() {
+    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
+    setBackgroundColor(customBackground.getAttribute("value"));
+  });
+
+
+  //SAVE
+  var saveButton = document.getElementById("save");
+
+  var saveFile = require('./app/js/save');
+
+  saveButton.addEventListener("click", function() {
+    if (thisFile.settings.name=="unnamed") {
+      saveFile.SaveAs(thisFile);
+      console.log('saved as!')
+    } else {
+      saveFile.Save(thisFile);
+      console.log('saved!')
+    }
+  });
+
+  //LOAD
+  var loadButton = document.getElementById("load");
+  var loadFile = require('./app/js/load');
+
+  loadButton.addEventListener("click", function(){
+    loadFile.Load(loadIntoCanvas);
+  });
+
+  function loadIntoCanvas(file){
+    if(file != null && file != undefined)
+    {
+      console.log("loading file " + file.settings.name);
+      thisFile = file;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      document.getElementById('settings_container').classList.add('hidden'); //hide settings menu
+
+      //DRAW
+      var _lines = thisFile.pages[0].lines
+
+      for(var line = 0; line < _lines.length; line++)
+      {
+        var _line = _lines[line];
+        var _points = _line.points;
+        if(_points.length==1){  //draw a dot
+          _x=_points[0].x;
+          _y=_points[0].y;
+          ctx.beginPath();
+          ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
+          ctx.fillStyle = lineColor;
+          ctx.shadowColor = lineColor;
+          ctx.strokeStyle = lineColor;
+          ctx.fill();
+        }
+        else {  //draw a line
+          var p1 = _points[0];
+          var p2 = _points[1];
+
+          ctx.shadowBlur = 0.5;
+          ctx.imageSmoothingEnabled = true;
+          ctx.strokeStyle = _line.color;
+          ctx.shadowColor = _line.color;
+          ctx.lineWidth = _line.width+2; //bypass shadows not stacking, thus resulting in a smaller line
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+
+          for (var i = 1, len = _points.length; i < len; i++) {
+            // we pick the point between pi+1 & pi+2 as the
+            // end point and p1 as our control point
+            var midPoint = midPointBtw(p1, p2);
+            ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+            p1 = _points[i];
+            p2 = _points[i+1];
+          }
+          // Draw last line as a straight line while
+          // we wait for the next point to be able to calculate
+          // the bezier control point
+          ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+        }
+      }
+    }
+    else console.log("error loading file: " + file);
+  }
 }); // document.ready?
