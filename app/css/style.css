@@ -386,4 +386,36 @@ footer {
   background-color: #cccccc;
   color: #212121; }
 
+/* Ruler */
+#ruler-div{
+  top:0px;
+  left:0px
+  right:0px;
+  bottom:0px;
+  width:200px;
+  height:50px;
+  background:blue;
+  position:absolute;
+  transform:translate(210px,200px) rotate(90deg);
+  transform-origin:50% 50% 0
+}
+
+#top-left{
+  width:10px;
+  height:10px;
+  background:white;
+  position:absolute;
+  top:0px;
+  left:0px;
+}
+
+#top-right{
+  width:10px;
+  height:10px;
+  background:white;
+  position:absolute;
+  top:0px;
+  right:0px;
+}
+
 /*# sourceMappingURL=style.css.map */
