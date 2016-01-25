@@ -264,6 +264,42 @@ footer {
   background-clip: border-box;
   font-size: 0; }
 
+#stroke_small {
+  background: #ffffff; }
+  #stroke_small:after {
+    content: "";
+    display: block;
+    position: relative;
+    height: 6px;
+    width: 6px;
+    border-radius: 6px;
+    background: black;
+    margin: 9px; }
+
+#stroke_medium {
+  background: #ffffff; }
+  #stroke_medium:after {
+    content: "";
+    display: block;
+    position: relative;
+    height: 10px;
+    width: 10px;
+    border-radius: 10px;
+    background: black;
+    margin: 7px; }
+
+#stroke_big {
+  background: #ffffff; }
+  #stroke_big:after {
+    content: "";
+    display: block;
+    position: relative;
+    height: 14px;
+    width: 14px;
+    border-radius: 14px;
+    background: black;
+    margin: 5px; }
+
 .background {
   background-color: #fff; }
 
@@ -307,11 +343,18 @@ footer {
     border-radius: 15px;
     border: 2px solid #eeeeee;
     box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 10px;
+    margin-bottom: 10px; }
     .btn-toolbar .btn-circular:hover {
       box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
     .btn-toolbar .btn-circular:active {
       box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
+    .btn-toolbar .btn-circular.btn-invisible {
+      border-color: transparent;
+      box-shadow: none; }
+      .btn-toolbar .btn-circular.btn-invisible:hover, .btn-toolbar .btn-circular.btn-invisible:active {
+        box-shadow: none; }
 
 .btn-hidden {
   animation: btn-hide 0.2s;
@@ -322,7 +365,8 @@ footer {
   animation-fill-mode: forwards; }
 
 .btn-active {
-  margin-bottom: 20px; }
+  transform: scale(1.2);
+  border-color: #FFFF00 !important; }
   .btn-active #pencil_color {
     top: 0px !important; }
 
@@ -357,13 +401,13 @@ footer {
   color: #ffffff; }
 
 .btn-yellow {
-  background-color: #E8B72E; }
+  background-color: #FFFF00; }
 
 .btn-yellow-hover:hover {
-  background-color: #E8B72E;
+  background-color: #FFFF00;
   color: #ffffff; }
 .btn-yellow-hover:active {
-  background-color: #9f7911;
+  background-color: #999900;
   color: #ffffff; }
 
 .btn-green {

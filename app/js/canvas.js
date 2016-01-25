@@ -207,6 +207,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   var customColor = document.getElementById("pencil_other");
   var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
 
+  var smallWidth = document.getElementById("stroke_small");
+  var mediumWidth = document.getElementById("stroke_medium");
+  var bigWidth = document.getElementById("stroke_big");
+  var allWidths = [smallWidth, mediumWidth, bigWidth];
+
   var whiteBackground = document.getElementById("background_white");
   var blackBackground = document.getElementById("background_black");
   var greenBackground = document.getElementById("background_green");
@@ -243,10 +248,12 @@ document.addEventListener( "DOMContentLoaded", function() {
     lineColor = color;
     pencilColor.style.borderBottom = "12px solid " + lineColor;
   }
-
+  function setWidth(width) {
+     lineWidth = width;
+  }
   function setBackgroundColor(color) {
      thisFile.settings.canvas.background = color;
-     canvas.style.background = thisFile.settings.canvas.background
+     canvas.style.background = thisFile.settings.canvas.background;
   }
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
@@ -317,6 +324,22 @@ document.addEventListener( "DOMContentLoaded", function() {
     setColor(customColor.getAttribute("value"));
   });
 
+  // WIDTH
+  smallWidth.addEventListener("click", function() {
+    setWidth(2);
+    clearButtonSelection(allWidths);
+    this.classList.add("btn-active");
+  });
+  mediumWidth.addEventListener("click", function() {
+    setWidth(4);
+    clearButtonSelection(allWidths);
+    this.classList.add("btn-active");
+  });
+  bigWidth.addEventListener("click", function() {
+    setWidth(6);
+    clearButtonSelection(allWidths);
+    this.classList.add("btn-active");
+  });
   // BACKGROUND COLOR PICKER
   whiteBackground.addEventListener("click", function(e) {
     setBackgroundColor("white");
