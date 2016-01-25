@@ -334,7 +334,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
   customBackground.addEventListener("click", function() {
     //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
-    setBackgroundColor(customColor.getAttribute("value"));
+    setBackgroundColor(customBackground.getAttribute("value"));
   });
 
 
