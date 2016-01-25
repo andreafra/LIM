@@ -148,7 +148,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   function endDrawing(e, touch) {
     if (toolSelected === "ruler") return;
   	//Handle points
-  	if(!hasMoved) {
+  	if(!hasMoved && isDrawing) {
   		var _x, _y;
   		if (touch) {
   		  _x = e.changedTouchs[0].clientX - DrawPaddingX;
@@ -503,4 +503,23 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     else console.log("error loading file: " + file);
   }
+
+  //RULER
+  var ruler_starting_translateX = 200;
+  var ruler_starting_translateY = 200;
+  var ruler = document.getElementById("ruler-div");
+  ruler.addEventListener("touchmove", function(event) {
+    var rotation = event.rotation;
+    // This isn't a fun browser!
+    if (rotation == undefined) {
+      rotation = Math.atan2(event.touches[0].pageY - event.touches[1].pageY,
+                              event.touches[0].pageX - event.touches[1].pageX) * 180 / Math.PI;
+    }
+
+    // Take into account vendor prefixes, which I haven't done.
+    ruler.style.transform = "translate(200px,200px) rotate(" + rotation + "deg)";
+    console.log(rotation+"deg");
+    //ruler.style.transform = "translate(200px,200px) rotate(0deg)";
+  });
+
 }); // document.ready?
