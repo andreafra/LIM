@@ -17,7 +17,8 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
     },
     pages: [
-      {lines: [ ]}
+      {lines: [ ],
+       wipes: [ ]}
     ]
     // pages: [
     //   lines: [
@@ -64,6 +65,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   //default values
   var lineColor = "black";
   var lineWidth = 4;
+  var rubberWidth = 30;
   ctx.strokeStyle = lineColor;
   ctx.shadowColor = lineColor;
   ctx.lineWidth = lineWidth;
@@ -94,11 +96,19 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     // save points
     _points.push({ x: _x, y: _y });
-    thisFile.pages[currentPage].lines.push({
-      points: _points,
-      color: ctx.strokeStyle,
-      width: ctx.lineWidth
-    });
+    if (toolSelected !== "rubber") {
+      thisFile.pages[currentPage].lines.push({
+        points: _points,
+        color: lineColor,
+        width: lineWidth
+      });
+    } else {
+      thisFile.pages[currentPage].wipes.push({
+        points: _points,
+        color: canvas.style.backgroundColor,
+        width: rubberWidth
+      });
+    }
   }
 
   function moveDrawing(e, touch) {
@@ -106,9 +116,18 @@ document.addEventListener( "DOMContentLoaded", function() {
     if (!isDrawing) return;
 
 	hasMoved = true;
-    var _x, _y;
-    var _lines = thisFile.pages[currentPage].lines
-    var _points = _lines[_lines.length-1].points
+    var _x, _y, _points;
+    var _lines = thisFile.pages[currentPage].lines;
+    var _wipes = thisFile.pages[currentPage].wipes;
+    if (toolSelected !== "rubber") {
+      _points = _lines[_lines.length-1].points;
+      ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+      ctx.lineWidth = _lines[_lines.length-1].width;
+    } else {
+      _points = _wipes[_wipes.length-1].points;
+      ctx.strokeStyle = ctx.shadowColor = _wipes[_wipes.length-1].color;
+      ctx.lineWidth = _wipes[_wipes.length-1].width;
+    } 
     if (touch) {
       canvas.style.cursor = "none";
       _x = e.changedTouches[0].clientX - DrawPaddingX;
@@ -125,9 +144,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     var p1 = _points[0];
     var p2 = _points[1];
 
-    ctx.strokeStyle = lineColor;
-    ctx.shadowColor = lineColor;
-    ctx.lineWidth = lineWidth;
     ctx.beginPath();
     ctx.moveTo(p1.x, p1.y);
 
@@ -225,9 +241,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   var linesBackground = document.getElementById("background_lines");
   var dotsBackground = document.getElementById("background_dots");
 
-
-  var pencilOldColor, pencilOldWidth;
-
   function clearButtonSelection(buttons) {
     var colors = buttons;
     for (var i = colors.length - 1; i >= 0; i--) {
@@ -275,8 +288,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     this.classList.add("btn-active");
     showColorButtons();
     if (toolSelected === "rubber") {
-      lineColor = pencilOldColor;
-      lineWidth = pencilOldWidth;
+      ctx.strokeStyle = ctx.shadowColor = lineColor;
+      ctx.lineWidth = lineWidth;
     }
     toolSelected = "pencil";
   });
@@ -284,14 +297,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     clearButtonSelection(allTools);
     this.classList.add("btn-active");
     hideColorButtons();
-    // backup old color & width
-    if (toolSelected !== "rubber") {
-      pencilOldColor = lineColor;
-      pencilOldWidth = lineWidth;
-    }
-    // apply new color & width
-    lineColor = thisFile.settings.canvas.background;
-    lineWidth = 30;
 
     toolSelected = "rubber";
   });
@@ -299,10 +304,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     clearButtonSelection(allTools);
     this.classList.add("btn-active");
     showColorButtons();
-    if (toolSelected === "rubber") {
-      lineColor = pencilOldColor;
-      lineWidth = pencilOldWidth;
-    }
+
     toolSelected = "ruler";
   });
   // COLOR PICKER
@@ -462,6 +464,49 @@ document.addEventListener( "DOMContentLoaded", function() {
       for(var line = 0; line < _lines.length; line++)
       {
         var _line = _lines[line];
+        var _points = _line.points;
+        if(_points.length === 1){  //draw a dot
+          _x=_points[0].x;
+          _y=_points[0].y;
+          ctx.beginPath();
+          ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
+          ctx.fillStyle = lineColor;
+          ctx.shadowColor = lineColor;
+          ctx.strokeStyle = lineColor;
+          ctx.fill();
+        }
+        else {  //draw a line
+          var p1 = _points[0];
+          var p2 = _points[1];
+
+          ctx.shadowBlur = 0.5;
+          ctx.imageSmoothingEnabled = true;
+          ctx.strokeStyle = _line.color;
+          ctx.shadowColor = _line.color;
+          ctx.lineWidth = _line.width+2; //bypass shadows not stacking, thus resulting in a smaller line
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+
+          for (var i = 1, len = _points.length; i < len; i++) {
+            // we pick the point between pi+1 & pi+2 as the
+            // end point and p1 as our control point
+            var midPoint = midPointBtw(p1, p2);
+            ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+            p1 = _points[i];
+            p2 = _points[i+1];
+          }
+          // Draw last line as a straight line while
+          // we wait for the next point to be able to calculate
+          // the bezier control point
+          ctx.lineTo(p1.x, p1.y);
+          ctx.stroke();
+        }
+      }
+      var _wipes = thisFile.pages[0].wipes
+
+      for(var line = 0; line < _wipes.length; line++)
+      {
+        var _line = _wipes[line];
         var _points = _line.points;
         if(_points.length === 1){  //draw a dot
           _x=_points[0].x;
