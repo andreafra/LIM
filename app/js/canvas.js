@@ -86,8 +86,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     hasMoved = false; //Not yet
     var _x, _y, _points = [ ];
     if (touch) {
-      _x = e.changedTouchs[0].clientX - DrawPaddingX;
-      _y = e.changedTouchs[0].clientY - DrawPaddingY;
+      _x = e.touches[0].clientX - DrawPaddingX;
+      _y = e.touches[0].clientY - DrawPaddingY;
     } else {
       _x = e.clientX - DrawPaddingX;
       _y = e.clientY - DrawPaddingY;
@@ -111,8 +111,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     var _points = _lines[_lines.length-1].points
     if (touch) {
       canvas.style.cursor = "none";
-      _x = e.changedTouchs[0].clientX - DrawPaddingX;
-      _y = e.changedTouchs[0].clientY - DrawPaddingY;
+      _x = e.changedTouches[0].clientX - DrawPaddingX;
+      _y = e.changedTouches[0].clientY - DrawPaddingY;
     } else {
       canvas.style.cursor = "crosshair";
       _x = e.clientX - DrawPaddingX;
@@ -151,8 +151,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   	if(!hasMoved && isDrawing) {
   		var _x, _y;
   		if (touch) {
-  		  _x = e.changedTouchs[0].clientX - DrawPaddingX;
-  		  _y = e.changedTouchs[0].clientY - DrawPaddingY;
+  		  _x = e.changedTouches[0].clientX - DrawPaddingX;
+  		  _y = e.changedTouches[0].clientY - DrawPaddingY;
   		} else {
   		  _x = e.clientX - DrawPaddingX;
   		  _y = e.clientY - DrawPaddingY;
@@ -516,7 +516,7 @@ document.addEventListener( "DOMContentLoaded", function() {
                               event.touches[0].pageX - event.touches[1].pageX) * 180 / Math.PI;
     }
 
-    // Take into account vendor prefixes, which I haven't done.
+    // No needs for vendor prefixes (only -webkit-* in case)
     ruler.style.transform = "translate(200px,200px) rotate(" + rotation + "deg)";
     console.log(rotation+"deg");
     //ruler.style.transform = "translate(200px,200px) rotate(0deg)";
