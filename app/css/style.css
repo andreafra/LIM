@@ -459,16 +459,25 @@ footer {
     width: 10px;
     height: 10px;
     background: white;
-    top: 0px; }
-  #ruler-div #top-center {
-    width: 10px;
-    height: 10px;
-    background: white;
-    top: 0px; }
+    position: absolute;
+    top: 0;
+    left: 0; }
   #ruler-div #top-right {
     width: 10px;
     height: 10px;
     background: white;
-    top: 0px; }
+    position: absolute;
+    top: 0;
+    right: 0; }
+  #ruler-div #ruler-left, #ruler-div #ruler-center, #ruler-div #ruler-right {
+    display: block;
+    width: 100%;
+    height: 100%; }
+  #ruler-div #ruler-left {
+    background-color: green; }
+  #ruler-div #ruler-center {
+    background-color: yellow; }
+  #ruler-div #ruler-right {
+    background-color: blue; }
 
 /*# sourceMappingURL=style.css.map */

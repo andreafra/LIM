@@ -15,18 +15,30 @@
 	  width:10px;
 	  height:10px;
 	  background:white;
-	  top:0px;
-	}
-	#top-center {
-	  width:10px;
-	  height:10px;
-	  background:white;
-	  top:0px;
+	  position:absolute;
+	  top:0;
+	  left: 0;
 	}
 	#top-right {
 	  width:10px;
 	  height:10px;
 	  background:white;
-	  top:0px;
+	  position:absolute;
+	  top:0;
+	  right: 0;
+	}
+	#ruler-left, #ruler-center, #ruler-right {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+	#ruler-left {
+		background-color: green;
+	}
+	#ruler-center {
+		background-color: yellow;
+	}
+	#ruler-right {
+		background-color: blue;
 	}
 }
