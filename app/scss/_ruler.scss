@@ -1,4 +1,4 @@
-#ruler-div {
+#ruler_container {
 	position: absolute;
 	display: flex;
 	top: 0;
@@ -8,45 +8,45 @@
 	height: 50px;
 	width: 200px;
 	transform-origin: 50% 50%;
-	transform: translate(200px, 200px);
+	transform: translate(200px, 200px) rotate(0deg);
 	background-color: red;
 	justify-content: space-between;
-	#top-left {
-	  width:10px;
-	  height:10px;
+	#top_left {
+	  width:0;
+	  height:0;
 	  background:white;
 	  position:absolute;
 	  top:0;
 	  left: 0;
 	}
-	#top-right {
-	  width:10px;
-	  height:10px;
+	#top_right {
+	  width:0;
+	  height:0;
 	  background:white;
 	  position:absolute;
 	  top:0;
 	  right: 0;
 	}
-	#bottom-right {
-	  width: 10px;
-	  height: 10px;
+	#bottom_right {
+	  width: 0;
+	  height: 0;
 	  background: white;
 	  position: absolute;
 	  bottom: 0;
 	  right: 0;
 	}
-	#ruler-left, #ruler-center, #ruler-right {
+	#ruler_left, #ruler_center, #ruler_right {
 		display: block;
 		width: 100%;
 		height: 100%;
 	}
-	#ruler-left {
+	#ruler_left {
 		background-color: green;
 	}
-	#ruler-center {
+	#ruler_center {
 		background-color: yellow;
 	}
-	#ruler-right {
+	#ruler_right {
 		background-color: blue;
 	}
 }

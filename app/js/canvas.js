@@ -526,21 +526,176 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   //RULER
-  var ruler_starting_translateX = 200;
-  var ruler_starting_translateY = 200;
-  var ruler = document.getElementById("ruler-div");
-  ruler.addEventListener("touchmove", function(event) {
-    var rotation = event.rotation;
-    // This isn't a fun browser!
-    if (rotation == undefined) {
-      rotation = Math.atan2(event.touches[0].pageY - event.touches[1].pageY,
-                              event.touches[0].pageX - event.touches[1].pageX) * 180 / Math.PI;
-    }
 
-    // No needs for vendor prefixes (only -webkit-* in case)
-    ruler.style.transform = "translate(200px,200px) rotate(" + rotation + "deg)";
+  var ruler = document.getElementById("ruler_container");
+  var ruler_left = document.getElementById("ruler_left");
+  var ruler_right = document.getElementById("ruler_right");
+  var ruler_topRight = document.getElementById("top_right");
+  var ruler_topLeft = document.getElementById("top_left");
+  var ruler_bottomRight = document.getElementById("bottom_right");
+  var ruler_center = document.getElementById("ruler_center");
+
+  var mRotation = 0 //default value. musth match css
+
+  //Mouse rotation
+  var rotation_down = false;
+  ruler_right.addEventListener("mousedown", function(){rotation_down = true;})
+  ruler_right.addEventListener("mouseup", function(){rotation_down = false;})
+  ruler_right.addEventListener("mousemove", function(event) {
+    if(!rotation_down) return;
+    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
+    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
+    var _center = midPointBtw(
+                            {
+                              x: _topLeftRect.left,
+                              y: _topLeftRect.top
+                            },
+
+                            {
+                              x: _bottomRightRect.right,
+                              y: _bottomRightRect.bottom
+                            }
+                          );
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+    
+    var rotation = Math.atan2(event.clientY - _center.y,
+                              event.clientX - _center.x) * 180 / Math.PI;
+
+    mRotation = rotation;
+    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
     console.log(rotation+"deg");
-    //ruler.style.transform = "translate(200px,200px) rotate(0deg)";
   });
 
+  ruler_left.addEventListener("mousedown", function(){rotation_down = true;})
+  ruler_left.addEventListener("mouseup", function(){rotation_down = false;})
+  ruler_left.addEventListener("mousemove", function(event) {
+    if(!rotation_down) return;
+    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
+    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
+    var _center = midPointBtw(
+                            {
+                              x: _topLeftRect.left,
+                              y: _topLeftRect.top
+                            },
+
+                            {
+                              x: _bottomRightRect.right,
+                              y: _bottomRightRect.bottom
+                            }
+                          );
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+    
+    var rotation = Math.atan2(_center.y - event.clientY,
+                               _center.x - event.clientX) * 180 / Math.PI;
+
+    mRotation = rotation;
+    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
+    console.log(rotation+"deg");
+  });
+  
+  //Touch rotation
+  ruler_right.addEventListener("touchmove", function(event) {
+    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
+    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
+    var _center = midPointBtw(
+                            {
+                              x: _topLeftRect.left,
+                              y: _topLeftRect.top
+                            },
+
+                            {
+                              x: _bottomRightRect.right,
+                              y: _bottomRightRect.bottom
+                            }
+                          );
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+    
+    var rotation = Math.atan2(event.touches[0].y - _center.y,
+                              event.touches[0].x - _center.x) * 180 / Math.PI;
+
+    mRotation = rotation;
+    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
+    console.log(rotation+"deg");
+  });
+
+  ruler_right.addEventListener("touchmove", function(event) {
+    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
+    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
+    var _center = midPointBtw(
+                            {
+                              x: _topLeftRect.left,
+                              y: _topLeftRect.top
+                            },
+
+                            {
+                              x: _bottomRightRect.right,
+                              y: _bottomRightRect.bottom
+                            }
+                          );
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+    
+    var rotation = Math.atan2(_center.y - event.touches[0].y,
+                              _center.x - event.touches[0].x ) * 180 / Math.PI;
+
+    mRotation = rotation;
+    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
+    console.log(rotation+"deg");
+  });
+
+  
+  var lastTouch;
+  //Mouse drag
+  var drag_down = false;
+  ruler_center.addEventListener("mousedown", function(event){drag_down = true; lastTouch={x: event.clientX, y: event.clientY}})
+  ruler_center.addEventListener("mouseup", function(){drag_down = false; lastTouch = undefined})
+  ruler_center.addEventListener("mousemove", function(event) {
+    if(!drag_down) return;
+    if(lastTouch === undefined) return;
+
+    var deltaX = event.clientX - lastTouch.x;
+    var deltaY = event.clientY - lastTouch.y
+
+    lastTouch.x = event.clientX;
+    lastTouch.y = event.clientY;
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+
+    var _x = transformX + deltaX;
+    var _y = transformY + deltaY;
+    ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
+  });
+
+  ruler_center.addEventListener("mousemove", function(event) {
+    if(!drag_down) return;
+    if(lastTouch === undefined) return;
+
+    var deltaX = event.touches[0].x - lastTouch.x;
+    var deltaY = event.touches[0].y - lastTouch.y
+
+    lastTouch.x = event.touches[0].x;
+    lastTouch.y = event.touches[0].y;
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+
+    var _x = transformX + deltaX;
+    var _y = transformY + deltaY;
+    ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
+  });
+  //Touch drag
 }); // document.ready?
