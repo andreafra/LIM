@@ -27,6 +27,14 @@
 	  top:0;
 	  right: 0;
 	}
+	#bottom-right {
+	  width: 10px;
+	  height: 10px;
+	  background: white;
+	  position: absolute;
+	  bottom: 0;
+	  right: 0;
+	}
 	#ruler-left, #ruler-center, #ruler-right {
 		display: block;
 		width: 100%;

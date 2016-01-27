@@ -469,6 +469,13 @@ footer {
     position: absolute;
     top: 0;
     right: 0; }
+  #ruler-div #bottom-right {
+    width: 10px;
+    height: 10px;
+    background: white;
+    position: absolute;
+    bottom: 0;
+    right: 0; }
   #ruler-div #ruler-left, #ruler-div #ruler-center, #ruler-div #ruler-right {
     display: block;
     width: 100%;
