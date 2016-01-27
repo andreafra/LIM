@@ -281,11 +281,14 @@ document.addEventListener( "DOMContentLoaded", function() {
     thisFile.settings.canvas.backgroundColor = color;
     canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
     //When backgruond changes color, i want rubber to be re-colored to match bg color
-    for(var i = 0; i < thisFile.pages[currentPage].wipes.length; i++){
-      thisFile.pages[currentPage].wipes[i].color = color;
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      //loadIntoCanvas(thisFile);
+    for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
+      if(thisFile.pages[currentPage].lines[i].rubber)
+      {
+        thisFile.pages[currentPage].lines[i].color = color;
+      }
     }
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    loadIntoCanvas(thisFile);
   }
   function setBackgroundImage(image) { // NO .PNG
      thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
