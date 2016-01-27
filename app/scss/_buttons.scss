@@ -71,8 +71,11 @@
 .btn-active {
   transform: scale(1.2);
   border-color: $yellow !important;
+}
+.btn-tool-active {
+  margin-top: -30px;
   #pencil_color {
-    top: -11px !important;
+    top: -5px !important;
   }
 }
 
