@@ -475,17 +475,14 @@ document.addEventListener( "DOMContentLoaded", function() {
         var _line = _lines[line];
         var _points = _line.points;
 
-        lineWidth = _line.width;
-        lineColor = _line.color;
-
         if(_points.length === 1){  //draw a dot
           _x=_points[0].x;
           _y=_points[0].y;
           ctx.beginPath();
-          ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
-          ctx.fillStyle = lineColor;
-          ctx.shadowColor = lineColor;
-          ctx.strokeStyle = lineColor;
+          ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
+          ctx.fillStyle = _line.color;
+          ctx.shadowColor = _line.color;
+          ctx.strokeStyle = _line.color;
           ctx.fill();
         }
         else {  //draw a line
@@ -517,6 +514,8 @@ document.addEventListener( "DOMContentLoaded", function() {
           // the bezier control point
           ctx.lineTo(p1.x, p1.y);
           ctx.stroke();
+
+
         }
       }
     }
