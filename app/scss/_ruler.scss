@@ -1,6 +1,6 @@
 #ruler-div {
 	position: absolute;
-	display: block;
+	display: flex;
 	top: 0;
 	left: 0;
 	right: 0;
@@ -10,20 +10,23 @@
 	transform-origin: 50% 50%;
 	transform: translate(200px, 200px);
 	background-color: red;
+	justify-content: space-between;
 	#top-left {
 	  width:10px;
 	  height:10px;
 	  background:white;
-	  position:absolute;
 	  top:0px;
-	  left:0px;
+	}
+	#top-center {
+	  width:10px;
+	  height:10px;
+	  background:white;
+	  top:0px;
 	}
 	#top-right {
 	  width:10px;
 	  height:10px;
 	  background:white;
-	  position:absolute;
 	  top:0px;
-	  right:0px;
 	}
 }
