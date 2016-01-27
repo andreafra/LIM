@@ -17,13 +17,12 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
     },
     pages: [
-      {lines: [ ],
-       wipes: [ ]}
+      {lines: [ ]}
     ]
     // pages: [
     //   lines: [
     //     {points: [{x:0,y:0}],
-    //      color: "#fff", width: 4}
+    //      color: "#fff", width: 4, rubber: true}
     // ]
   }
 
@@ -96,17 +95,19 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     // save points
     _points.push({ x: _x, y: _y });
-    if (toolSelected !== "rubber") {
+    if (toolSelected !== "rubber") { // RUBBER OFF
       thisFile.pages[currentPage].lines.push({
         points: _points,
         color: lineColor,
-        width: lineWidth
+        width: lineWidth,
+        rubber: false
       });
-    } else {
-      thisFile.pages[currentPage].wipes.push({
+    } else { // RUBBER ON
+      thisFile.pages[currentPage].lines.push({
         points: _points,
         color: canvas.style.backgroundColor,
-        width: rubberWidth
+        width: rubberWidth,
+        rubber: true
       });
     }
   }
@@ -118,16 +119,13 @@ document.addEventListener( "DOMContentLoaded", function() {
     hasMoved = true;
     var _x, _y, _points;
     var _lines = thisFile.pages[currentPage].lines;
-    var _wipes = thisFile.pages[currentPage].wipes;
-    if (toolSelected !== "rubber") {
-      _points = _lines[_lines.length-1].points;
-      ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
-      ctx.lineWidth = _lines[_lines.length-1].width;
-    } else {
-      _points = _wipes[_wipes.length-1].points;
-      ctx.strokeStyle = _wipes[_wipes.length-1].color;
+
+    _points = _lines[_lines.length-1].points;
+    ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+    ctx.lineWidth = _lines[_lines.length-1].width;
+
+    if (toolSelected === "rubber") {
       ctx.shadowColor = "transparent";
-      ctx.lineWidth = _wipes[_wipes.length-1].width;
     } 
     if (touch) {
       canvas.style.cursor = "none";
@@ -176,17 +174,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   		}
       var _width;
       var _lines = thisFile.pages[currentPage].lines;
-      var _wipes = thisFile.pages[currentPage].wipes;
 
   		ctx.beginPath();
 
-      if (toolSelected !== "rubber") {
-        ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
-        _width = _lines[_lines.length-1].width;
-      } else {
-        ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _wipes[_wipes.length-1].color;
-        _width = _wipes[_wipes.length-1].width;
-      } 
+      ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+      _width = _lines[_lines.length-1].width;
 
   		ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
       ctx.fill();
@@ -482,6 +474,10 @@ document.addEventListener( "DOMContentLoaded", function() {
       {
         var _line = _lines[line];
         var _points = _line.points;
+
+        lineWidth = _line.width;
+        lineColor = _line.color;
+
         if(_points.length === 1){  //draw a dot
           _x=_points[0].x;
           _y=_points[0].y;
@@ -499,50 +495,11 @@ document.addEventListener( "DOMContentLoaded", function() {
           ctx.shadowBlur = 0.5;
           ctx.imageSmoothingEnabled = true;
           ctx.strokeStyle = _line.color;
-          ctx.shadowColor = _line.color;
-          ctx.lineWidth = _line.width+2; //bypass shadows not stacking, thus resulting in a smaller line
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-
-          for (var i = 1, len = _points.length; i < len; i++) {
-            // we pick the point between pi+1 & pi+2 as the
-            // end point and p1 as our control point
-            var midPoint = midPointBtw(p1, p2);
-            ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-            p1 = _points[i];
-            p2 = _points[i+1];
+          if (_line.rubber) {
+            ctx.shadowColor = "transparent";
+          } else {
+            ctx.shadowColor = _line.color;
           }
-          // Draw last line as a straight line while
-          // we wait for the next point to be able to calculate
-          // the bezier control point
-          ctx.lineTo(p1.x, p1.y);
-          ctx.stroke();
-        }
-      }
-      var _wipes = thisFile.pages[0].wipes
-
-      for(var line = 0; line < _wipes.length; line++)
-      {
-        var _line = _wipes[line];
-        var _points = _line.points;
-        if(_points.length === 1){  //draw a dot
-          _x=_points[0].x;
-          _y=_points[0].y;
-          ctx.beginPath();
-          ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
-          ctx.fillStyle = lineColor;
-          ctx.shadowColor = lineColor;
-          ctx.strokeStyle = lineColor;
-          ctx.fill();
-        }
-        else {  //draw a line
-          var p1 = _points[0];
-          var p2 = _points[1];
-
-          ctx.shadowBlur = 0.5;
-          ctx.imageSmoothingEnabled = true;
-          ctx.strokeStyle = _line.color;
-          ctx.shadowColor = _line.color;
           ctx.lineWidth = _line.width+2; //bypass shadows not stacking, thus resulting in a smaller line
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
