@@ -115,7 +115,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if (toolSelected === "ruler") return;
     if (!isDrawing) return;
 
-	hasMoved = true;
+    hasMoved = true;
     var _x, _y, _points;
     var _lines = thisFile.pages[currentPage].lines;
     var _wipes = thisFile.pages[currentPage].wipes;
@@ -125,7 +125,8 @@ document.addEventListener( "DOMContentLoaded", function() {
       ctx.lineWidth = _lines[_lines.length-1].width;
     } else {
       _points = _wipes[_wipes.length-1].points;
-      ctx.strokeStyle = ctx.shadowColor = _wipes[_wipes.length-1].color;
+      ctx.strokeStyle = _wipes[_wipes.length-1].color;
+      ctx.shadowColor = "transparent";
       ctx.lineWidth = _wipes[_wipes.length-1].width;
     } 
     if (touch) {
@@ -173,11 +174,21 @@ document.addEventListener( "DOMContentLoaded", function() {
   		  _x = e.clientX - DrawPaddingX;
   		  _y = e.clientY - DrawPaddingY;
   		}
+      var _width;
+      var _lines = thisFile.pages[currentPage].lines;
+      var _wipes = thisFile.pages[currentPage].wipes;
+
   		ctx.beginPath();
-  		ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
-  		ctx.fillStyle = lineColor;
-      ctx.shadowColor = lineColor;
-      ctx.strokeStyle = lineColor;
+
+      if (toolSelected !== "rubber") {
+        ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+        _width = _lines[_lines.length-1].width;
+      } else {
+        ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _wipes[_wipes.length-1].color;
+        _width = _wipes[_wipes.length-1].width;
+      } 
+
+  		ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
       ctx.fill();
   	}
 	
@@ -272,10 +283,17 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function setWidth(width) {
      lineWidth = width;
+     ctx.lineWidth = width;
   }
   function setBackgroundColor(color) {
-     thisFile.settings.canvas.backgroundColor = color;
-     canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+    thisFile.settings.canvas.backgroundColor = color;
+    canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+    //When backgruond changes color, i want rubber to be re-colored to match bg color
+    for(var i = 0; i < thisFile.pages[currentPage].wipes.length; i++){
+      thisFile.pages[currentPage].wipes[i].color = color;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      //loadIntoCanvas(thisFile);
+    }
   }
   function setBackgroundImage(image) { // NO .PNG
      thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
@@ -456,7 +474,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       console.log("loading file " + file.settings.name);
       thisFile = file;
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      document.getElementById('settings_container').classList.add('hidden'); //hide settings menu
 
       //DRAW
       var _lines = thisFile.pages[0].lines
