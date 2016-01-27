@@ -679,7 +679,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
   });
 
-  ruler_center.addEventListener("mousemove", function(event) {
+  //Touch drag
+  ruler_center.addEventListener("touchmove", function(event) {
     if(!drag_down) return;
     if(lastTouch === undefined) return;
 
@@ -697,5 +698,4 @@ document.addEventListener( "DOMContentLoaded", function() {
     var _y = transformY + deltaY;
     ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
   });
-  //Touch drag
 }); // document.ready?
