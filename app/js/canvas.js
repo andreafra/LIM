@@ -244,10 +244,10 @@ document.addEventListener( "DOMContentLoaded", function() {
   var linesBackground = document.getElementById("background_lines");
   var dotsBackground = document.getElementById("background_dots");
 
-  function clearButtonSelection(buttons) {
+  function clearButtonSelection(buttons, _class) {
     var colors = buttons;
     for (var i = colors.length - 1; i >= 0; i--) {
-      colors[i].classList.remove("btn-active");
+      colors[i].classList.remove(_class);
     }
   }
 
@@ -297,8 +297,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
-    clearButtonSelection(allTools);
-    this.classList.add("btn-active");
+    clearButtonSelection(allTools, "btn-tool-active");
+    this.classList.add("btn-tool-active");
     showColorButtons();
     if (toolSelected === "rubber") {
       ctx.strokeStyle = ctx.shadowColor = lineColor;
@@ -307,15 +307,15 @@ document.addEventListener( "DOMContentLoaded", function() {
     toolSelected = "pencil";
   });
   rubber.addEventListener("click", function(e) {
-    clearButtonSelection(allTools);
-    this.classList.add("btn-active");
+    clearButtonSelection(allTools, "btn-tool-active");
+    this.classList.add("btn-tool-active");
     hideColorButtons();
 
     toolSelected = "rubber";
   });
   ruler.addEventListener("click", function(e) {
-    clearButtonSelection(allTools);
-    this.classList.add("btn-active");
+    clearButtonSelection(allTools, "btn-tool-active");
+    this.classList.add("btn-tool-active");
     showColorButtons();
 
     toolSelected = "ruler";
@@ -323,26 +323,26 @@ document.addEventListener( "DOMContentLoaded", function() {
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
     setColor("black");
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
   blueColor.addEventListener("click", function(e) {
     setColor("#2962ff");
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
   redColor.addEventListener("click", function(e) {
     setColor("#f44336");
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
   greenColor.addEventListener("click", function(e) {
     setColor("#4caf50");
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
   customColor.addEventListener("mouseup", function() {
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
     document.getElementById("body").lastChild.addEventListener("mouseup", function() {
       setColor(customColor.getAttribute("value"));
@@ -356,17 +356,17 @@ document.addEventListener( "DOMContentLoaded", function() {
   // WIDTH
   smallWidth.addEventListener("click", function() {
     setWidth(2);
-    clearButtonSelection(allWidths);
+    clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   mediumWidth.addEventListener("click", function() {
     setWidth(4);
-    clearButtonSelection(allWidths);
+    clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   bigWidth.addEventListener("click", function() {
     setWidth(6);
-    clearButtonSelection(allWidths);
+    clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   // BACKGROUND COLOR PICKER

@@ -48,6 +48,17 @@
     transform: scale(1);
     opacity: 1;
     display: block; } }
+/*@keyframes btn-jump {
+  0% {
+    margin-top: 0;
+  }
+  80% {
+    margin-top: -35px;
+  }
+  100% {
+    margin-top: -30px;
+  } 
+}*/
 body {
   position: fixed;
   top: 0;
@@ -71,10 +82,21 @@ header, footer {
 header {
   height: 40px;
   position: relative;
+  display: flex;
   top: 0;
   left: 0;
   right: 0;
+  text-align: center;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
+  header #title {
+    display: block;
+    position: relative;
+    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
+    align-self: center;
+    font-size: 1rem;
+    font-weight: normal; }
 
 footer {
   height: 80px;
@@ -200,11 +222,17 @@ footer {
     .settings_list .settings_list_circular_picker #background_none {
       background-image: none; }
     .settings_list .settings_list_circular_picker #background_squared {
-      background-image: url("../img/grid/squared-dark.png"); }
+      background-image: url("../img/grid/squared-dark.png");
+      background-position: 15px 15px;
+      background-size: 48px 48px; }
     .settings_list .settings_list_circular_picker #background_squared_marked {
-      background-image: url("../img/grid/squared-marked-dark.png"); }
+      background-image: url("../img/grid/squared-marked-dark.png");
+      background-position: 15px 15px;
+      background-size: 48px 48px; }
     .settings_list .settings_list_circular_picker #background_lines {
-      background-image: url("../img/grid/lines-dark.png"); }
+      background-image: url("../img/grid/lines-dark.png");
+      background-position: 15px 15px;
+      background-size: 12px 12px; }
     .settings_list .settings_list_circular_picker #background_dots {
       background-image: url("../img/grid/dots-dark.png"); }
 
@@ -379,8 +407,11 @@ footer {
 .btn-active {
   transform: scale(1.2);
   border-color: #FFFF00 !important; }
-  .btn-active #pencil_color {
-    top: -11px !important; }
+
+.btn-tool-active {
+  margin-top: -30px; }
+  .btn-tool-active #pencil_color {
+    top: -5px !important; }
 
 .btn-azure {
   background-color: #36D3FF; }
