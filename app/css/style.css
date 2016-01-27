@@ -442,4 +442,31 @@ footer {
   background-color: #cccccc;
   color: #212121; }
 
+#ruler-div {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50px;
+  width: 200px;
+  transform-origin: 50% 50%;
+  transform: translate(200px, 200px);
+  background-color: red; }
+  #ruler-div #top-left {
+    width: 10px;
+    height: 10px;
+    background: white;
+    position: absolute;
+    top: 0px;
+    left: 0px; }
+  #ruler-div #top-right {
+    width: 10px;
+    height: 10px;
+    background: white;
+    position: absolute;
+    top: 0px;
+    right: 0px; }
+
 /*# sourceMappingURL=style.css.map */
