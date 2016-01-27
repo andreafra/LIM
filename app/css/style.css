@@ -413,6 +413,9 @@ footer {
   .btn-tool-active #pencil_color {
     top: -5px !important; }
 
+.btn-ruler-active {
+  margin-top: -30px; }
+
 .btn-azure {
   background-color: #36D3FF; }
 
@@ -475,13 +478,13 @@ footer {
 
 #ruler_container {
   position: absolute;
-  display: flex;
+  display: none;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 50px;
-  width: 200px;
+  height: 80px;
+  width: 400px;
   transform-origin: 50% 50%;
   transform: translate(200px, 200px) rotate(0deg);
   background-color: red;

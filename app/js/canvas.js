@@ -70,7 +70,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   ctx.lineWidth = lineWidth;
   //ctx.translate(0.5,0.5);
 
-  var toolSelected = "pencil"; // can be "pencil", "rubber", "ruler"
+  var toolSelected = "pencil"; // can be "pencil", "rubber"
+  var rulerActive = false;
 
   
 
@@ -295,30 +296,42 @@ document.addEventListener( "DOMContentLoaded", function() {
      canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
   }
 
+  function selectTool(_tool){
+    if(_tool.id=="ruler"){
+      rulerActive = !rulerActive;
+      var rulerContainer = document.getElementById("ruler_container");
+      if(rulerActive){
+        rulerContainer.style.display="flex";
+        _tool.classList.add("btn-ruler-active");
+      }
+      else{
+        rulerContainer.style.display="none";
+        _tool.classList.remove("btn-ruler-active");
+      }
+    }
+    else{
+      clearButtonSelection(allTools, "btn-tool-active");
+      _tool.classList.add("btn-tool-active");
+      toolSelected = _tool.id;
+    }
+  }
+
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
-    clearButtonSelection(allTools, "btn-tool-active");
-    this.classList.add("btn-tool-active");
     showColorButtons();
     if (toolSelected === "rubber") {
       ctx.strokeStyle = ctx.shadowColor = lineColor;
       ctx.lineWidth = lineWidth;
     }
-    toolSelected = "pencil";
+
+    selectTool(this);
   });
   rubber.addEventListener("click", function(e) {
-    clearButtonSelection(allTools, "btn-tool-active");
-    this.classList.add("btn-tool-active");
     hideColorButtons();
-
-    toolSelected = "rubber";
+    selectTool(this);
   });
   ruler.addEventListener("click", function(e) {
-    clearButtonSelection(allTools, "btn-tool-active");
-    this.classList.add("btn-tool-active");
-    showColorButtons();
-
-    toolSelected = "ruler";
+    selectTool(this);
   });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
@@ -447,13 +460,18 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   saveButton.addEventListener("click", function() {
     if (thisFile.settings.name=="unnamed") {
-      saveFile.SaveAs(thisFile);
+      saveFile.SaveAs(thisFile, rename);
       console.log('saved as!')
     } else {
       saveFile.Save(thisFile);
       console.log('saved!')
     }
   });
+
+  function rename(fileName){
+    thisFile.settings.name == fileName;
+    document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
+  }
 
   //LOAD
   var loadButton = document.getElementById("load");
@@ -468,6 +486,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     {
       console.log("loading file " + file.settings.name);
       thisFile = file;
+      document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
       ctx.clearRect(0,0,canvas.width,canvas.height);
 
       //DRAW

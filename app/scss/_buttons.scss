@@ -78,6 +78,10 @@
     top: -5px !important;
   }
 }
+.btn-ruler-active {
+  margin-top: -30px;
+}
+
 
 @each $color, $name in $colors {
   .btn-#{$name} {
