@@ -2,7 +2,7 @@ const dialog = require('electron').remote.require('dialog');
 const app = require('electron').remote.require('app');
 
 // SAVE AS (1st time)
-exports.SaveAs = function(thisFile) {
+exports.SaveAs = function(thisFile, callback) {
   var fs = require('fs'); 
   dialog.showSaveDialog({ 
     filters: [ { name: 'lim', extensions: ['lim'] } ]
@@ -10,7 +10,12 @@ exports.SaveAs = function(thisFile) {
     if(fileName === undefined) return;
     thisFile.settings.name = fileName;
     fs.writeFile(fileName, JSON.stringify(thisFile), function (err) {
-      if(err!=null) console.log("Error saving file: " + err);
+      if(err!=null) {
+        console.log("Error saving file: " + err);
+      }
+      else{
+        callback(fileName);
+      }
     });
   });
 }

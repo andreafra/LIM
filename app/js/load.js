@@ -13,6 +13,7 @@ exports.Load = function(callback) {
 			fs.readFile(fileName, 'utf-8', function(err, data){
 				if(err == null){
 					var file = JSON.parse(data);
+      				document.getElementById('settings_container').classList.add('hidden'); //hide settings menu
 					console.log('File parsed');
 					callback(file);
 				}

@@ -12,7 +12,8 @@ document.addEventListener( "DOMContentLoaded", function() {
       canvas: {
         x: 10,
         y: 20,
-        background: "#fff"
+        backgroundColor: "#fff",
+        backgroundImage: "none"
       }
     },
     pages: [
@@ -21,7 +22,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     // pages: [
     //   lines: [
     //     {points: [{x:0,y:0}],
-    //      color: "#fff"}
+    //      color: "#fff", width: 4, rubber: true}
     // ]
   }
 
@@ -35,7 +36,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var canvas = document.getElementById("canvas");
 
-  canvas.style.background = thisFile.settings.canvas.background;
+  canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+  canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
   var DrawPaddingX = canvas.offsetLeft;
   var DrawPaddingY = canvas.offsetTop;
@@ -62,12 +64,14 @@ document.addEventListener( "DOMContentLoaded", function() {
   //default values
   var lineColor = "black";
   var lineWidth = 4;
+  var rubberWidth = 30;
   ctx.strokeStyle = lineColor;
   ctx.shadowColor = lineColor;
   ctx.lineWidth = lineWidth;
   //ctx.translate(0.5,0.5);
 
-  var toolSelected = "pencil"; // can be "pencil", "rubber", "ruler"
+  var toolSelected = "pencil"; // can be "pencil", "rubber"
+  var rulerActive = false;
 
   
 
@@ -82,35 +86,56 @@ document.addEventListener( "DOMContentLoaded", function() {
     if (toolSelected === "ruler") return;
     isDrawing = true;
     hasMoved = false; //Not yet
+
+    if(thisFile.pages[currentPage] === undefined)
+      thisFile.pages[currentPage] = {lines: []};
+
     var _x, _y, _points = [ ];
     if (touch) {
-      _x = e.changedTouchs[0].clientX - DrawPaddingX;
-      _y = e.changedTouchs[0].clientY - DrawPaddingY;
+      _x = e.touches[0].clientX - DrawPaddingX;
+      _y = e.touches[0].clientY - DrawPaddingY;
     } else {
       _x = e.clientX - DrawPaddingX;
       _y = e.clientY - DrawPaddingY;
     }
     // save points
     _points.push({ x: _x, y: _y });
-    thisFile.pages[currentPage].lines.push({
-      points: _points,
-      color: ctx.strokeStyle,
-      width: ctx.lineWidth
-    });
+    if (toolSelected !== "rubber") { // RUBBER OFF
+      thisFile.pages[currentPage].lines.push({
+        points: _points,
+        color: lineColor,
+        width: lineWidth,
+        rubber: false
+      });
+    } else { // RUBBER ON
+      thisFile.pages[currentPage].lines.push({
+        points: _points,
+        color: canvas.style.backgroundColor,
+        width: rubberWidth,
+        rubber: true
+      });
+    }
   }
 
   function moveDrawing(e, touch) {
     if (toolSelected === "ruler") return;
     if (!isDrawing) return;
 
-	hasMoved = true;
-    var _x, _y;
-    var _lines = thisFile.pages[currentPage].lines
-    var _points = _lines[_lines.length-1].points
+    hasMoved = true;
+    var _x, _y, _points;
+    var _lines = thisFile.pages[currentPage].lines;
+
+    _points = _lines[_lines.length-1].points;
+    ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+    ctx.lineWidth = _lines[_lines.length-1].width;
+
+    if (toolSelected === "rubber") {
+      ctx.shadowColor = "transparent";
+    } 
     if (touch) {
       canvas.style.cursor = "none";
-      _x = e.changedTouchs[0].clientX - DrawPaddingX;
-      _y = e.changedTouchs[0].clientY - DrawPaddingY;
+      _x = e.changedTouches[0].clientX - DrawPaddingX;
+      _y = e.changedTouches[0].clientY - DrawPaddingY;
     } else {
       canvas.style.cursor = "crosshair";
       _x = e.clientX - DrawPaddingX;
@@ -123,9 +148,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     var p1 = _points[0];
     var p2 = _points[1];
 
-    ctx.strokeStyle = lineColor;
-    ctx.shadowColor = lineColor;
-    ctx.lineWidth = lineWidth;
     ctx.beginPath();
     ctx.moveTo(p1.x, p1.y);
 
@@ -146,20 +168,24 @@ document.addEventListener( "DOMContentLoaded", function() {
   function endDrawing(e, touch) {
     if (toolSelected === "ruler") return;
   	//Handle points
-  	if(!hasMoved) {
+  	if(!hasMoved && isDrawing) {
   		var _x, _y;
   		if (touch) {
-  		  _x = e.changedTouchs[0].clientX - DrawPaddingX;
-  		  _y = e.changedTouchs[0].clientY - DrawPaddingY;
+  		  _x = e.changedTouches[0].clientX - DrawPaddingX;
+  		  _y = e.changedTouches[0].clientY - DrawPaddingY;
   		} else {
   		  _x = e.clientX - DrawPaddingX;
   		  _y = e.clientY - DrawPaddingY;
   		}
+      var _width;
+      var _lines = thisFile.pages[currentPage].lines;
+
   		ctx.beginPath();
-  		ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
-  		ctx.fillStyle = lineColor;
-      ctx.shadowColor = lineColor;
-      ctx.strokeStyle = lineColor;
+
+      ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+      _width = _lines[_lines.length-1].width;
+
+  		ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
       ctx.fill();
   	}
 	
@@ -207,17 +233,26 @@ document.addEventListener( "DOMContentLoaded", function() {
   var customColor = document.getElementById("pencil_other");
   var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
 
+  var smallWidth = document.getElementById("stroke_small");
+  var mediumWidth = document.getElementById("stroke_medium");
+  var bigWidth = document.getElementById("stroke_big");
+  var allWidths = [smallWidth, mediumWidth, bigWidth];
+
   var whiteBackground = document.getElementById("background_white");
   var blackBackground = document.getElementById("background_black");
   var greenBackground = document.getElementById("background_green");
   var customBackground = document.getElementById("background_custom");
 
-  var pencilOldColor, pencilOldWidth;
+  var noneBackground = document.getElementById("background_none");
+  var squaredBackground = document.getElementById("background_squared");
+  var squaredMarkedBackground = document.getElementById("background_squared_marked");
+  var linesBackground = document.getElementById("background_lines");
+  var dotsBackground = document.getElementById("background_dots");
 
-  function clearButtonSelection(buttons) {
+  function clearButtonSelection(buttons, _class) {
     var colors = buttons;
     for (var i = colors.length - 1; i >= 0; i--) {
-      colors[i].classList.remove("btn-active");
+      colors[i].classList.remove(_class);
     }
   }
 
@@ -243,70 +278,80 @@ document.addEventListener( "DOMContentLoaded", function() {
     lineColor = color;
     pencilColor.style.borderBottom = "12px solid " + lineColor;
   }
-
-  function setBackgroundColor(color) {
-     thisFile.settings.canvas.background = color;
-     canvas.style.background = thisFile.settings.canvas.background
+  function setWidth(width) {
+     lineWidth = width;
+     ctx.lineWidth = width;
   }
+  function setBackgroundColor(color) {
+    thisFile.settings.canvas.backgroundColor = color;
+    canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+    loadIntoCanvas(thisFile, currentPage);
+  }
+  function setBackgroundImage(image) { // NO .PNG
+     thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
+     canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+  }
+
+  function selectTool(_tool){
+    if(_tool.id=="ruler"){
+      rulerActive = !rulerActive;
+      var rulerContainer = document.getElementById("ruler_container");
+      if(rulerActive){
+        rulerContainer.style.display="flex";
+        _tool.classList.add("btn-ruler-active");
+      }
+      else{
+        rulerContainer.style.display="none";
+        _tool.classList.remove("btn-ruler-active");
+      }
+    }
+    else{
+      clearButtonSelection(allTools, "btn-tool-active");
+      _tool.classList.add("btn-tool-active");
+      toolSelected = _tool.id;
+    }
+  }
+
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
-    clearButtonSelection(allTools);
-    this.classList.add("btn-active");
     showColorButtons();
     if (toolSelected === "rubber") {
-      lineColor = pencilOldColor;
-      lineWidth = pencilOldWidth;
+      ctx.strokeStyle = ctx.shadowColor = lineColor;
+      ctx.lineWidth = lineWidth;
     }
-    toolSelected = "pencil";
+
+    selectTool(this);
   });
   rubber.addEventListener("click", function(e) {
-    clearButtonSelection(allTools);
-    this.classList.add("btn-active");
     hideColorButtons();
-    // backup old color & width
-    if (toolSelected !== "rubber") {
-      pencilOldColor = lineColor;
-      pencilOldWidth = lineWidth;
-    }
-    // apply new color & width
-    lineColor = thisFile.settings.canvas.background;
-    lineWidth = 30;
-
-    toolSelected = "rubber";
+    selectTool(this);
   });
   ruler.addEventListener("click", function(e) {
-    clearButtonSelection(allTools);
-    this.classList.add("btn-active");
-    showColorButtons();
-    if (toolSelected === "rubber") {
-      lineColor = pencilOldColor;
-      lineWidth = pencilOldWidth;
-    }
-    toolSelected = "ruler";
+    selectTool(this);
   });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
     setColor("black");
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
   blueColor.addEventListener("click", function(e) {
     setColor("#2962ff");
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
   redColor.addEventListener("click", function(e) {
     setColor("#f44336");
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
   greenColor.addEventListener("click", function(e) {
     setColor("#4caf50");
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
   customColor.addEventListener("mouseup", function() {
-    clearButtonSelection(allColors);
+    clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
     document.getElementById("body").lastChild.addEventListener("mouseup", function() {
       setColor(customColor.getAttribute("value"));
@@ -317,12 +362,28 @@ document.addEventListener( "DOMContentLoaded", function() {
     setColor(customColor.getAttribute("value"));
   });
 
+  // WIDTH
+  smallWidth.addEventListener("click", function() {
+    setWidth(2);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("btn-active");
+  });
+  mediumWidth.addEventListener("click", function() {
+    setWidth(4);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("btn-active");
+  });
+  bigWidth.addEventListener("click", function() {
+    setWidth(6);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("btn-active");
+  });
   // BACKGROUND COLOR PICKER
   whiteBackground.addEventListener("click", function(e) {
-    setBackgroundColor("white");
+    setBackgroundColor("#ffffff");
   });
   blackBackground.addEventListener("click", function(e) {
-    setBackgroundColor("black");
+    setBackgroundColor("#000000");
   });
   greenBackground.addEventListener("click", function(e) {
     setBackgroundColor("#567E3A");
@@ -337,6 +398,56 @@ document.addEventListener( "DOMContentLoaded", function() {
     setBackgroundColor(customBackground.getAttribute("value"));
   });
 
+  function isDark (color) {
+    var c = color.substring(1);      // strip #
+    var rgb = parseInt(c, 16);   // convert rrggbb to decimal
+    var r = (rgb >> 16) & 0xff;  // extract red
+    var g = (rgb >>  8) & 0xff;  // extract green
+    var b = (rgb >>  0) & 0xff;  // extract blue
+
+    var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+    if (luma > 40) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  noneBackground.addEventListener("click", function() {
+    setBackgroundImage("none");
+  });
+  squaredBackground.addEventListener("click", function() {
+    if(isDark(canvas.style.backgroundColor)) {
+      setBackgroundImage("squared-light");
+    } else {
+      setBackgroundImage("squared-dark");
+    }
+    console.log(canvas.style.backgroundColor)
+    console.log(isDark(canvas.style.backgroundColor))
+  });
+  squaredMarkedBackground.addEventListener("click", function() {
+    if(isDark(canvas.style.backgroundColor)) {
+      setBackgroundImage("squared-marked-light");
+    } else {
+      setBackgroundImage("squared-marked-dark");
+    }
+  });
+  linesBackground.addEventListener("click", function() {
+    if(isDark(canvas.style.backgroundColor)) {
+      setBackgroundImage("lines-light");
+    } else {
+      setBackgroundImage("lines-dark");
+    }
+  });
+  dotsBackground.addEventListener("click", function() {
+    if(isDark(canvas.style.backgroundColor)) {
+      setBackgroundImage("dots-light");
+    } else {
+      setBackgroundImage("dots-dark");
+    }
+  });
+
 
   //SAVE
   var saveButton = document.getElementById("save");
@@ -345,13 +456,18 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   saveButton.addEventListener("click", function() {
     if (thisFile.settings.name=="unnamed") {
-      saveFile.SaveAs(thisFile);
+      saveFile.SaveAs(thisFile, rename);
       console.log('saved as!')
     } else {
       saveFile.Save(thisFile);
       console.log('saved!')
     }
   });
+
+  function rename(fileName){
+    thisFile.settings.name == fileName;
+    document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
+  }
 
   //LOAD
   var loadButton = document.getElementById("load");
@@ -361,29 +477,62 @@ document.addEventListener( "DOMContentLoaded", function() {
     loadFile.Load(loadIntoCanvas);
   });
 
-  function loadIntoCanvas(file){
-    if(file != null && file != undefined)
+  function loadIntoCanvas(file, page){ /*page is optional. if not set, page will be 0*/
+    if(file !== null && file !== undefined)
     {
       console.log("loading file " + file.settings.name);
       thisFile = file;
+      document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      document.getElementById('settings_container').classList.add('hidden'); //hide settings menu
+      
+      if(page === undefined || page === null)
+      {
+        page = 0;
+      }
+
+      currentPage = page;
+      pageCounter.innerHTML = currentPage+1;
+
+      canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+
+      //When backgruond changes color, i want rubber to be re-colored to match bg color
+      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
+        if(thisFile.pages[currentPage].lines[i].rubber)
+        {
+          thisFile.pages[currentPage].lines[i].color = color;
+        }
+      }
 
       //DRAW
-      var _lines = thisFile.pages[0].lines
+      var _lines;
+      if(thisFile.pages[currentPage] === undefined){
+        _lines = [];
+      }
+      else{
+        //I want rubber to match bg color
+        for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
+          if(thisFile.pages[currentPage].lines[i].rubber)
+          {
+            thisFile.pages[currentPage].lines[i].color = color;
+          }
+        }
+
+        _lines = thisFile.pages[currentPage].lines;
+      }
 
       for(var line = 0; line < _lines.length; line++)
       {
         var _line = _lines[line];
         var _points = _line.points;
-        if(_points.length==1){  //draw a dot
+
+        if(_points.length === 1){  //draw a dot
           _x=_points[0].x;
           _y=_points[0].y;
           ctx.beginPath();
-          ctx.arc(_x, _y, lineWidth, 0, 2 * Math.PI, false);
-          ctx.fillStyle = lineColor;
-          ctx.shadowColor = lineColor;
-          ctx.strokeStyle = lineColor;
+          ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
+          ctx.fillStyle = _line.color;
+          ctx.shadowColor = _line.color;
+          ctx.strokeStyle = _line.color;
           ctx.fill();
         }
         else {  //draw a line
@@ -393,7 +542,11 @@ document.addEventListener( "DOMContentLoaded", function() {
           ctx.shadowBlur = 0.5;
           ctx.imageSmoothingEnabled = true;
           ctx.strokeStyle = _line.color;
-          ctx.shadowColor = _line.color;
+          if (_line.rubber) {
+            ctx.shadowColor = "transparent";
+          } else {
+            ctx.shadowColor = _line.color;
+          }
           ctx.lineWidth = _line.width+2; //bypass shadows not stacking, thus resulting in a smaller line
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
@@ -411,9 +564,212 @@ document.addEventListener( "DOMContentLoaded", function() {
           // the bezier control point
           ctx.lineTo(p1.x, p1.y);
           ctx.stroke();
+
+
         }
       }
     }
     else console.log("error loading file: " + file);
   }
+
+  //PAGES
+  var pageCounter = document.getElementById("page_counter");
+  var pageNextBtn = document.getElementById("page_next");
+  var pagePrevBtn = document.getElementById("page_prev");
+
+  function pageNext(){
+    loadIntoCanvas(thisFile,currentPage+1);
+  }
+
+  function pagePrev(){
+    loadIntoCanvas(thisFile,currentPage-1);
+  }
+
+  function setPage(_page){
+    loadIntoCanvas(thisFile,_page);
+  }
+
+  pageNextBtn.addEventListener("click", function(){
+    pageNext();
+  });
+  pagePrevBtn.addEventListener("click",function(){
+    if(currentPage>0)
+      pagePrev();
+  })
+
+  //RULER
+
+  var ruler = document.getElementById("ruler_container");
+  var ruler_left = document.getElementById("ruler_left");
+  var ruler_right = document.getElementById("ruler_right");
+  var ruler_topRight = document.getElementById("top_right");
+  var ruler_topLeft = document.getElementById("top_left");
+  var ruler_bottomRight = document.getElementById("bottom_right");
+  var ruler_center = document.getElementById("ruler_center");
+
+  var mRotation = 0 //default value. musth match css
+
+  //Mouse rotation
+  var rotation_down = false;
+  ruler_right.addEventListener("mousedown", function(){rotation_down = true;})
+  ruler_right.addEventListener("mouseup", function(){rotation_down = false;})
+  ruler_right.addEventListener("mousemove", function(event) {
+    if(!rotation_down) return;
+    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
+    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
+    var _center = midPointBtw(
+                            {
+                              x: _topLeftRect.left,
+                              y: _topLeftRect.top
+                            },
+
+                            {
+                              x: _bottomRightRect.right,
+                              y: _bottomRightRect.bottom
+                            }
+                          );
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+    
+    var rotation = Math.atan2(event.clientY - _center.y,
+                              event.clientX - _center.x) * 180 / Math.PI;
+
+    mRotation = rotation;
+    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
+    console.log(rotation+"deg");
+  });
+
+  ruler_left.addEventListener("mousedown", function(){rotation_down = true;})
+  ruler_left.addEventListener("mouseup", function(){rotation_down = false;})
+  ruler_left.addEventListener("mousemove", function(event) {
+    if(!rotation_down) return;
+    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
+    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
+    var _center = midPointBtw(
+                            {
+                              x: _topLeftRect.left,
+                              y: _topLeftRect.top
+                            },
+
+                            {
+                              x: _bottomRightRect.right,
+                              y: _bottomRightRect.bottom
+                            }
+                          );
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+    
+    var rotation = Math.atan2(_center.y - event.clientY,
+                               _center.x - event.clientX) * 180 / Math.PI;
+
+    mRotation = rotation;
+    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
+    console.log(rotation+"deg");
+  });
+  
+  //Touch rotation
+  ruler_right.addEventListener("touchmove", function(event) {
+    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
+    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
+    var _center = midPointBtw(
+                            {
+                              x: _topLeftRect.left,
+                              y: _topLeftRect.top
+                            },
+
+                            {
+                              x: _bottomRightRect.right,
+                              y: _bottomRightRect.bottom
+                            }
+                          );
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+    
+    var rotation = Math.atan2(event.touches[0].clientY - _center.y,
+                              event.touches[0].clientX - _center.x) * 180 / Math.PI;
+
+    mRotation = rotation;
+    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
+    console.log(rotation+"deg");
+  });
+
+  ruler_left.addEventListener("touchmove", function(event) {
+    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
+    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
+    var _center = midPointBtw(
+                            {
+                              x: _topLeftRect.left,
+                              y: _topLeftRect.top
+                            },
+
+                            {
+                              x: _bottomRightRect.right,
+                              y: _bottomRightRect.bottom
+                            }
+                          );
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+    
+    var rotation = Math.atan2(_center.y - event.touches[0].clientY,
+                              _center.x - event.touches[0].clientX ) * 180 / Math.PI;
+
+    mRotation = rotation;
+    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
+    console.log(rotation+"deg");
+  });
+
+  
+  var lastTouch;
+  //Mouse drag
+  var drag_down = false;
+  ruler_center.addEventListener("mousedown", function(event){drag_down = true; lastTouch={x: event.clientX, y: event.clientY}})
+  ruler_center.addEventListener("mouseup", function(){drag_down = false; lastTouch = undefined})
+  ruler_center.addEventListener("mousemove", function(event) {
+    if(!drag_down) return;
+    if(lastTouch === undefined) return;
+
+    var deltaX = event.clientX - lastTouch.x;
+    var deltaY = event.clientY - lastTouch.y
+
+    lastTouch.x = event.clientX;
+    lastTouch.y = event.clientY;
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+
+    var _x = transformX + deltaX;
+    var _y = transformY + deltaY;
+    ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
+  });
+
+  //Touch drag
+  ruler_center.addEventListener("touchstart", function(event){drag_down = true; lastTouch={x: event.touches[0].clientX, y: event.touches[0].clientY}})
+  ruler_center.addEventListener("touchend", function(){drag_down = false; lastTouch = undefined})
+  ruler_center.addEventListener("touchmove", function(event) {
+    if(!drag_down) return;
+    if(lastTouch === undefined) return;
+
+    var deltaX = event.touches[0].clientX - lastTouch.x;
+    var deltaY = event.touches[0].clientY - lastTouch.y
+
+    lastTouch.x = event.touches[0].clientX;
+    lastTouch.y = event.touches[0].clientY;
+
+    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
+    var transformX = curTransform.m41;
+    var transformY = curTransform.m42;
+
+    var _x = transformX + deltaX;
+    var _y = transformY + deltaY;
+    ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
+  });
 }); // document.ready?
