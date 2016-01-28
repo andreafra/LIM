@@ -495,13 +495,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
 
-      //When backgruond changes color, i want rubber to be re-colored to match bg color
-      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
-        if(thisFile.pages[currentPage].lines[i].rubber)
-        {
-          thisFile.pages[currentPage].lines[i].color = color;
-        }
-      }
+      
 
       //DRAW
       var _lines;
@@ -509,14 +503,13 @@ document.addEventListener( "DOMContentLoaded", function() {
         _lines = [];
       }
       else{
-        //I want rubber to match bg color
+        //When backgruond changes color, i want rubber to be re-colored to match bg color
         for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
           if(thisFile.pages[currentPage].lines[i].rubber)
           {
-            thisFile.pages[currentPage].lines[i].color = color;
+            thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
           }
         }
-
         _lines = thisFile.pages[currentPage].lines;
       }
 
