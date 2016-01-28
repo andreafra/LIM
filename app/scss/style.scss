@@ -233,6 +233,19 @@ footer {
   margin-left: auto;
   margin-right: auto;
 }
+.toolbar-right {
+  position: absolute;
+  display: flex;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 200px;
+  padding-right: 20px;
+  flex-direction: row-reverse;
+}
 .toolbar-spacer {
     margin-left: 15px;
     margin-right: 15px;
