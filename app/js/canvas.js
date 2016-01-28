@@ -288,8 +288,7 @@ document.addEventListener( "DOMContentLoaded", function() {
         thisFile.pages[currentPage].lines[i].color = color;
       }
     }
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    loadIntoCanvas(thisFile);
+    loadIntoCanvas(thisFile, currentPage);
   }
   function setBackgroundImage(image) { // NO .PNG
      thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
@@ -488,7 +487,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       thisFile = file;
       document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      if(page === undefined)
+      if(page === undefined || _page === null)
       {
         page = 0;
       }
