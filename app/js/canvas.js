@@ -481,16 +481,22 @@ document.addEventListener( "DOMContentLoaded", function() {
     loadFile.Load(loadIntoCanvas);
   });
 
-  function loadIntoCanvas(file){
+  function loadIntoCanvas(file, page){ /*page is optional. if not set, page will be 0*/
     if(file !== null && file !== undefined)
     {
       console.log("loading file " + file.settings.name);
       thisFile = file;
       document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
       ctx.clearRect(0,0,canvas.width,canvas.height);
+      if(page === undefined)
+      {
+        page = 0;
+      }
+
+      currentPage = page;
 
       //DRAW
-      var _lines = thisFile.pages[0].lines
+      var _lines = thisFile.pages[currentPage].lines
 
       for(var line = 0; line < _lines.length; line++)
       {
@@ -542,6 +548,19 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
     }
     else console.log("error loading file: " + file);
+  }
+
+  //PAGES
+  function pagePlus(){
+    loadIntoCanvas(thisFile,currentPage+1);
+  }
+
+  function pageLess(){
+    loadIntoCanvas(thisFile,currentPage-1);
+  }
+
+  function setPage(_page){
+    loadIntoCanvas(thisFile,_page);
   }
 
   //RULER
