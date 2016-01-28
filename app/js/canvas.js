@@ -638,15 +638,15 @@ document.addEventListener( "DOMContentLoaded", function() {
     var transformX = curTransform.m41;
     var transformY = curTransform.m42;
     
-    var rotation = Math.atan2(event.touches[0].y - _center.y,
-                              event.touches[0].x - _center.x) * 180 / Math.PI;
+    var rotation = Math.atan2(event.touches[0].clientY - _center.y,
+                              event.touches[0].clientX - _center.x) * 180 / Math.PI;
 
     mRotation = rotation;
     ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
     console.log(rotation+"deg");
   });
 
-  ruler_right.addEventListener("touchmove", function(event) {
+  ruler_left.addEventListener("touchmove", function(event) {
     var _topLeftRect = ruler_topLeft.getBoundingClientRect();
     var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
     var _center = midPointBtw(
@@ -665,8 +665,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     var transformX = curTransform.m41;
     var transformY = curTransform.m42;
     
-    var rotation = Math.atan2(_center.y - event.touches[0].y,
-                              _center.x - event.touches[0].x ) * 180 / Math.PI;
+    var rotation = Math.atan2(_center.y - event.touches[0].clientY,
+                              _center.x - event.touches[0].clientX ) * 180 / Math.PI;
 
     mRotation = rotation;
     ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
@@ -699,15 +699,17 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
 
   //Touch drag
+  ruler_center.addEventListener("touchstart", function(event){drag_down = true; lastTouch={x: event.touches[0].clientX, y: event.touches[0].clientY}})
+  ruler_center.addEventListener("touchend", function(){drag_down = false; lastTouch = undefined})
   ruler_center.addEventListener("touchmove", function(event) {
     if(!drag_down) return;
     if(lastTouch === undefined) return;
 
-    var deltaX = event.touches[0].x - lastTouch.x;
-    var deltaY = event.touches[0].y - lastTouch.y
+    var deltaX = event.touches[0].clientX - lastTouch.x;
+    var deltaY = event.touches[0].clientY - lastTouch.y
 
-    lastTouch.x = event.touches[0].x;
-    lastTouch.y = event.touches[0].y;
+    lastTouch.x = event.touches[0].clientX;
+    lastTouch.y = event.touches[0].clientY;
 
     var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
     var transformX = curTransform.m41;
