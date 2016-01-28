@@ -285,13 +285,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   function setBackgroundColor(color) {
     thisFile.settings.canvas.backgroundColor = color;
     canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
-    //When backgruond changes color, i want rubber to be re-colored to match bg color
-    for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
-      if(thisFile.pages[currentPage].lines[i].rubber)
-      {
-        thisFile.pages[currentPage].lines[i].color = color;
-      }
-    }
     loadIntoCanvas(thisFile, currentPage);
   }
   function setBackgroundImage(image) { // NO .PNG
@@ -491,6 +484,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       thisFile = file;
       document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
       ctx.clearRect(0,0,canvas.width,canvas.height);
+      
       if(page === undefined || page === null)
       {
         page = 0;
@@ -499,12 +493,30 @@ document.addEventListener( "DOMContentLoaded", function() {
       currentPage = page;
       pageCounter.innerHTML = currentPage+1;
 
+      canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+
+      //When backgruond changes color, i want rubber to be re-colored to match bg color
+      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
+        if(thisFile.pages[currentPage].lines[i].rubber)
+        {
+          thisFile.pages[currentPage].lines[i].color = color;
+        }
+      }
+
       //DRAW
       var _lines;
       if(thisFile.pages[currentPage] === undefined){
         _lines = [];
       }
       else{
+        //I want rubber to match bg color
+        for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
+          if(thisFile.pages[currentPage].lines[i].rubber)
+          {
+            thisFile.pages[currentPage].lines[i].color = color;
+          }
+        }
+
         _lines = thisFile.pages[currentPage].lines;
       }
 
