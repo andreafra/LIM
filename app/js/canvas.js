@@ -500,28 +500,25 @@ document.addEventListener( "DOMContentLoaded", function() {
       currentPage = page;
       pageCounter.innerHTML = currentPage+1;
 
+      if (thisFile.pages[currentPage] === undefined) {
+        thisFile.pages[currentPage] = {lines: [], backstack: []};
+      }
+
       resetBackstackButtons();
+      updateNavButtons();
 
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
       title.innerHTML=thisFile.settings.name.split("\\").pop();
 
-      
-
       //DRAW
-      var _lines;
-      if (thisFile.pages[currentPage] === undefined) {
-        _lines = [];
-      }
-      else{
-        //When backgruond changes color, i want rubber to be re-colored to match bg color
-        for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++) {
-          if(thisFile.pages[currentPage].lines[i].rubber)
-          {
-            thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
-          }
+      //When backgruond changes color, i want rubber to be re-colored to match bg color
+      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++) {
+        if(thisFile.pages[currentPage].lines[i].rubber)
+        {
+          thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
         }
-        _lines = thisFile.pages[currentPage].lines;
       }
+      var _lines = thisFile.pages[currentPage].lines;
 
       for (var line = 0; line < _lines.length; line++) {
         var _line = _lines[line];
