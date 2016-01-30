@@ -17,17 +17,22 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
     },
     pages: [
-      {lines: [ ]}
+      {lines: [ ],
+        backstack: [ ]}
     ]
     // pages: [
     //   lines: [
     //     {points: [{x:0,y:0}],
     //      color: "#fff", width: 4, rubber: true}
+    //    backstack: [
+    //      {points: [{x:0,y:0}],
+    //      color: "#fff", width: 4, rubber: true}]
     // ]
   }
 
   var content = document.getElementById("content");
   var header_height = document.getElementById('header').clientHeight;
+  var title = document.getElementById("title");
 
   content.style.height = String(window.innerHeight - header_height) + "px";
 
@@ -115,6 +120,11 @@ document.addEventListener( "DOMContentLoaded", function() {
         rubber: true
       });
     }
+
+    //Delete latest backstacks
+    for(var i=0; i < backstack_counter; i++){
+      thisFile.pages[currentPage].backstack.pop();
+    }
   }
 
   function moveDrawing(e, touch) {
@@ -190,7 +200,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   	}
 	
 	 //These points are already saved in startDrawing. No need to save here.
-
+    resetBackstackButtons();
     isDrawing = false;
     hasMoved = false;
   }
@@ -482,7 +492,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     {
       console.log("loading file " + file.settings.name);
       thisFile = file;
-      document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
       ctx.clearRect(0,0,canvas.width,canvas.height);
       
       if(page === undefined || page === null)
@@ -493,7 +502,10 @@ document.addEventListener( "DOMContentLoaded", function() {
       currentPage = page;
       pageCounter.innerHTML = currentPage+1;
 
+      resetBackstackButtons();
+
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+      title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       
 
@@ -557,8 +569,6 @@ document.addEventListener( "DOMContentLoaded", function() {
           // the bezier control point
           ctx.lineTo(p1.x, p1.y);
           ctx.stroke();
-
-
         }
       }
     }
@@ -588,7 +598,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   pagePrevBtn.addEventListener("click",function(){
     if(currentPage>0)
       pagePrev();
-  })
+  });
 
   //RULER
 
@@ -765,4 +775,53 @@ document.addEventListener( "DOMContentLoaded", function() {
     var _y = transformY + deltaY;
     ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
   });
+
+  //UNDO & REDO
+  var undo = document.getElementById("undo");
+  var redo = document.getElementById("redo");
+  var backstack_counter=0;
+  //On load
+  resetBackstackButtons();
+
+  undo.addEventListener("click",function() {
+    if(thisFile.pages[currentPage] === undefined) return;
+    var _lines = thisFile.pages[currentPage].lines;
+    if(_lines.length==0) return;
+    thisFile.pages[currentPage].backstack.push(_lines.pop());
+    backstack_counter++;
+    loadIntoCanvas(thisFile,currentPage);
+  });
+
+  redo.addEventListener("click",function() {
+    if(thisFile.pages[currentPage] === undefined) return;
+    var _backstack = thisFile.pages[currentPage].backstack;
+    if (_backstack.length==0) return;
+    thisFile.pages[currentPage].lines.push(_backstack.pop());
+    backstack_counter--;
+    loadIntoCanvas(thisFile,currentPage);
+  });
+
+  function resetBackstackButtons(){
+    if(thisFile.pages[currentPage] === undefined){
+      undo.style.pointerEvents = 'none';
+      redo.style.pointerEvents = 'none';
+    }
+    else{
+      var _lines = thisFile.pages[currentPage].lines;
+      var _backstack = thisFile.pages[currentPage].backstack;
+      if(_backstack.length==0){
+        redo.style.pointerEvents = 'none';
+      }
+      else{
+        redo.style.pointerEvents = 'auto';
+      }
+
+      if(_lines.length==0){
+        undo.style.pointerEvents = 'none';
+      }
+      else{
+        undo.style.pointerEvents = 'auto';
+      }
+    }
+  }
 }); // document.ready?
