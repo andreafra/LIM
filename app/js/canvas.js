@@ -757,7 +757,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   undo.addEventListener("click",function() {
     if(thisFile.pages[currentPage] === undefined) return;
     var _lines = thisFile.pages[currentPage].lines;
-    if(_lines.length==0) return;
+    if(_lines.length === 0) return;
     thisFile.pages[currentPage].backstack.push(_lines.pop());
     backstack_counter++;
     loadIntoCanvas(thisFile,currentPage);
@@ -766,7 +766,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   redo.addEventListener("click",function() {
     if(thisFile.pages[currentPage] === undefined) return;
     var _backstack = thisFile.pages[currentPage].backstack;
-    if (_backstack.length==0) return;
+    if (_backstack.length === 0) return;
     thisFile.pages[currentPage].lines.push(_backstack.pop());
     backstack_counter--;
     loadIntoCanvas(thisFile,currentPage);
@@ -845,4 +845,19 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   // Run once at start
   updateNavButtons();
+
+  // CLEAR ALL
+
+  var clearAllBtn = document.getElementById("clear_all")
+  clearAllBtn.addEventListener("mousedown", function() {
+    var _backstack = thisFile.pages[currentPage].backstack;
+    var _lines = thisFile.pages[currentPage].lines;
+    console.log(_lines.length)
+    for (var i = _lines.length - 1; i >= 0; i--) {
+      _backstack.push(_lines.pop());
+    };
+    console.log(_lines.length)
+    loadIntoCanvas(thisFile, currentPage);
+  });
+  
 }); // document.ready?
