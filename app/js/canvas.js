@@ -93,7 +93,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     hasMoved = false; //Not yet
 
     if(thisFile.pages[currentPage] === undefined)
-      thisFile.pages[currentPage] = {lines: []};
+      thisFile.pages[currentPage] = {lines: [], backstack: []};
 
     var _x, _y, _points = [ ];
     if (touch) {
