@@ -488,14 +488,12 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
 
   function loadIntoCanvas(file, page){ /*page is optional. if not set, page will be 0*/
-    if(file !== null && file !== undefined)
-    {
+    if (file !== null && file !== undefined) {
       console.log("loading file " + file.settings.name);
       thisFile = file;
       ctx.clearRect(0,0,canvas.width,canvas.height);
       
-      if(page === undefined || page === null)
-      {
+      if (page === undefined || page === null) {
         page = 0;
       }
 
@@ -511,12 +509,12 @@ document.addEventListener( "DOMContentLoaded", function() {
 
       //DRAW
       var _lines;
-      if(thisFile.pages[currentPage] === undefined){
+      if (thisFile.pages[currentPage] === undefined) {
         _lines = [];
       }
       else{
         //When backgruond changes color, i want rubber to be re-colored to match bg color
-        for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
+        for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++) {
           if(thisFile.pages[currentPage].lines[i].rubber)
           {
             thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
@@ -525,12 +523,11 @@ document.addEventListener( "DOMContentLoaded", function() {
         _lines = thisFile.pages[currentPage].lines;
       }
 
-      for(var line = 0; line < _lines.length; line++)
-      {
+      for (var line = 0; line < _lines.length; line++) {
         var _line = _lines[line];
         var _points = _line.points;
 
-        if(_points.length === 1){  //draw a dot
+        if (_points.length === 1){  //draw a dot
           _x=_points[0].x;
           _y=_points[0].y;
           ctx.beginPath();
@@ -570,35 +567,9 @@ document.addEventListener( "DOMContentLoaded", function() {
           ctx.lineTo(p1.x, p1.y);
           ctx.stroke();
         }
-      }
-    }
-    else console.log("error loading file: " + file);
+      }      
+    } else console.log("error loading file: " + file);
   }
-
-  //PAGES
-  var pageCounter = document.getElementById("page_counter");
-  var pageNextBtn = document.getElementById("page_next");
-  var pagePrevBtn = document.getElementById("page_prev");
-
-  function pageNext(){
-    loadIntoCanvas(thisFile,currentPage+1);
-  }
-
-  function pagePrev(){
-    loadIntoCanvas(thisFile,currentPage-1);
-  }
-
-  function setPage(_page){
-    loadIntoCanvas(thisFile,_page);
-  }
-
-  pageNextBtn.addEventListener("click", function(){
-    pageNext();
-  });
-  pagePrevBtn.addEventListener("click",function(){
-    if(currentPage>0)
-      pagePrev();
-  });
 
   //RULER
 
@@ -801,7 +772,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     loadIntoCanvas(thisFile,currentPage);
   });
 
-  function resetBackstackButtons(){
+  function resetBackstackButtons() {
     if(thisFile.pages[currentPage] === undefined){
       undo.style.pointerEvents = 'none';
       redo.style.pointerEvents = 'none';
@@ -811,17 +782,67 @@ document.addEventListener( "DOMContentLoaded", function() {
       var _backstack = thisFile.pages[currentPage].backstack;
       if(_backstack.length==0){
         redo.style.pointerEvents = 'none';
+        redo.classList.add("btn-disabled");
       }
       else{
         redo.style.pointerEvents = 'auto';
+        redo.classList.remove("btn-disabled");
       }
 
       if(_lines.length==0){
         undo.style.pointerEvents = 'none';
+        undo.classList.add("btn-disabled");
       }
       else{
         undo.style.pointerEvents = 'auto';
+        undo.classList.remove("btn-disabled");
       }
     }
   }
+
+  //PAGES
+
+  var pageCounter = document.getElementById("page_counter");
+  var pageNextBtn = document.getElementById("page_next");
+  var pagePrevBtn = document.getElementById("page_prev");
+
+  function pageNext(){
+    loadIntoCanvas(thisFile,currentPage+1);
+  }
+
+  function pagePrev(){
+    loadIntoCanvas(thisFile,currentPage-1);
+  }
+
+  function setPage(_page){
+    loadIntoCanvas(thisFile,_page);
+  }
+
+  pageNextBtn.addEventListener("click", function(){
+    pageNext();
+    updateNavButtons();
+  });
+  pagePrevBtn.addEventListener("click",function(){
+    if(currentPage>0) {
+      pagePrev();
+      updateNavButtons();
+    }
+  });
+
+  function updateNavButtons() {
+    if (currentPage === 0) { // we cant go back to prev page
+      pagePrevBtn.classList.add("btn-disabled");
+      pagePrevBtn.style.pointerEvents = 'none';
+    } else {
+      pagePrevBtn.classList.remove("btn-disabled");
+      pagePrevBtn.style.pointerEvents = 'auto';
+    }
+    if ((currentPage + 1) === thisFile.pages.length) { // + replaces -> when there are no more pages
+      pageNextBtn.children[0].innerHTML = "note_add";
+    } else {
+      pageNextBtn.children[0].innerHTML = "arrow_forward";
+    }
+  }
+  // Run once at start
+  updateNavButtons();
 }); // document.ready?
