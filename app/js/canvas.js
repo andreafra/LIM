@@ -39,7 +39,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   var header_height = document.getElementById('header').clientHeight;
   var title = document.getElementById("title");
 
-  content.style.height = canvasHeight + "px";
+  content.style.height = String(window.innerHeight - header_height) + "px";
 
   var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas>';
   document.getElementById("content").innerHTML = canvasToAdd;
@@ -61,7 +61,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   function resizeCanvas() {
     canvasWidth = window.innerWidth;
     canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
-    content.style.height = canvasHeight + "px";
+    content.style.height = String(window.innerHeight - header_height) + "px";
 
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas>';
     document.getElementById("content").innerHTML = canvasToAdd;
