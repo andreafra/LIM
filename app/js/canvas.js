@@ -748,6 +748,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   var undo = document.getElementById("undo");
   var redo = document.getElementById("redo");
   var backstack_counter=0;
+  var redo_times = 1;
   //On load
   resetBackstackButtons();
 
@@ -757,6 +758,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(_lines.length === 0) return;
     thisFile.pages[currentPage].backstack.push(_lines.pop());
     backstack_counter++;
+    redo_times=1;
     loadIntoCanvas(thisFile,currentPage);
   });
 
@@ -764,9 +766,27 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(thisFile.pages[currentPage] === undefined) return;
     var _backstack = thisFile.pages[currentPage].backstack;
     if (_backstack.length === 0) return;
-    thisFile.pages[currentPage].lines.push(_backstack.pop());
-    backstack_counter--;
+    for(var i=0; i<redo_times; redo_times--){
+      thisFile.pages[currentPage].lines.push(_backstack.pop());
+      backstack_counter--;
+    }
+    redo_times=1;
     loadIntoCanvas(thisFile,currentPage);
+  });
+
+  // CLEAR ALL
+
+  var clearAllBtn = document.getElementById("clear_all")
+  clearAllBtn.addEventListener("mousedown", function() {
+    var _lines = thisFile.pages[currentPage].lines;
+    console.log(_lines.length)
+    redo_times=0; //was most likely 1 before, so let's set it to 0 before increasing it
+    for (var i = _lines.length - 1; i >= 0; i--) {
+      thisFile.pages[currentPage].backstack.push(_lines.pop());
+      redo_times=redo_times+1; //Next redo will redraw every line deleted by clear all
+    };
+    console.log(_lines.length)
+    loadIntoCanvas(thisFile, currentPage);
   });
 
   function resetBackstackButtons() {
@@ -842,19 +862,5 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   // Run once at start
   updateNavButtons();
-
-  // CLEAR ALL
-
-  var clearAllBtn = document.getElementById("clear_all")
-  clearAllBtn.addEventListener("mousedown", function() {
-    var _backstack = thisFile.pages[currentPage].backstack;
-    var _lines = thisFile.pages[currentPage].lines;
-    console.log(_lines.length)
-    for (var i = _lines.length - 1; i >= 0; i--) {
-      _backstack.push(_lines.pop());
-    };
-    console.log(_lines.length)
-    loadIntoCanvas(thisFile, currentPage);
-  });
   
 }); // document.ready?
