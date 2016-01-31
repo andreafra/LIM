@@ -61,6 +61,15 @@ document.addEventListener( "DOMContentLoaded", function() {
   function resizeCanvas(callLoad) {
     canvasWidth = window.innerWidth;
     canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
+    var oldCanvasWidth = thisFile.settings.canvas.x;
+    var oldCanvasHeight = thisFile.settings.canvas.y;
+    var widthRatio = canvasWidth/oldCanvasWidth;
+    var heightRatio = canvasHeight/oldCanvasHeight;
+    if(canvasWidth==oldCanvasWidth && canvasHeight == oldCanvasHeight) {
+      console.log("skipping canvas resize");
+      return;
+    }
+
     content.style.height = String(window.innerHeight - header_height) + "px";
 
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas>';
@@ -101,10 +110,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     for(var i=0; i<thisFile.pages.length; i++){
       var _lines = thisFile.pages[i].lines;
       var _backstack = thisFile.pages[i].backstack;
-      var oldCanvasWidth = thisFile.settings.canvas.x;
-      var oldCanvasHeight = thisFile.settings.canvas.y;
-      var widthRatio = canvasWidth/oldCanvasWidth;
-      var heightRatio = canvasHeight/oldCanvasHeight;
       //lines
       for(var j=0; j<_lines.length; j++){
         var _points = _lines[j].points;
