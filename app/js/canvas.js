@@ -5,13 +5,18 @@ document.addEventListener( "DOMContentLoaded", function() {
 // for the nice explanation :)
   //define and resize canvas
 
+  var header = document.getElementById("header");
+  var footer = document.getElementById("footer");
+  var canvasWidth = window.innerWidth;
+  var canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
+
   var thisFile = {
     settings: {
       name: "unnamed",
       date: new Date().getTime(),
       canvas: {
-        x: 10,
-        y: 20,
+        x: canvasWidth,
+        y: canvasHeight,
         backgroundColor: "#fff",
         backgroundImage: "none"
       }
@@ -34,9 +39,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   var header_height = document.getElementById('header').clientHeight;
   var title = document.getElementById("title");
 
-  content.style.height = String(window.innerHeight - header_height) + "px";
+  content.style.height = canvasWidth + "px";
 
-  var canvasToAdd = '<canvas id="canvas" width="'+window.innerWidth+'" height="'+(window.innerHeight)+'"></canvas>';
+  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas>';
   document.getElementById("content").innerHTML = canvasToAdd;
 
   var canvas = document.getElementById("canvas");
