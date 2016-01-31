@@ -69,6 +69,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
+    ctx.shadowBlur = 0.5;
+    ctx.imageSmoothingEnabled = true;
+    ctx.strokeStyle = lineColor;
+    ctx.shadowColor = lineColor;
+    ctx.lineWidth = lineWidth;
     //Re-bind click events, since we've updated canvas object
     canvas.onmousedown = function(e) {
       startDrawing(e, false);
