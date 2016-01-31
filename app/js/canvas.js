@@ -25,21 +25,21 @@ document.addEventListener( "DOMContentLoaded", function() {
       {lines: [ ],
         backstack: [ ]}
     ]
-    // pages: [
+    // pages: [{
     //   lines: [
     //     {points: [{x:0,y:0}],
-    //      color: "#fff", width: 4, rubber: true}
+    //      color: "#fff", width: 4, rubber: true}],
     //    backstack: [
     //      {points: [{x:0,y:0}],
     //      color: "#fff", width: 4, rubber: true}]
-    // ]
+    // }]
   }
 
   var content = document.getElementById("content");
   var header_height = document.getElementById('header').clientHeight;
   var title = document.getElementById("title");
 
-  content.style.height = canvasWidth + "px";
+  content.style.height = canvasHeight + "px";
 
   var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas>';
   document.getElementById("content").innerHTML = canvasToAdd;
@@ -55,10 +55,76 @@ document.addEventListener( "DOMContentLoaded", function() {
   var ctx = canvas.getContext('2d');
 
   window.onresize = function() {
-    DrawPaddingX = canvas.offsetLeft;
-    DrawPaddingY = canvas.offsetTop;
+    resizeCanvas();
   }
 
+  function resizeCanvas() {
+    canvasWidth = window.innerWidth;
+    canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
+    content.style.height = canvasHeight + "px";
+
+    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas>';
+    document.getElementById("content").innerHTML = canvasToAdd;
+    canvas = document.getElementById("canvas");
+    DrawPaddingX = canvas.offsetLeft;
+    DrawPaddingY = canvas.offsetTop;
+    ctx = canvas.getContext('2d');
+    //Re-bind click events, since we've updated canvas object
+    canvas.onmousedown = function(e) {
+      startDrawing(e, false);
+    };
+    canvas.onmousemove = function(e) {
+      moveDrawing(e, false);
+    };
+    canvas.onmouseup = function(e) {
+      endDrawing(e, false);
+    };
+    // TOUCH SUPPORT
+    canvas.addEventListener("touchstart", function(e) {
+      startDrawing(e, true);
+    });
+
+    canvas.addEventListener("touchmove", function(e) {
+      moveDrawing(e, true);
+    });
+
+    canvas.addEventListener("touchend", function(e) {
+      endDrawing();
+    });
+
+    //Adapt points
+    for(var i=0; i<thisFile.pages.length; i++){
+      var _lines = thisFile.pages[i].lines;
+      var _backstack = thisFile.pages[i].backstack;
+      var oldCanvasWidth = thisFile.settings.canvas.x;
+      var oldCanvasHeight = thisFile.settings.canvas.y;
+      var widthRatio = canvasWidth/oldCanvasWidth;
+      var heightRatio = canvasHeight/oldCanvasHeight;
+      //lines
+      for(var j=0; j<_lines.length; j++){
+        var _points = _lines[j].points;
+        for(var k=0; k<_points.length; k++){
+          var _point = _points[k];
+          var newPointX = _point.x * widthRatio;
+          var newPointY = _point.y * heightRatio;
+          thisFile.pages[i].lines[j].points[k]={x:newPointX,y:newPointY};
+        }
+      }
+      //backstack
+      for(var l=0; l<_backstack.length; l++){
+        var _points1 = _backstack[l].points;
+        for(var m=0; m<_points1.length; m++){
+          var _point1 = _points1[m];
+          var newPointX = _point1.x * widthRatio;
+          var newPointY = _point1.y * heightRatio;
+          thisFile.pages[i].backstack[l].points[m]={x:newPointX,y:newPointY};
+        }
+      }
+    }
+    thisFile.settings.canvas.x=canvasWidth;
+    thisFile.settings.canvas.y=canvasHeight;
+    loadIntoCanvas(thisFile,currentPage);
+  }
 
   function midPointBtw(p1, p2) {
     return {
@@ -93,6 +159,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
 
   function startDrawing(e, touch) {
+    console.log("Started drawing!");
     if (toolSelected === "ruler") return;
     isDrawing = true;
     hasMoved = false; //Not yet
