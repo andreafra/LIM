@@ -55,10 +55,10 @@ document.addEventListener( "DOMContentLoaded", function() {
   var ctx = canvas.getContext('2d');
 
   window.onresize = function() {
-    resizeCanvas();
+    resizeCanvas(true);
   }
 
-  function resizeCanvas() {
+  function resizeCanvas(callLoad) {
     canvasWidth = window.innerWidth;
     canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
     content.style.height = String(window.innerHeight - header_height) + "px";
@@ -123,7 +123,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     thisFile.settings.canvas.x=canvasWidth;
     thisFile.settings.canvas.y=canvasHeight;
-    loadIntoCanvas(thisFile,currentPage);
+    if(callLoad==true){
+      loadIntoCanvas(thisFile,currentPage);
+    }
   }
 
   function midPointBtw(p1, p2) {
@@ -197,6 +199,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     for(var i=0; i < backstack_counter; i++){
       thisFile.pages[currentPage].backstack.pop();
     }
+    redo_times=1;
   }
 
   function moveDrawing(e, touch) {
@@ -576,6 +579,7 @@ document.addEventListener( "DOMContentLoaded", function() {
         thisFile.pages[currentPage] = {lines: [], backstack: []};
       }
 
+      resizeCanvas(false);
       resetBackstackButtons();
       updateNavButtons();
 
@@ -636,7 +640,7 @@ document.addEventListener( "DOMContentLoaded", function() {
           ctx.lineTo(p1.x, p1.y);
           ctx.stroke();
         }
-      }      
+      }     
     } else console.log("error loading file: " + file);
   }
 
@@ -851,13 +855,12 @@ document.addEventListener( "DOMContentLoaded", function() {
   var clearAllBtn = document.getElementById("clear_all")
   clearAllBtn.addEventListener("mousedown", function() {
     var _lines = thisFile.pages[currentPage].lines;
-    console.log(_lines.length)
     redo_times=0; //was most likely 1 before, so let's set it to 0 before increasing it
     for (var i = _lines.length - 1; i >= 0; i--) {
       thisFile.pages[currentPage].backstack.push(_lines.pop());
-      redo_times=redo_times+1; //Next redo will redraw every line deleted by clear all
+      redo_times++; //Next redo will redraw every line deleted by clear all
+      backstack_counter++;
     };
-    console.log(_lines.length)
     loadIntoCanvas(thisFile, currentPage);
   });
 
