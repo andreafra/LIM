@@ -5,33 +5,43 @@ document.addEventListener( "DOMContentLoaded", function() {
 // for the nice explanation :)
   //define and resize canvas
 
+  var header = document.getElementById("header");
+  var footer = document.getElementById("footer");
+  var canvasWidth = window.innerWidth;
+  var canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
+
   var thisFile = {
     settings: {
       name: "unnamed",
       date: new Date().getTime(),
       canvas: {
-        x: 10,
-        y: 20,
+        x: canvasWidth,
+        y: canvasHeight,
         backgroundColor: "#fff",
         backgroundImage: "none"
       }
     },
     pages: [
-      {lines: [ ]}
+      {lines: [ ],
+        backstack: [ ]}
     ]
-    // pages: [
+    // pages: [{
     //   lines: [
     //     {points: [{x:0,y:0}],
-    //      color: "#fff", width: 4, rubber: true}
-    // ]
+    //      color: "#fff", width: 4, rubber: true}],
+    //    backstack: [
+    //      {points: [{x:0,y:0}],
+    //      color: "#fff", width: 4, rubber: true}]
+    // }]
   }
 
   var content = document.getElementById("content");
   var header_height = document.getElementById('header').clientHeight;
+  var title = document.getElementById("title");
 
   content.style.height = String(window.innerHeight - header_height) + "px";
 
-  var canvasToAdd = '<canvas id="canvas" width="'+window.innerWidth+'" height="'+(window.innerHeight)+'"></canvas>';
+  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas><div id="grid"></div>';
   document.getElementById("content").innerHTML = canvasToAdd;
 
   var canvas = document.getElementById("canvas");
@@ -45,10 +55,88 @@ document.addEventListener( "DOMContentLoaded", function() {
   var ctx = canvas.getContext('2d');
 
   window.onresize = function() {
-    DrawPaddingX = canvas.offsetLeft;
-    DrawPaddingY = canvas.offsetTop;
+    resizeCanvas(true);
   }
 
+  function resizeCanvas(callLoad) {
+    canvasWidth = window.innerWidth;
+    canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
+    var oldCanvasWidth = thisFile.settings.canvas.x;
+    var oldCanvasHeight = thisFile.settings.canvas.y;
+    var widthRatio = canvasWidth/oldCanvasWidth;
+    var heightRatio = canvasHeight/oldCanvasHeight;
+    if(canvasWidth==oldCanvasWidth && canvasHeight == oldCanvasHeight) {
+      console.log("skipping canvas resize");
+      return;
+    }
+
+    content.style.height = String(window.innerHeight - header_height) + "px";
+
+    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas><div id="grid"></div>';
+    document.getElementById("content").innerHTML = canvasToAdd;
+    canvas = document.getElementById("canvas");
+    DrawPaddingX = canvas.offsetLeft;
+    DrawPaddingY = canvas.offsetTop;
+    ctx = canvas.getContext('2d');
+    ctx.shadowBlur = 0.5;
+    ctx.imageSmoothingEnabled = true;
+    ctx.strokeStyle = lineColor;
+    ctx.shadowColor = lineColor;
+    ctx.lineWidth = lineWidth;
+    //Re-bind click events, since we've updated canvas object
+    canvas.onmousedown = function(e) {
+      startDrawing(e, false);
+    };
+    canvas.onmousemove = function(e) {
+      moveDrawing(e, false);
+    };
+    canvas.onmouseup = function(e) {
+      endDrawing(e, false);
+    };
+    // TOUCH SUPPORT
+    canvas.addEventListener("touchstart", function(e) {
+      startDrawing(e, true);
+    });
+
+    canvas.addEventListener("touchmove", function(e) {
+      moveDrawing(e, true);
+    });
+
+    canvas.addEventListener("touchend", function(e) {
+      endDrawing();
+    });
+
+    //Adapt points
+    for(var i=0; i<thisFile.pages.length; i++){
+      var _lines = thisFile.pages[i].lines;
+      var _backstack = thisFile.pages[i].backstack;
+      //lines
+      for(var j=0; j<_lines.length; j++){
+        var _points = _lines[j].points;
+        for(var k=0; k<_points.length; k++){
+          var _point = _points[k];
+          var newPointX = _point.x * widthRatio;
+          var newPointY = _point.y * heightRatio;
+          thisFile.pages[i].lines[j].points[k]={x:newPointX,y:newPointY};
+        }
+      }
+      //backstack
+      for(var l=0; l<_backstack.length; l++){
+        var _points1 = _backstack[l].points;
+        for(var m=0; m<_points1.length; m++){
+          var _point1 = _points1[m];
+          var newPointX = _point1.x * widthRatio;
+          var newPointY = _point1.y * heightRatio;
+          thisFile.pages[i].backstack[l].points[m]={x:newPointX,y:newPointY};
+        }
+      }
+    }
+    thisFile.settings.canvas.x=canvasWidth;
+    thisFile.settings.canvas.y=canvasHeight;
+    if(callLoad==true){
+      loadIntoCanvas(thisFile,currentPage);
+    }
+  }
 
   function midPointBtw(p1, p2) {
     return {
@@ -83,12 +171,13 @@ document.addEventListener( "DOMContentLoaded", function() {
 
 
   function startDrawing(e, touch) {
+    console.log("Started drawing!");
     if (toolSelected === "ruler") return;
     isDrawing = true;
     hasMoved = false; //Not yet
 
     if(thisFile.pages[currentPage] === undefined)
-      thisFile.pages[currentPage] = {lines: []};
+      thisFile.pages[currentPage] = {lines: [], backstack: []};
 
     var _x, _y, _points = [ ];
     if (touch) {
@@ -115,6 +204,12 @@ document.addEventListener( "DOMContentLoaded", function() {
         rubber: true
       });
     }
+
+    //Delete latest backstacks
+    for(var i=0; i < backstack_counter; i++){
+      thisFile.pages[currentPage].backstack.pop();
+    }
+    redo_times=1;
   }
 
   function moveDrawing(e, touch) {
@@ -190,7 +285,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   	}
 	
 	 //These points are already saved in startDrawing. No need to save here.
-
+    resetBackstackButtons();
     isDrawing = false;
     hasMoved = false;
   }
@@ -289,11 +384,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function setBackgroundImage(image) { // NO .PNG
      thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
-     canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+     document.getElementById("grid").style.backgroundImage = thisFile.settings.canvas.backgroundImage;
   }
 
   function selectTool(_tool){
-    if(_tool.id=="ruler"){
+    if(_tool.id == "ruler"){
       rulerActive = !rulerActive;
       var rulerContainer = document.getElementById("ruler_container");
       if(rulerActive){
@@ -478,47 +573,45 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
 
   function loadIntoCanvas(file, page){ /*page is optional. if not set, page will be 0*/
-    if(file !== null && file !== undefined)
-    {
+    if (file !== null && file !== undefined) {
       console.log("loading file " + file.settings.name);
       thisFile = file;
-      document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
       ctx.clearRect(0,0,canvas.width,canvas.height);
       
-      if(page === undefined || page === null)
-      {
+      if (page === undefined || page === null) {
         page = 0;
       }
 
       currentPage = page;
       pageCounter.innerHTML = currentPage+1;
 
-      canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+      if (thisFile.pages[currentPage] === undefined) {
+        thisFile.pages[currentPage] = {lines: [], backstack: []};
+      }
 
-      
+      resizeCanvas(false);
+      resetBackstackButtons();
+      updateNavButtons();
+
+      canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+      document.getElementById("grid").style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+      title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
-      var _lines;
-      if(thisFile.pages[currentPage] === undefined){
-        _lines = [];
-      }
-      else{
-        //When backgruond changes color, i want rubber to be re-colored to match bg color
-        for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++){
-          if(thisFile.pages[currentPage].lines[i].rubber)
-          {
-            thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
-          }
+      //When backgruond changes color, i want rubber to be re-colored to match bg color
+      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++) {
+        if(thisFile.pages[currentPage].lines[i].rubber)
+        {
+          thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
         }
-        _lines = thisFile.pages[currentPage].lines;
       }
+      var _lines = thisFile.pages[currentPage].lines;
 
-      for(var line = 0; line < _lines.length; line++)
-      {
+      for (var line = 0; line < _lines.length; line++) {
         var _line = _lines[line];
         var _points = _line.points;
 
-        if(_points.length === 1){  //draw a dot
+        if (_points.length === 1){  //draw a dot
           _x=_points[0].x;
           _y=_points[0].y;
           ctx.beginPath();
@@ -557,15 +650,89 @@ document.addEventListener( "DOMContentLoaded", function() {
           // the bezier control point
           ctx.lineTo(p1.x, p1.y);
           ctx.stroke();
-
-
         }
+      }     
+    } else console.log("error loading file: " + file);
+  }
+
+  //RULER
+  var rulerLoader = require('./app/js/ruler');
+  rulerLoader.LoadRuler();
+
+  //UNDO & REDO
+  var undo = document.getElementById("undo");
+  var redo = document.getElementById("redo");
+  var backstack_counter=0;
+  var redo_times = 1;
+  //On load
+  resetBackstackButtons();
+
+  undo.addEventListener("click",function() {
+    if(thisFile.pages[currentPage] === undefined) return;
+    var _lines = thisFile.pages[currentPage].lines;
+    if(_lines.length === 0) return;
+    thisFile.pages[currentPage].backstack.push(_lines.pop());
+    backstack_counter++;
+    redo_times=1;
+    loadIntoCanvas(thisFile,currentPage);
+  });
+
+  redo.addEventListener("click",function() {
+    if(thisFile.pages[currentPage] === undefined) return;
+    var _backstack = thisFile.pages[currentPage].backstack;
+    if (_backstack.length === 0) return;
+    for(var i=0; i<redo_times; redo_times--){
+      thisFile.pages[currentPage].lines.push(_backstack.pop());
+      backstack_counter--;
+    }
+    redo_times=1;
+    loadIntoCanvas(thisFile,currentPage);
+  });
+
+  // CLEAR ALL
+
+  var clearAllBtn = document.getElementById("clear_all")
+  clearAllBtn.addEventListener("mousedown", function() {
+    var _lines = thisFile.pages[currentPage].lines;
+    redo_times=0; //was most likely 1 before, so let's set it to 0 before increasing it
+    for (var i = _lines.length - 1; i >= 0; i--) {
+      thisFile.pages[currentPage].backstack.push(_lines.pop());
+      redo_times++; //Next redo will redraw every line deleted by clear all
+      backstack_counter++;
+    };
+    loadIntoCanvas(thisFile, currentPage);
+  });
+
+  function resetBackstackButtons() {
+    if(thisFile.pages[currentPage] === undefined){
+      undo.style.pointerEvents = 'none';
+      redo.style.pointerEvents = 'none';
+    }
+    else{
+      var _lines = thisFile.pages[currentPage].lines;
+      var _backstack = thisFile.pages[currentPage].backstack;
+      if(_backstack.length==0){
+        redo.style.pointerEvents = 'none';
+        redo.classList.add("btn-disabled");
+      }
+      else{
+        redo.style.pointerEvents = 'auto';
+        redo.classList.remove("btn-disabled");
+      }
+
+      if(_lines.length==0){
+        undo.style.pointerEvents = 'none';
+        undo.classList.add("btn-disabled");
+      }
+      else{
+        undo.style.pointerEvents = 'auto';
+        undo.classList.remove("btn-disabled");
       }
     }
-    else console.log("error loading file: " + file);
   }
 
   //PAGES
+
   var pageCounter = document.getElementById("page_counter");
   var pageNextBtn = document.getElementById("page_next");
   var pagePrevBtn = document.getElementById("page_prev");
@@ -584,185 +751,30 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   pageNextBtn.addEventListener("click", function(){
     pageNext();
+    updateNavButtons();
   });
   pagePrevBtn.addEventListener("click",function(){
-    if(currentPage>0)
+    if(currentPage>0) {
       pagePrev();
-  })
-
-  //RULER
-
-  var ruler = document.getElementById("ruler_container");
-  var ruler_left = document.getElementById("ruler_left");
-  var ruler_right = document.getElementById("ruler_right");
-  var ruler_topRight = document.getElementById("top_right");
-  var ruler_topLeft = document.getElementById("top_left");
-  var ruler_bottomRight = document.getElementById("bottom_right");
-  var ruler_center = document.getElementById("ruler_center");
-
-  var mRotation = 0 //default value. musth match css
-
-  //Mouse rotation
-  var rotation_down = false;
-  ruler_right.addEventListener("mousedown", function(){rotation_down = true;})
-  ruler_right.addEventListener("mouseup", function(){rotation_down = false;})
-  ruler_right.addEventListener("mousemove", function(event) {
-    if(!rotation_down) return;
-    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
-    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
-    var _center = midPointBtw(
-                            {
-                              x: _topLeftRect.left,
-                              y: _topLeftRect.top
-                            },
-
-                            {
-                              x: _bottomRightRect.right,
-                              y: _bottomRightRect.bottom
-                            }
-                          );
-
-    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
-    var transformX = curTransform.m41;
-    var transformY = curTransform.m42;
-    
-    var rotation = Math.atan2(event.clientY - _center.y,
-                              event.clientX - _center.x) * 180 / Math.PI;
-
-    mRotation = rotation;
-    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
-    console.log(rotation+"deg");
+      updateNavButtons();
+    }
   });
 
-  ruler_left.addEventListener("mousedown", function(){rotation_down = true;})
-  ruler_left.addEventListener("mouseup", function(){rotation_down = false;})
-  ruler_left.addEventListener("mousemove", function(event) {
-    if(!rotation_down) return;
-    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
-    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
-    var _center = midPointBtw(
-                            {
-                              x: _topLeftRect.left,
-                              y: _topLeftRect.top
-                            },
-
-                            {
-                              x: _bottomRightRect.right,
-                              y: _bottomRightRect.bottom
-                            }
-                          );
-
-    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
-    var transformX = curTransform.m41;
-    var transformY = curTransform.m42;
-    
-    var rotation = Math.atan2(_center.y - event.clientY,
-                               _center.x - event.clientX) * 180 / Math.PI;
-
-    mRotation = rotation;
-    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
-    console.log(rotation+"deg");
-  });
+  function updateNavButtons() {
+    if (currentPage === 0) { // we cant go back to prev page
+      pagePrevBtn.classList.add("btn-disabled");
+      pagePrevBtn.style.pointerEvents = 'none';
+    } else {
+      pagePrevBtn.classList.remove("btn-disabled");
+      pagePrevBtn.style.pointerEvents = 'auto';
+    }
+    if ((currentPage + 1) === thisFile.pages.length) { // + replaces -> when there are no more pages
+      pageNextBtn.children[0].innerHTML = "note_add";
+    } else {
+      pageNextBtn.children[0].innerHTML = "arrow_forward";
+    }
+  }
+  // Run once at start
+  updateNavButtons();
   
-  //Touch rotation
-  ruler_right.addEventListener("touchmove", function(event) {
-    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
-    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
-    var _center = midPointBtw(
-                            {
-                              x: _topLeftRect.left,
-                              y: _topLeftRect.top
-                            },
-
-                            {
-                              x: _bottomRightRect.right,
-                              y: _bottomRightRect.bottom
-                            }
-                          );
-
-    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
-    var transformX = curTransform.m41;
-    var transformY = curTransform.m42;
-    
-    var rotation = Math.atan2(event.touches[0].clientY - _center.y,
-                              event.touches[0].clientX - _center.x) * 180 / Math.PI;
-
-    mRotation = rotation;
-    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
-    console.log(rotation+"deg");
-  });
-
-  ruler_left.addEventListener("touchmove", function(event) {
-    var _topLeftRect = ruler_topLeft.getBoundingClientRect();
-    var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
-    var _center = midPointBtw(
-                            {
-                              x: _topLeftRect.left,
-                              y: _topLeftRect.top
-                            },
-
-                            {
-                              x: _bottomRightRect.right,
-                              y: _bottomRightRect.bottom
-                            }
-                          );
-
-    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
-    var transformX = curTransform.m41;
-    var transformY = curTransform.m42;
-    
-    var rotation = Math.atan2(_center.y - event.touches[0].clientY,
-                              _center.x - event.touches[0].clientX ) * 180 / Math.PI;
-
-    mRotation = rotation;
-    ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + rotation + "deg)";
-    console.log(rotation+"deg");
-  });
-
-  
-  var lastTouch;
-  //Mouse drag
-  var drag_down = false;
-  ruler_center.addEventListener("mousedown", function(event){drag_down = true; lastTouch={x: event.clientX, y: event.clientY}})
-  ruler_center.addEventListener("mouseup", function(){drag_down = false; lastTouch = undefined})
-  ruler_center.addEventListener("mousemove", function(event) {
-    if(!drag_down) return;
-    if(lastTouch === undefined) return;
-
-    var deltaX = event.clientX - lastTouch.x;
-    var deltaY = event.clientY - lastTouch.y
-
-    lastTouch.x = event.clientX;
-    lastTouch.y = event.clientY;
-
-    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
-    var transformX = curTransform.m41;
-    var transformY = curTransform.m42;
-
-    var _x = transformX + deltaX;
-    var _y = transformY + deltaY;
-    ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
-  });
-
-  //Touch drag
-  ruler_center.addEventListener("touchstart", function(event){drag_down = true; lastTouch={x: event.touches[0].clientX, y: event.touches[0].clientY}})
-  ruler_center.addEventListener("touchend", function(){drag_down = false; lastTouch = undefined})
-  ruler_center.addEventListener("touchmove", function(event) {
-    if(!drag_down) return;
-    if(lastTouch === undefined) return;
-
-    var deltaX = event.touches[0].clientX - lastTouch.x;
-    var deltaY = event.touches[0].clientY - lastTouch.y
-
-    lastTouch.x = event.touches[0].clientX;
-    lastTouch.y = event.touches[0].clientY;
-
-    var curTransform = new   WebKitCSSMatrix(window.getComputedStyle(ruler_container).webkitTransform);
-    var transformX = curTransform.m41;
-    var transformY = curTransform.m42;
-
-    var _x = transformX + deltaX;
-    var _y = transformY + deltaY;
-    ruler.style.transform = "translate("+_x+"px,"+_y+"px) rotate(" + mRotation + "deg)";
-  });
 }); // document.ready?

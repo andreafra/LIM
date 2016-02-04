@@ -86,7 +86,9 @@
   animation: btn-show 0.2s;
   animation-fill-mode: forwards;
 }
-
+.btn-disabled {
+  color: #ccc;
+}
 .btn-active {
   transform: scale(1.2);
   border-color: $yellow !important;
