@@ -136,7 +136,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(callLoad==true){
       loadIntoCanvas(thisFile,currentPage);
     }
-    setBackgroundImage(thisFile.settings.canvas.backgroundImage);
   }
 
   function midPointBtw(p1, p2) {
@@ -595,6 +594,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       updateNavButtons();
 
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+      document.getElementById("grid").style.backgroundImage = thisFile.settings.canvas.backgroundImage;
       title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
