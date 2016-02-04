@@ -41,7 +41,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   content.style.height = String(window.innerHeight - header_height) + "px";
 
-  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas>';
+  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas><div id="grid"></div>';
   document.getElementById("content").innerHTML = canvasToAdd;
 
   var canvas = document.getElementById("canvas");
@@ -72,7 +72,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     content.style.height = String(window.innerHeight - header_height) + "px";
 
-    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas>';
+    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas><div id="grid"></div>';
     document.getElementById("content").innerHTML = canvasToAdd;
     canvas = document.getElementById("canvas");
     DrawPaddingX = canvas.offsetLeft;
@@ -136,6 +136,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(callLoad==true){
       loadIntoCanvas(thisFile,currentPage);
     }
+    setBackgroundImage(thisFile.settings.canvas.backgroundImage);
   }
 
   function midPointBtw(p1, p2) {
@@ -384,11 +385,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function setBackgroundImage(image) { // NO .PNG
      thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
-     canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+     document.getElementById("grid").style.backgroundImage = thisFile.settings.canvas.backgroundImage;
   }
 
   function selectTool(_tool){
-    if(_tool.id=="ruler"){
+    if(_tool.id == "ruler"){
       rulerActive = !rulerActive;
       var rulerContainer = document.getElementById("ruler_container");
       if(rulerActive){

@@ -119,6 +119,12 @@ footer {
 #content {
   text-align: center;
   -webkit-app-region: no-drag; }
+  #content #grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 40px;
+    pointer-events: none; }
 
 #settings_container {
   position: absolute;
