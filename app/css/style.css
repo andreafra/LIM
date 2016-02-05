@@ -529,14 +529,14 @@ footer {
     height: 0;
     background: white;
     position: absolute;
-    top: 0;
+    top: -3px;
     left: 0; }
   #ruler_container #top_right {
     width: 0;
     height: 0;
     background: white;
     position: absolute;
-    top: 0;
+    top: -3px;
     right: 0; }
   #ruler_container #bottom_right {
     width: 0;
