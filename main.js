@@ -47,11 +47,14 @@ app.on('ready', function() {
 });
 
 ipcMain.on('close-main-window', function () {
-  app.quit()
+  app.quit();
 });
 ipcMain.on('maximize-main-window', function () {
-  mainWindow.maximize()
+  if(mainWindow.isMaximized())
+    mainWindow.unmaximize();
+  else
+    mainWindow.maximize();
 });
 ipcMain.on('minimize-main-window', function () {
-  mainWindow.minimize()
+  mainWindow.minimize();
 });
