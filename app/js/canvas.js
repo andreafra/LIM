@@ -747,7 +747,7 @@ document.addEventListener( "DOMContentLoaded", function() {
           } else {
             ctx.shadowColor = _line.color;
           }
-          ctx.lineWidth = _line.width+2; //bypass shadows not stacking, thus resulting in a smaller line
+          ctx.lineWidth = _line.width;
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
 
@@ -758,12 +758,12 @@ document.addEventListener( "DOMContentLoaded", function() {
             ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
             p1 = _points[i];
             p2 = _points[i+1];
+            // Draw last line as a straight line while
+            // we wait for the next point to be able to calculate
+            // the bezier control point
+            ctx.lineTo(p1.x, p1.y);
+            ctx.stroke();
           }
-          // Draw last line as a straight line while
-          // we wait for the next point to be able to calculate
-          // the bezier control point
-          ctx.lineTo(p1.x, p1.y);
-          ctx.stroke();
         }
       }     
     } else console.log("error loading file: " + file);
