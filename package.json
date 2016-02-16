@@ -1,5 +1,26 @@
 {
   "name": "LIM",
+  "license": "SEE LICENSE IN NOLICENSE.md",
   "version": "0.1.0",
-  "main": "main.js"
+  "private": true,
+  "main": "main.js",
+  "dependencies": {
+    "electron-compile": "^2.0.6",
+    "electron-gh-releases": "^2.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QUB3X/LIM.git"
+  },
+  "contributors": [
+    {
+      "name": "Andrea Franchini",
+      "email": "f.andrea1602@gmail.com",
+      "url": "http://twitter.com/Qubex_"
+    },
+    {
+      "name": "Alessandro Astone",
+      "email": "alessandro.astone@hotmail.com"
+    }
+  ]
 }
