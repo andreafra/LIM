@@ -736,8 +736,6 @@ document.addEventListener( "DOMContentLoaded", function() {
           ctx.fill();
         }
         else {  //draw a line
-          var p1 = _points[0];
-          var p2 = _points[1];
 
           ctx.shadowBlur = 0.5;
           ctx.imageSmoothingEnabled = true;
@@ -747,17 +745,23 @@ document.addEventListener( "DOMContentLoaded", function() {
           } else {
             ctx.shadowColor = _line.color;
           }
-          ctx.lineWidth = _line.width;
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
 
-          for (var i = 1, len = _points.length; i < len; i++) {
-            // we pick the point between pi+1 & pi+2 as the
-            // end point and p1 as our control point
-            var midPoint = midPointBtw(p1, p2);
-            ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-            p1 = _points[i];
-            p2 = _points[i+1];
+          //Adapted code from startDrawing
+          for(var _point = 1; _point<_points.length;_point++){ //Simulate i'm drawing
+            var p1 = _points[0];
+            var p2 = _points[1];
+
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+
+            for (var i = 1; i < _point+1; i++) {  //Will produce the same effect as _points.length in startDrawing
+              // we pick the point between pi+1 & pi+2 as the
+              // end point and p1 as our control point
+              var midPoint = midPointBtw(p1, p2);
+              ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+              p1 = _points[i];
+              p2 = _points[i+1];
+            }
             // Draw last line as a straight line while
             // we wait for the next point to be able to calculate
             // the bezier control point
