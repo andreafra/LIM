@@ -8,4 +8,12 @@ ehthumbs.db
 Thumbs.db
 .sass-cache
 .sass-cache/*
+
+# YODEVIL'S WINDOWS STUFF
+build-lim.bat
+publish-lim.bat
+package-lim.bat
+LIM-win32-x64/*
+
+# APP RELATED STUFF
 app/css/style.css.map
