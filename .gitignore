@@ -14,6 +14,8 @@ build-lim.bat
 publish-lim.bat
 package-lim.bat
 LIM-win32-x64/*
+LIM-win32-ia32/*
+Installer/*
 
 # APP RELATED STUFF
 app/css/style.css.map

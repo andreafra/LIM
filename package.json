@@ -2,6 +2,7 @@
   "name": "LIM",
   "license": "SEE LICENSE IN NOLICENSE.md",
   "version": "0.1.0",
+  "description": "A simple program to draw on LIM boards",
   "private": true,
   "main": "main.js",
   "dependencies": {
@@ -22,5 +23,9 @@
       "name": "Alessandro Astone",
       "email": "alessandro.astone@hotmail.com"
     }
-  ]
+  ],
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-electron-installer": "^1.2.1"
+  }
 }
