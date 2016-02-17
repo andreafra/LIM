@@ -1,7 +1,7 @@
 {
   "name": "LIM",
   "license": "SEE LICENSE IN NOLICENSE.md",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "description": "A simple program to draw on LIM boards",
   "private": true,
   "main": "main.js",

@@ -5,8 +5,6 @@ const app = electron.app;  // Module to control application life.
 var path = require('path');
 var cp = require('child_process');
 
-const dialog = require('dialog');
-
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 
 // Report crashes to our server.
@@ -104,6 +102,8 @@ else{
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
   // Restart the app and install the update
+  const dialog = require('dialog');
+  var canvas = require('./app/js/canvas.js');
   dialog.showMessageBox({ type: 'info', buttons: ['Restart', 'Save and restart', 'Not now'], cancelId: 2, message: "An update has been downloaded. Do you want to restart to install it?"},
     function(response) {
       switch(response) {
@@ -111,7 +111,7 @@ updater.on('update-downloaded', (info) => {
           updater.install();
         case 1:
           var saveFile = require('./app/js/save');
-          saveFile.SaveAs(thisFile,updater.install());
+          saveFile.SaveAs(canvas.thisFile,updater.install());
         case 2:
           canUpdate = true;
       }

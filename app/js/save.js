@@ -1,5 +1,14 @@
-const dialog = require('electron').remote.require('dialog');
-const app = require('electron').remote.require('app');
+var dialog;
+var app;
+if(require('electron').remote == undefined) //calling from main
+{
+  dialog = require('dialog');
+  app = require('app');
+}
+else{
+  dialog = require('electron').remote.require('dialog');
+  app = require('electron').remote.require('app');
+}
 
 // SAVE AS (1st time)
 exports.SaveAs = function(thisFile, callback) {

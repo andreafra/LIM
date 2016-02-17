@@ -1,4 +1,5 @@
 var thisFile;
+exports.thisFile = thisFile;
 document.addEventListener( "DOMContentLoaded", function() {
 
 // function to setup a new canvas for drawing
