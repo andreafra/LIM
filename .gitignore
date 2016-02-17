@@ -21,3 +21,4 @@ Installer/*
 app/css/style.css.map
 LIM-darwin-x64
 LIM-darwin-x64/*
+node_modules/grunt-electron-installer/vendor/SquirrelSetup.log

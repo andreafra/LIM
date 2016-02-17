@@ -2,6 +2,8 @@ const electron = require('electron');
 const ipcMain = require('electron').ipcMain;
 
 const app = electron.app;  // Module to control application life.
+var path = require('path');
+var cp = require('child_process');
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 
 // Report crashes to our server.
@@ -15,9 +17,29 @@ var handleStartupEvent = function() {
     return false;
   }
 
+   function executeSquirrelCommand(args, done) {
+      var updateDotExe = path.resolve(path.dirname(process.execPath), 
+         '..', 'update.exe');
+      var child = cp.spawn(updateDotExe, args, { detached: true });
+      child.on('close', function(code) {
+         done();
+      });
+   };
+
+   function install(done) {
+      var target = path.basename(process.execPath);
+      executeSquirrelCommand(["--createShortcut", target], done);
+   };
+
+   function uninstall(done) {
+      var target = path.basename(process.execPath);
+      executeSquirrelCommand(["--removeShortcut", target], done);
+   };
+
   var squirrelCommand = process.argv[1];
   switch (squirrelCommand) {
     case '--squirrel-install':
+      install();
     case '--squirrel-updated':
 
       // Optionally do things such as:
@@ -28,16 +50,14 @@ var handleStartupEvent = function() {
       //   explorer context menus
 
       // Always quit when done
-      app.quit();
-
+      install(app.quit);
       return true;
     case '--squirrel-uninstall':
       // Undo anything you did in the --squirrel-install and
       // --squirrel-updated handlers
 
       // Always quit when done
-      app.quit();
-
+      uninstall(app.quit());
       return true;
     case '--squirrel-obsolete':
       // This is called on the outgoing version of your app before

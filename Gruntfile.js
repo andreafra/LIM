@@ -6,13 +6,17 @@ module.exports = function(grunt) {
 		appDirectory: '/Users/aless/Documents/LIM/LIM-win32-x64',
 		outputDirectory: '/Users/aless/Documents/LIM/Installer/x64',
 		authors: 'Andrea Franchini, Alessandro Astone',
-		exe: 'LIM.exe'
+		exe: 'LIM.exe',
+		title: 'LIM',
+		noMsi: true
 	  },
 	  ia32: {
 		appDirectory: '/Users/aless/Documents/LIM/LIM-win32-ia32',
 		outputDirectory: '/Users/aless/Documents/LIM/Installer/x32',
 		authors: 'Andrea Franchini, Alessandro Astone',
-		exe: 'LIM.exe'
+		exe: 'LIM.exe',
+		title: 'LIM',
+		noMsi: true
 	  }
 	}
   });
