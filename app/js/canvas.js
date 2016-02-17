@@ -1,3 +1,4 @@
+var thisFile;
 document.addEventListener( "DOMContentLoaded", function() {
 
 // function to setup a new canvas for drawing
@@ -10,7 +11,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   var canvasWidth = window.innerWidth;
   var canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
 
-  var thisFile = {
+  thisFile = {
     settings: {
       name: "unnamed",
       date: new Date().getTime(),

@@ -75,6 +75,7 @@ if (handleStartupEvent()) {
 // =========== //
 // Autoupdater //
 // =========== //
+var canUpdate = false;
 const GhReleases = require('electron-gh-releases')
 
 var options = {
@@ -82,21 +83,36 @@ var options = {
   currentVersion: app.getVersion()
 }
 
-const updater = new GhReleases(options)
+const updater = new GhReleases(options);
 
 // Check for updates
 // `status` returns true if there is a new update available
-updater.check((err, status) => {
-  if (!err && status) {
-    // Download the update
-    updater.download()
-  }
-})
-
+if(!canUpdate){
+  updater.check((err, status) => {
+    if (!err && status) {
+      // Download the update
+      updater.download()
+    }
+  });
+}
+else{
+  updater.install();
+}
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
   // Restart the app and install the update
-  updater.install()
+  dialog.showMessageBox({ type: 'info', buttons: ['Restart', 'Save and restart', 'Not now'], cancelId: 2, message: "An update has been downloaded. Do you want to restart to install it?"},
+    function(response) {
+      switch(response) {
+        case 0:
+          updater.install();
+        case 1:
+          var saveFile = require('./app/js/save');
+          saveFile.SaveAs(thisFile,updater.install());
+        case 2:
+          canUpdate = true;
+      }
+    });
 })
 
 // Access electrons autoUpdater
