@@ -16,9 +16,9 @@ package-lim.bat
 LIM-win32-x64/*
 LIM-win32-ia32/*
 Installer/*
+node_modules/grunt-electron-installer/vendor/SquirrelSetup.log
 
 # APP RELATED STUFF
 app/css/style.css.map
 LIM-darwin-x64
 LIM-darwin-x64/*
-node_modules/grunt-electron-installer/vendor/SquirrelSetup.log
