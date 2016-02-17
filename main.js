@@ -4,6 +4,9 @@ const ipcMain = require('electron').ipcMain;
 const app = electron.app;  // Module to control application life.
 var path = require('path');
 var cp = require('child_process');
+
+const dialog = require('dialog');
+
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 
 // Report crashes to our server.
