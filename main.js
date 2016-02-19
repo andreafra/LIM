@@ -106,9 +106,7 @@ updater.on('update-downloaded', (info) => {
           updater.install();
           break;
         case 1:
-          var saveFile = require('./app/js/save');
-          var canvas = require('./app/js/canvas');
-          saveFile.SaveAs(canvas.thisFile);
+          mainWindow.webContents.send('save-file', updater); //send request to canvas.js, passing the updater file, so that we can update from another script.
           break;
         case 2:
           break;

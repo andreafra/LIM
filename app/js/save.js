@@ -11,7 +11,7 @@ else{
 }
 
 // SAVE AS (1st time)
-exports.SaveAs = function(thisFile, callback) {
+exports.SaveAs = function(thisFile, callback, update) {
   var fs = require('fs'); 
   dialog.showSaveDialog({ 
     filters: [ { name: 'lim', extensions: ['lim'] } ]
@@ -24,6 +24,11 @@ exports.SaveAs = function(thisFile, callback) {
       }
       else{
         callback(fileName);
+        if(update){
+          const GhReleases = require('electron-gh-releases');
+          const updater = new GhReleases(options);
+          updater.install();
+        }
       }
     });
   });

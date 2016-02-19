@@ -1,10 +1,19 @@
-var thisFile = {};
-module.exports = thisFile;
+var thisFile; 
+
+
+
 document.addEventListener( "DOMContentLoaded", function() {
+
+  const ipc = require('electron').ipcRenderer;
+  ipc.on('save-file', function(event,arg1){
+    var saveFile = require('./app/js/save');
+    saveFile.SaveAs(thisFile,rename,arg1);
+  });
 
 // function to setup a new canvas for drawing
 // Thanks to http://perfectionkills.com/exploring-canvas-drawing-techniques/
 // for the nice explanation :)
+
   //define and resize canvas
 
   var header = document.getElementById("header");
@@ -35,7 +44,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     //      {points: [{x:0,y:0}],
     //      color: "#fff", width: 4, rubber: true}]
     // }]
-  }
+  };
 
   var content = document.getElementById("content");
   var header_height = document.getElementById('header').clientHeight;
@@ -68,7 +77,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     var widthRatio = canvasWidth/oldCanvasWidth;
     var heightRatio = canvasHeight/oldCanvasHeight;
     if(canvasWidth==oldCanvasWidth && canvasHeight == oldCanvasHeight) {
-      console.log("skipping canvas resize");
       return;
     }
 
@@ -385,7 +393,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     resetBackstackButtons();
     isDrawing = false;
     hasMoved = false;
-    console.log(JSON.stringify(global.thisFile));
   }
 
 
