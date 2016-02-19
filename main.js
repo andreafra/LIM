@@ -23,7 +23,8 @@ var handleStartupEvent = function() {
          '..', 'update.exe');
       var child = cp.spawn(updateDotExe, args, { detached: true });
       child.on('close', function(code) {
-         done();
+         if(done!==null && done!==undefined)
+          done();
       });
    };
 
@@ -76,7 +77,6 @@ if (handleStartupEvent()) {
 // =========== //
 // Autoupdater //
 // =========== //
-var canUpdate = false;
 const GhReleases = require('electron-gh-releases')
 
 var options = {
@@ -88,32 +88,30 @@ const updater = new GhReleases(options);
 
 // Check for updates
 // `status` returns true if there is a new update available
-if(!canUpdate){
-  updater.check((err, status) => {
-    if (!err && status) {
-      // Download the update
-      updater.download()
-    }
-  });
-}
-else{
-  updater.install();
-}
+updater.check((err, status) => {
+  if (!err && status) {
+    // Download the update
+    updater.download()
+  }
+});
+
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
   // Restart the app and install the update
   const dialog = require('dialog');
-  var canvas = require('./app/js/canvas.js');
   dialog.showMessageBox({ type: 'info', buttons: ['Restart', 'Save and restart', 'Not now'], cancelId: 2, message: "An update has been downloaded. Do you want to restart to install it?"},
     function(response) {
       switch(response) {
         case 0:
           updater.install();
+          break;
         case 1:
           var saveFile = require('./app/js/save');
-          saveFile.SaveAs(canvas.thisFile,updater.install());
+          var canvas = require('./app/js/canvas');
+          saveFile.SaveAs(canvas.thisFile);
+          break;
         case 2:
-          canUpdate = true;
+          break;
       }
     });
 })

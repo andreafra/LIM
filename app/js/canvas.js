@@ -1,5 +1,5 @@
-var thisFile;
-exports.thisFile = thisFile;
+var thisFile = {};
+module.exports = thisFile;
 document.addEventListener( "DOMContentLoaded", function() {
 
 // function to setup a new canvas for drawing
@@ -385,6 +385,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     resetBackstackButtons();
     isDrawing = false;
     hasMoved = false;
+    console.log(JSON.stringify(global.thisFile));
   }
 
 
