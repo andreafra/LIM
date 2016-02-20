@@ -1,5 +1,6 @@
 var dialog;
 var app;
+var ipc = require('electron').ipcRenderer;
 if(require('electron').remote == undefined) //calling from main
 {
   dialog = require('dialog');
@@ -25,9 +26,7 @@ exports.SaveAs = function(thisFile, callback, update) {
       else{
         callback(fileName);
         if(update){
-          const GhReleases = require('electron-gh-releases');
-          const updater = new GhReleases(options);
-          updater.install();
+          ipc.send('update');
         }
       }
     });

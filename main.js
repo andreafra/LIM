@@ -98,7 +98,7 @@ updater.check((err, status) => {
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
   // Restart the app and install the update
-  const dialog = require('dialog');
+  var dialog = require('dialog');
   dialog.showMessageBox({ type: 'info', buttons: ['Restart', 'Save and restart', 'Not now'], cancelId: 2, message: "An update has been downloaded. Do you want to restart to install it?"},
     function(response) {
       switch(response) {
@@ -113,6 +113,10 @@ updater.on('update-downloaded', (info) => {
       }
     });
 })
+
+ipcMain.on('update',function(){
+  updater.install();
+});
 
 // Access electrons autoUpdater
 updater.autoUpdater

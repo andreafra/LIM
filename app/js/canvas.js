@@ -1,6 +1,4 @@
-var thisFile; 
-
-
+var thisFile;
 
 document.addEventListener( "DOMContentLoaded", function() {
 
