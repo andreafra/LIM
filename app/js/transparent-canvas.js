@@ -65,7 +65,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   function resizeCanvas(callLoad) {
     canvasWidth = window.innerWidth;
-    canvasHeight = window.innerHeight - footer.clientHeight;
+    canvasHeight = window.innerHeight;
     var oldCanvasWidth = thisFile.settings.canvas.x;
     var oldCanvasHeight = thisFile.settings.canvas.y;
     var widthRatio = canvasWidth/oldCanvasWidth;
