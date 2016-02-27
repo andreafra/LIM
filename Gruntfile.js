@@ -19,6 +19,15 @@ module.exports = function(grunt) {
 		noMsi: true
 	  }
 	}
+	'electron':{
+	  win32: {
+ 		options: {
+	 	  'version-string': {
+	 		ProductName: 'Your App'
+	 	  }
+	 	}
+	  }
+	}
   });
 
   grunt.loadNpmTasks('grunt-electron-installer');
