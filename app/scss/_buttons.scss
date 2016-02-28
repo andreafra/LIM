@@ -103,6 +103,33 @@
   margin-top: -30px;
 }
 
+.btn-toolbar-tool {
+  height: $header_height;
+  width: 40px;
+  img {
+    position: relative;
+    height: $header_height * 2.5;
+    z-index: 401;
+  }
+  #pencil_color {
+    display: block;
+    position: absolute;
+    z-index: 400;
+    top: 10px;
+    margin-left: 4.5px;
+    height: 0;
+    width: 0;
+    border-top: 12px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid $black;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+/* Pencil tip fix for transparent window */
+.toolbar-transparent #pencil_color {
+  top: 10px;
+}
 
 @each $color, $name in $colors {
   .btn-#{$name} {

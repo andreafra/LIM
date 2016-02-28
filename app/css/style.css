@@ -277,30 +277,24 @@ footer {
   padding-right: 20px;
   flex-direction: row-reverse; }
 
+.toolbar-transparent {
+  position: relative;
+  display: flex;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  right: 0;
+  top: 0;
+  flex-direction: row;
+  padding-left: 15px;
+  padding-right: 15px; }
+
 .toolbar-spacer {
   margin-left: 15px;
-  margin-right: 15px; }
-
-.btn-toolbar-tool {
-  height: 40px;
-  width: 40px; }
-  .btn-toolbar-tool img {
-    position: relative;
-    height: 100px;
-    z-index: 401; }
-  .btn-toolbar-tool #pencil_color {
-    display: block;
-    position: absolute;
-    z-index: 400;
-    top: 10px;
-    margin-left: 4.5px;
-    height: 0;
-    width: 0;
-    border-top: 12px solid transparent;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 12px solid #212121;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  margin-right: 15px;
+  border-left: 1px solid #d5d5d5;
+  margin-top: 20px;
+  margin-bottom: 20px; }
 
 #pencil_black {
   background: black; }
@@ -361,6 +355,55 @@ footer {
 
 .hidden {
   display: none !important; }
+
+.welcome-content {
+  position: fixed;
+  display: block;
+  top: 40px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-app-region: no-drag; }
+  .welcome-content .welcome-choose {
+    display: flex; }
+    .welcome-content .welcome-choose .btn-full {
+      flex-grow: 1;
+      text-decoration: none !important;
+      font: 1.5em "Futura";
+      color: black;
+      padding-top: 2em;
+      padding-bottom: 2em;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+      .welcome-content .welcome-choose .btn-full:hover {
+        background-color: #e6e6e6; }
+      .welcome-content .welcome-choose .btn-full img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block; }
+      .welcome-content .welcome-choose .btn-full span {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        width: 75%; }
+  .welcome-content .welcome-footer {
+    position: absolute;
+    display: block;
+    width: 100%;
+    bottom: 0; }
+    .welcome-content .welcome-footer ul {
+      padding: 0;
+      display: flex; }
+      .welcome-content .welcome-footer ul li {
+        flex-grow: 1;
+        display: inline-block;
+        text-align: center;
+        text-decoration: none; }
+        .welcome-content .welcome-footer ul li a {
+          padding: 3px;
+          font: 1em "Futura";
+          color: black;
+          padding-top: 2em; }
 
 .btn {
   text-align: center;
@@ -450,6 +493,31 @@ footer {
 
 .btn-ruler-active {
   margin-top: -30px; }
+
+.btn-toolbar-tool {
+  height: 40px;
+  width: 40px; }
+  .btn-toolbar-tool img {
+    position: relative;
+    height: 100px;
+    z-index: 401; }
+  .btn-toolbar-tool #pencil_color {
+    display: block;
+    position: absolute;
+    z-index: 400;
+    top: 10px;
+    margin-left: 4.5px;
+    height: 0;
+    width: 0;
+    border-top: 12px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid #212121;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Pencil tip fix for transparent window */
+.toolbar-transparent #pencil_color {
+  top: 10px; }
 
 .btn-azure {
   background-color: #36D3FF; }

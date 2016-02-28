@@ -19,43 +19,8 @@
       </div>
       <div id="ruler_right"></div>
     </div>
-    <div id="settings_container" class="hidden">
-      <div id="settings_panel">
-        <a id="settings_panel_close" class="btn">
-          <i class="material-icons">close</i>
-        </a>
-        <h1>Impostazioni</h1>
-        <ul class="settings_list">
-          <li class="settings_list_heading">File</li>
-          <li class="settings_list_element" id="save">
-            <i class="material-icons">save</i>
-            <span>Salva</span>
-          </li>
-          <li class="settings_list_element" id="load">
-            <i class="material-icons">folder</i>
-            <span>Apri...</span>
-          </li>
-          <li class="settings_list_heading">Colore di sfondo</li>
-          <li class="settings_list_circular_picker">
-            <span id="background_white"></span>
-            <span id="background_black"></span>
-            <span id="background_green"></span>
-            <span id="background_transparent"></span>
-            <input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff" id="background_custom"></span>
-          </li>
-          <li class="settings_list_heading">Tipo di sfondo</li>
-          <li class="settings_list_circular_picker">
-            <span id="background_none"></span>
-            <span id="background_squared"></span>
-            <span id="background_squared_marked"></span>
-            <span id="background_lines"></span>
-            <span id="background_dots"></span>
-          </li>
-        </ul>
-      </div>
-    </div>
     <footer id="footer">
-      <ul class="toolbar-left">
+      <ul class="toolbar-transparent">
         <!-- Tool Picker -->
         <li class="btn-toolbar btn-toolbar-tool btn-tool-active" id="pencil">
           <img src="app/img/pencil.png">
@@ -90,30 +55,14 @@
           <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
           <span class="btn-circular btn-invisible"></span>
         </li>
-      </ul>
-      <div class="toolbar-center">
-        <button id="settings_panel_open" class="btn btn-menu"><i class="material-icons">more_horiz</i></button>
-      </div>
-      <ul class="toolbar-right">
-        <li class="btn-pager" id="page_next">
-          <i class="material-icons">arrow_forward</i>
-        </li>
-        <li class="btn-pager">
-          <span id="page_counter">1</span>
-        </li>
-        <li class="btn-pager" id="page_prev">
-          <i class="material-icons">arrow_back</i>
-        </li>
-        <li class="toolbar-spacer">
+        <li class="toolbar-spacer"></li>
+        <li class="btn-pager" id="undo">
+          <i class="material-icons">undo</i>
         </li>
         <li class="btn-pager" id="redo">
           <i class="material-icons">redo</i>
         </li>
-        <li class="btn-pager" id="undo">
-          <i class="material-icons">undo</i>
-        </li>
-        <li class="toolbar-spacer">
-        </li>
+        <li class="toolbar-spacer"></li>
         <li class="btn-pager" id="clear_all" data-tooltip="CANCELLERAI TUTTO!">
           <i class="material-icons">delete</i>
         </li>

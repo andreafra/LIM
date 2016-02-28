@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>LIM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="app/css/style.css" type="text/css">
+  </head>
+  <body id="body" class="background" style="-webkit-app-region: drag">
+    <header id="header">
+      <h1 id="title">unnamed</h1>
+      <div id="window-menu">
+        <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
+        <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
+        <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
+      </div>
+    </header>
+    <div id="content">
+    </div>
+    <div id="ruler_container">
+      <div id="top_left"></div>
+      <div id="top_right"></div>
+      <div id="bottom_right"></div>
+      <div id="ruler_left"></div>
+      <div id="ruler_center">
+        <span id="ruler_degrees">0°</span>
+      </div>
+      <div id="ruler_right"></div>
+    </div>
+    <div id="settings_container" class="hidden">
+      <div id="settings_panel">
+        <a id="settings_panel_close" class="btn">
+          <i class="material-icons">close</i>
+        </a>
+        <h1>Impostazioni</h1>
+        <ul class="settings_list">
+          <li class="settings_list_heading">File</li>
+          <li class="settings_list_element" id="save">
+            <i class="material-icons">save</i>
+            <span>Salva</span>
+          </li>
+          <li class="settings_list_element" id="load">
+            <i class="material-icons">folder</i>
+            <span>Apri...</span>
+          </li>
+          <li class="settings_list_heading">Colore di sfondo</li>
+          <li class="settings_list_circular_picker">
+            <span id="background_white"></span>
+            <span id="background_black"></span>
+            <span id="background_green"></span>
+            <span id="background_transparent"></span>
+            <input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff" id="background_custom"></span>
+          </li>
+          <li class="settings_list_heading">Tipo di sfondo</li>
+          <li class="settings_list_circular_picker">
+            <span id="background_none"></span>
+            <span id="background_squared"></span>
+            <span id="background_squared_marked"></span>
+            <span id="background_lines"></span>
+            <span id="background_dots"></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <footer id="footer">
+      <ul class="toolbar-left">
+        <!-- Tool Picker -->
+        <li class="btn-toolbar btn-toolbar-tool btn-tool-active" id="pencil">
+          <img src="app/img/pencil.png">
+          <span id="pencil_color"></span>
+        </li>
+        <li class="btn-toolbar btn-toolbar-tool" id="rubber">
+          <img src="app/img/rubber.png">
+        </li>
+        <li class="btn-toolbar btn-toolbar-tool" id="ruler">
+          <img src="app/img/ruler.png">
+        </li>
+        <li class="toolbar-spacer">
+        </li>
+        <!-- Color Picker -->
+        <li class="btn-toolbar">
+          <span class="btn-circular btn-toolbar-color btn-active" id="pencil_black"></span>
+          <span class="btn-circular" id="stroke_small"></span>
+        </li>
+        <li class="btn-toolbar">
+          <span class="btn-circular btn-toolbar-color" id="pencil_blue"></span>
+          <span class="btn-circular btn-active" id="stroke_medium"></span>
+        </li>
+        <li class="btn-toolbar">
+          <span class="btn-circular btn-toolbar-color" id="pencil_red"></span>
+          <span class="btn-circular" id="stroke_big"></span>
+        </li>
+        <li class="btn-toolbar">
+          <span class="btn-circular btn-toolbar-color" id="pencil_green"></span>
+          <span class="btn-circular btn-invisible"></span>
+        </li>
+        <li class="btn-toolbar btn-toolbar-color">
+          <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
+          <span class="btn-circular btn-invisible"></span>
+        </li>
+      </ul>
+      <div class="toolbar-center">
+        <button id="settings_panel_open" class="btn btn-menu"><i class="material-icons">more_horiz</i></button>
+      </div>
+      <ul class="toolbar-right">
+        <li class="btn-pager" id="page_next">
+          <i class="material-icons">arrow_forward</i>
+        </li>
+        <li class="btn-pager">
+          <span id="page_counter">1</span>
+        </li>
+        <li class="btn-pager" id="page_prev">
+          <i class="material-icons">arrow_back</i>
+        </li>
+        <li class="toolbar-spacer">
+        </li>
+        <li class="btn-pager" id="redo">
+          <i class="material-icons">redo</i>
+        </li>
+        <li class="btn-pager" id="undo">
+          <i class="material-icons">undo</i>
+        </li>
+        <li class="toolbar-spacer">
+        </li>
+        <li class="btn-pager" id="clear_all" data-tooltip="CANCELLERAI TUTTO!">
+          <i class="material-icons">delete</i>
+        </li>
+      </ul>
+
+    </footer>
+    <script src="app/js/canvas.js"></script>
+    <script src="app/lib/jscolor.min.js"></script>
+    <script>
+      const ipcRenderer = require('electron').ipcRenderer;
+      var closeBtn = document.querySelector('#menu-close');
+      var maximBtn = document.querySelector('#menu-maximize');
+      var minimBtn = document.querySelector('#menu-minimize');
+      var closeSettings = document.querySelector('#settings_panel_close');
+      var openSettings = document.querySelector('#settings_panel_open');
+      
+      closeBtn.addEventListener('click', function () {
+        ipcRenderer.send('close-main-window');
+      });
+      maximBtn.addEventListener('click', function () {
+        ipcRenderer.send('maximize-main-window');
+      });
+      minimBtn.addEventListener('click', function () {
+        ipcRenderer.send('minimize-main-window');
+      });
+      closeSettings.addEventListener('click', function() {
+        document.getElementById('settings_container').classList.add('hidden');
+      });
+      openSettings.addEventListener('click', function() {
+        document.getElementById('settings_container').classList.remove('hidden');
+      });
+      // COLOR PICKER
+      function updateColor(picker) {
+        document.getElementById("pencil_other").setAttribute("value", "#"+picker);
+      }
+      function updateBackgroundColor(picker) {
+        document.getElementById("background_custom").setAttribute("value", "#"+picker);
+      }
+    </script>
+  </body>
+</html>

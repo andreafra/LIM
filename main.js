@@ -142,15 +142,17 @@ app.on('ready', function() {
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
-    width: size.width,
-    height: size.height,
+    width: 800/*size.width*/,
+    height: 600/*size.height*/,
     transparent:true,
     fullscreen:false,
-    frame: false
+    frame: false,
+    minWidth: 800,
+    minHeight: 600
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/transparent.html');
+  mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
