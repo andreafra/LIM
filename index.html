@@ -17,11 +17,11 @@
     </header>
     <div class="welcome-content">
       <div class="welcome-choose">
-        <a href="paper.html" class="btn-full">
+        <a class="btn-full" id="default_window">
           <img src="app/img/welcome_paper.png">
           <span>Scrivi su un nuovo foglio</span>
         </a>
-        <a href="transparent.html" class="btn-full">
+        <a class="btn-full" id="transparent_window">
           <img src="app/img/welcome_transparent.png">
           <span>Scrivi su un programma</span>
         </a>
@@ -40,7 +40,9 @@
       var closeBtn = document.querySelector('#menu-close');
       var maximBtn = document.querySelector('#menu-maximize');
       var minimBtn = document.querySelector('#menu-minimize');
-      
+      var defaultWindow = document.querySelector('#default_window');
+      var transparentWindow = document.querySelector('#transparent_window');
+
       closeBtn.addEventListener('click', function () {
         ipcRenderer.send('close-main-window');
       });
@@ -49,6 +51,13 @@
       });
       minimBtn.addEventListener('click', function () {
         ipcRenderer.send('minimize-main-window');
+      });
+
+      defaultWindow.addEventListener('click', function () {
+        ipcRenderer.send('new-default-window');
+      });
+      transparentWindow.addEventListener('click', function () {
+        ipcRenderer.send('new-transparent-window');
       });
     </script>
   </body>

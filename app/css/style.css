@@ -369,6 +369,7 @@ footer {
     .welcome-content .welcome-choose .btn-full {
       flex-grow: 1;
       text-decoration: none !important;
+      text-align: center;
       font: 1.5em "Futura";
       color: black;
       padding-top: 2em;

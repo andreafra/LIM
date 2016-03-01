@@ -1,4 +1,5 @@
 var thisFile;
+const ipcRenderer = require('electron').ipcRenderer;
 
 document.addEventListener( "DOMContentLoaded", function() {
 

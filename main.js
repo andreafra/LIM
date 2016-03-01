@@ -124,7 +124,7 @@ updater.autoUpdater
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
-
+var toolbarWindow = null;
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
   // On OS X it is common for applications and their menu bar
@@ -174,4 +174,28 @@ ipcMain.on('maximize-main-window', function () {
 });
 ipcMain.on('minimize-main-window', function () {
   mainWindow.minimize();
+});
+ipcMain.on('new-default-window', function() {
+  mainWindow.loadURL('file://' + __dirname + '/paper.html');
+});
+ipcMain.on('new-transparent-window', function() {
+  mainWindow.loadURL('file://' + __dirname + '/transparent.html');
+  mainWindow.maximize();
+
+  var electronScreen = electron.screen;
+  var size = electronScreen.getPrimaryDisplay().workAreaSize;
+  toolbarWindow = new BrowserWindow({
+    width: 600/*size.width*/,
+    height: 80/*size.height*/,
+    transparent:false,
+    fullscreen:false,
+    frame: false,
+    minWidth: 800,
+    minHeight: 80,
+    maxHeight: 80,
+    alwaysOnTop: true, // keep the toolbar ver the canvas
+    x: size.width - 600,
+    y: size.height - 80
+  });
+  toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
 });
