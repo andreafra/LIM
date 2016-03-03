@@ -199,3 +199,10 @@ ipcMain.on('new-transparent-window', function() {
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
 });
+
+ipcMain.on('send-command', function(arg0, cmd, target){
+  switch(target){
+    case "canvas": mainWindow.webContents.send(cmd); break;
+    case "toolbar": toolbarWindow.webContents.send(cmd); break;
+  }
+});

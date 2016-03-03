@@ -1,5 +1,4 @@
 var thisFile;
-const ipcRenderer = require('electron').ipcRenderer;
 
 document.addEventListener( "DOMContentLoaded", function() {
 
@@ -8,6 +7,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     var saveFile = require('./app/js/save');
     saveFile.SaveAs(thisFile,rename,arg1);
   });
+
+  ipc.send("send-command","doStuff","toolbar"); //send command "doStuff" to toolbar.
 
 // function to setup a new canvas for drawing
 // Thanks to http://perfectionkills.com/exploring-canvas-drawing-techniques/
