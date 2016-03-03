@@ -1,8 +1,18 @@
-const dialog = require('electron').remote.require('dialog');
-const app = require('electron').remote.require('app');
+var dialog;
+var app;
+var ipc = require('electron').ipcRenderer;
+if(require('electron').remote == undefined) //calling from main
+{
+  dialog = require('dialog');
+  app = require('app');
+}
+else{
+  dialog = require('electron').remote.require('dialog');
+  app = require('electron').remote.require('app');
+}
 
 // SAVE AS (1st time)
-exports.SaveAs = function(thisFile, callback) {
+exports.SaveAs = function(thisFile, callback, update) {
   var fs = require('fs'); 
   dialog.showSaveDialog({ 
     filters: [ { name: 'lim', extensions: ['lim'] } ]
@@ -15,6 +25,9 @@ exports.SaveAs = function(thisFile, callback) {
       }
       else{
         callback(fileName);
+        if(update){
+          ipc.send('update');
+        }
       }
     });
   });

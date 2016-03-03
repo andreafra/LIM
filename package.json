@@ -1,5 +1,32 @@
 {
   "name": "LIM",
-  "version": "0.1.0",
-  "main": "main.js"
+  "license": "SEE LICENSE IN NOLICENSE.md",
+  "version": "0.2.18",
+  "description": "A simple program to draw on LIM boards",
+  "private": true,
+  "main": "main.js",
+  "dependencies": {
+    "electron-compile": "^2.0.6",
+    "electron-gh-releases": "^2.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QUB3X/LIM.git"
+  },
+  "contributors": [
+    {
+      "name": "Andrea Franchini",
+      "email": "f.andrea1602@gmail.com",
+      "url": "http://twitter.com/Qubex_"
+    },
+    {
+      "name": "Alessandro Astone",
+      "email": "alessandro.astone@hotmail.com"
+    }
+  ],
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-electron": "^2.0.1",
+    "grunt-electron-installer": "^1.2.1"
+  }
 }

@@ -13,8 +13,10 @@ exports.LoadRuler = function(){
   var ruler_topLeft = document.getElementById("top_left");
   var ruler_bottomRight = document.getElementById("bottom_right");
   var ruler_center = document.getElementById("ruler_center");
+  var ruler_text = document.getElementById("ruler_degrees");
 
   var mRotation = 0 //default value. musth match css
+  var displayRotation = mRotation;
   var startingRotation = 0;
 
   //Mouse rotation
@@ -71,6 +73,9 @@ exports.LoadRuler = function(){
     mRotation += deltaRotation;
     startingRotation += deltaRotation;
     ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + mRotation + "deg)";
+    if(mRotation >= 0) displayRotation=mRotation|0;
+    else displayRotation = (360+mRotation)|0;
+    ruler_text.innerHTML=(displayRotation|0) +"°";
   });
 
   ruler_left.addEventListener("mousedown", function(){
@@ -124,6 +129,9 @@ exports.LoadRuler = function(){
     mRotation += deltaRotation;
     startingRotation += deltaRotation;
     ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + mRotation + "deg)";
+    if(mRotation >= 0) displayRotation=mRotation|0;
+else displayRotation = (360+mRotation)|0;
+ruler_text.innerHTML=(displayRotation|0) +"°";
   });
   
   //Touch rotation
@@ -177,6 +185,9 @@ exports.LoadRuler = function(){
     mRotation += deltaRotation;
     startingRotation += deltaRotation;
     ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + mRotation + "deg)";
+    if(mRotation >= 0) displayRotation=mRotation|0;
+else displayRotation = (360+mRotation)|0;
+ruler_text.innerHTML=(displayRotation|0) +"°";
   });
   
 
@@ -229,6 +240,9 @@ exports.LoadRuler = function(){
     mRotation += deltaRotation;
     startingRotation += deltaRotation;
     ruler.style.transform = "translate("+transformX+"px,"+transformY+"px) rotate(" + mRotation + "deg)";
+    if(mRotation >= 0) displayRotation=mRotation|0;
+else displayRotation = (360+mRotation)|0;
+ruler_text.innerHTML=(displayRotation|0) +"°";
   });
 
   
