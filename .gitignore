@@ -13,10 +13,9 @@ Thumbs.db
 build-lim.bat
 publish-lim.bat
 package-lim.bat
-LIM-win32-x64/*
-LIM-win32-ia32/*
+build/*
 Installer/*
-node_modules/grunt-electron-installer/vendor/SquirrelSetup.log
+node_modules/*
 
 # APP RELATED STUFF
 app/css/style.css.map
