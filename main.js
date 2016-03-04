@@ -194,15 +194,22 @@ ipcMain.on('new-transparent-window', function() {
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
-    x: size.width - 600,
+    x: size.width - 600, // anchor the TB in bottomleft
     y: size.height - 80
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
 });
 
-ipcMain.on('send-command', function(arg0, cmd, target){
-  switch(target){
-    case "canvas": mainWindow.webContents.send(cmd); break;
-    case "toolbar": toolbarWindow.webContents.send(cmd); break;
+ipcMain.on('send-command', function(e, target, command, parameters) {
+   switch (target) {
+    case "canvas":
+      mainWindow.webContents.send('send-command', command, parameters)
+      break;
+    case "toolbar":
+      toolbarWindow.webContents.send('send-command', command, parameters)
+      break;
+    default:
+      console.log('No target in IPC SENDCOMMAND');
+      break;
   }
 });

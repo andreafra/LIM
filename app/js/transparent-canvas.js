@@ -3,12 +3,8 @@ var thisFile;
 document.addEventListener( "DOMContentLoaded", function() {
 
   const ipc = require('electron').ipcRenderer;
-  ipc.on('save-file', function(event,arg1){
-    var saveFile = require('./app/js/save');
-    saveFile.SaveAs(thisFile,rename,arg1);
-  });
 
-  ipc.send("send-command","doStuff","toolbar"); //send command "doStuff" to toolbar.
+  ipc.send("send-command","toolbar","doStuff", ["param"]); //send command "doStuff" to toolbar.
 
 // function to setup a new canvas for drawing
 // Thanks to http://perfectionkills.com/exploring-canvas-drawing-techniques/
@@ -416,59 +412,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     endDrawing();
   });
 
-  var pencil = document.getElementById("pencil");
-  var pencilColor = document.getElementById("pencil_color");
-  var rubber = document.getElementById("rubber");
-  var ruler = document.getElementById("ruler");
-  var allTools = [pencil, rubber, ruler];
-
-  var blackColor = document.getElementById("pencil_black");
-  var blueColor = document.getElementById("pencil_blue");
-  var redColor = document.getElementById("pencil_red");
-  var greenColor = document.getElementById("pencil_green");
-  var customColor = document.getElementById("pencil_other");
-  var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
-
-  var smallWidth = document.getElementById("stroke_small");
-  var mediumWidth = document.getElementById("stroke_medium");
-  var bigWidth = document.getElementById("stroke_big");
-  var allWidths = [smallWidth, mediumWidth, bigWidth];
-
-  var whiteBackground = document.getElementById("background_white");
-  var blackBackground = document.getElementById("background_black");
-  var greenBackground = document.getElementById("background_green");
-  var customBackground = document.getElementById("background_custom");
-
-  var noneBackground = document.getElementById("background_none");
-  var squaredBackground = document.getElementById("background_squared");
-  var squaredMarkedBackground = document.getElementById("background_squared_marked");
-  var linesBackground = document.getElementById("background_lines");
-  var dotsBackground = document.getElementById("background_dots");
-
-  function clearButtonSelection(buttons, _class) {
-    var colors = buttons;
-    for (var i = colors.length - 1; i >= 0; i--) {
-      colors[i].classList.remove(_class);
-    }
-  }
-
-  function showColorButtons(){
-    var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = _colorButtons.length - 1; i >= 0; i--) {
-      _colorButtons[i].classList.remove("btn-hidden");
-      _colorButtons[i].classList.add("btn-visible");
-      _colorButtons[i].style.pointerEvents = 'auto';
-    };
-  }
-
-  function hideColorButtons(){
-    var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = _colorButtons.length - 1; i >= 0; i--) {
-      _colorButtons[i].classList.remove("btn-visible");
-      _colorButtons[i].classList.add("btn-hidden");
-      _colorButtons[i].style.pointerEvents = 'none';
-    };
-  }
+  // THESE SET THINGS
 
   function setColor(color){
     lineColor = color;
@@ -482,17 +426,9 @@ document.addEventListener( "DOMContentLoaded", function() {
      rubberWidth = width;
      ctx.lineWidth = width;
   }
-  function setBackgroundColor(color) {
-    thisFile.settings.canvas.backgroundColor = color;
-    canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
-    loadIntoCanvas(thisFile, currentPage);
-  }
-  function setBackgroundImage(image) { // NO .PNG
-     thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
-     document.getElementById("grid").style.backgroundImage = thisFile.settings.canvas.backgroundImage;
-  }
 
-  function selectTool(_tool){
+
+  function selectTool(_tool){ //--da dividere
     if(_tool.id == "ruler"){
       rulerActive = !rulerActive;
       var rulerContainer = document.getElementById("ruler_container");
@@ -512,14 +448,13 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   }
 
-  // TOOL PICKER
+  // TOOL PICKER --da dividere
   pencil.addEventListener("click", function(e) {
     showColorButtons();
     if (toolSelected === "rubber") {
       ctx.strokeStyle = ctx.shadowColor = lineColor;
       ctx.lineWidth = lineWidth;
     }
-
     selectTool(this);
     ctx.lineWidth = lineWidth;
   });
@@ -532,6 +467,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     selectTool(this);
     ctx.lineWidth = lineWidth;
   });
+
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
     setColor("black");
@@ -539,7 +475,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     this.classList.add("btn-active");
   });
   blueColor.addEventListener("click", function(e) {
-    setColor("#2962ff");
+    setColor("#2 962ff");
     clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
   });
@@ -593,104 +529,13 @@ document.addEventListener( "DOMContentLoaded", function() {
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
-  // BACKGROUND COLOR PICKER
-  whiteBackground.addEventListener("click", function(e) {
-    setBackgroundColor("#ffffff");
-  });
-  blackBackground.addEventListener("click", function(e) {
-    setBackgroundColor("#000000");
-  });
-  greenBackground.addEventListener("click", function(e) {
-    setBackgroundColor("#567E3A");
-  });
-  customBackground.addEventListener("mouseup", function() {
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
-      setBackgroundColor(customBackground.getAttribute("value"));
-    });
-  });
-  customBackground.addEventListener("click", function() {
-    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
-    setBackgroundColor(customBackground.getAttribute("value"));
-  });
 
-  function isDark (color) {
-    var c = color.substring(1);      // strip #
-    var rgb = parseInt(c, 16);   // convert rrggbb to decimal
-    var r = (rgb >> 16) & 0xff;  // extract red
-    var g = (rgb >>  8) & 0xff;  // extract green
-    var b = (rgb >>  0) & 0xff;  // extract blue
-
-    var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-
-    if (luma > 40) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  noneBackground.addEventListener("click", function() {
-    setBackgroundImage("none");
-  });
-  squaredBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("squared-light");
-    } else {
-      setBackgroundImage("squared-dark");
-    }
-    console.log(canvas.style.backgroundColor)
-    console.log(isDark(canvas.style.backgroundColor))
-  });
-  squaredMarkedBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("squared-marked-light");
-    } else {
-      setBackgroundImage("squared-marked-dark");
-    }
-  });
-  linesBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("lines-light");
-    } else {
-      setBackgroundImage("lines-dark");
-    }
-  });
-  dotsBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("dots-light");
-    } else {
-      setBackgroundImage("dots-dark");
-    }
-  });
+  ipc.on()
 
 
-  //SAVE
-  var saveButton = document.getElementById("save");
-
-  var saveFile = require('./app/js/save');
-
-  saveButton.addEventListener("click", function() {
-    if (thisFile.settings.name=="unnamed") {
-      saveFile.SaveAs(thisFile, rename);
-      console.log('saved as!')
-    } else {
-      saveFile.Save(thisFile);
-      console.log('saved!')
-    }
-  });
-
-  function rename(fileName){
-    thisFile.settings.name == fileName;
-    document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
-  }
-
-  //LOAD
-  var loadButton = document.getElementById("load");
-  var loadFile = require('./app/js/load');
-
-  loadButton.addEventListener("click", function(){
-    loadFile.Load(loadIntoCanvas);
-  });
+  // ==================================================================== //
+  //                    O T H E R   F U N C T I O N S                     //
+  // ==================================================================== //
 
   function loadIntoCanvas(file, page){ /*page is optional. if not set, page will be 0*/
     if (file !== null && file !== undefined) {
@@ -854,51 +699,4 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
     }
   }
-
-  //PAGES
-
-  var pageCounter = document.getElementById("page_counter");
-  var pageNextBtn = document.getElementById("page_next");
-  var pagePrevBtn = document.getElementById("page_prev");
-
-  function pageNext(){
-    loadIntoCanvas(thisFile,currentPage+1);
-  }
-
-  function pagePrev(){
-    loadIntoCanvas(thisFile,currentPage-1);
-  }
-
-  function setPage(_page){
-    loadIntoCanvas(thisFile,_page);
-  }
-
-  pageNextBtn.addEventListener("click", function(){
-    pageNext();
-    updateNavButtons();
-  });
-  pagePrevBtn.addEventListener("click",function(){
-    if(currentPage>0) {
-      pagePrev();
-      updateNavButtons();
-    }
-  });
-
-  function updateNavButtons() {
-    if (currentPage === 0) { // we cant go back to prev page
-      pagePrevBtn.classList.add("btn-disabled");
-      pagePrevBtn.style.pointerEvents = 'none';
-    } else {
-      pagePrevBtn.classList.remove("btn-disabled");
-      pagePrevBtn.style.pointerEvents = 'auto';
-    }
-    if ((currentPage + 1) === thisFile.pages.length) { // + replaces -> when there are no more pages
-      pageNextBtn.children[0].innerHTML = "note_add";
-    } else {
-      pageNextBtn.children[0].innerHTML = "arrow_forward";
-    }
-  }
-  // Run once at start
-  updateNavButtons();
-  
 }); // document.ready?
