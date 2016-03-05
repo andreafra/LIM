@@ -468,14 +468,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   // RECEIVE SETTINGS
 
   ipc.on('send-command', function(e, command, parameters) {
-  var dialog = require('dialog');
-  dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: target+", "+command});
-    console.log('Received command!')
     switch (command) {
       case "setLine":
-        setColor(command.lineColor);
-        lineWidth(command.lineWidth);
-        setRubberWidth(command.rubberWidth);
+        setColor(parameters.lineColor);
+        lineWidth(parameters.lineWidth);
+        setRubberWidth(parameters.rubberWidth);
         console.log('Received settings for lines');
         break;
       default:
@@ -500,7 +497,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
 
       currentPage = page;
-      pageCounter.innerHTML = currentPage+1;
 
       if (thisFile.pages[currentPage] === undefined) {
         thisFile.pages[currentPage] = {lines: [], backstack: []};
@@ -624,7 +620,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     loadIntoCanvas(thisFile, currentPage);
   });
 
-  /*function resetBackstackButtons() {
+  function resetBackstackButtons() {/*  DA RIVEDERE
     if(thisFile.pages[currentPage] === undefined){
       undo.style.pointerEvents = 'none';
       redo.style.pointerEvents = 'none';
@@ -649,6 +645,6 @@ document.addEventListener( "DOMContentLoaded", function() {
         undo.style.pointerEvents = 'auto';
         undo.classList.remove("btn-disabled");
       }
-    }
-  }*/
+    }*/
+  }
 }); // document.ready?
