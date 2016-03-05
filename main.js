@@ -203,10 +203,10 @@ ipcMain.on('new-transparent-window', function() {
 ipcMain.on('send-command', function(e, target, command, parameters) {
    switch (target) {
     case "canvas":
-      mainWindow.webContents.send('send-command', command, parameters)
+      mainWindow.webContents.send('send-command', command, parameters);
       break;
     case "toolbar":
-      toolbarWindow.webContents.send('send-command', command, parameters)
+      toolbarWindow.webContents.send('send-command', command, parameters);
       break;
     default:
       console.log('No target in IPC SENDCOMMAND');

@@ -4,7 +4,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   const ipc = require('electron').ipcRenderer;
 
-  ipc.send("send-command","toolbar","doStuff", ["param"]); //send command "doStuff" to toolbar.
+  ipc.send("send-command","toolbar","doStuff", {}); //send command "doStuff" to toolbar.
 
 // function to setup a new canvas for drawing
 // Thanks to http://perfectionkills.com/exploring-canvas-drawing-techniques/
@@ -151,10 +151,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   ctx.shadowBlur = 0.5;
   ctx.imageSmoothingEnabled = true;
 
-  //default values
+  //default values - just first setup
   var lineColor = "black";
   var lineWidth = 4;
   var rubberWidth = 30;
+
   ctx.strokeStyle = lineColor;
   ctx.shadowColor = lineColor;
   ctx.lineWidth = lineWidth;
@@ -162,8 +163,6 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var toolSelected = "pencil"; // can be "pencil", "rubber"
   var rulerActive = false;
-
-  
 
   var isDrawing, pages = [ ];
   var hasMoved = false;
@@ -261,7 +260,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     redo_times=1;
   }
-
   function moveDrawing(e, touch) {
     if (toolSelected === "ruler") return;
     if (!isDrawing) return;
@@ -413,7 +411,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
 
   // THESE SET THINGS
-
   function setColor(color){
     lineColor = color;
     pencilColor.style.borderBottom = "12px solid " + lineColor;
@@ -449,7 +446,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   // TOOL PICKER --da dividere
-  pencil.addEventListener("click", function(e) {
+  /*pencil.addEventListener("click", function(e) {
     showColorButtons();
     if (toolSelected === "rubber") {
       ctx.strokeStyle = ctx.shadowColor = lineColor;
@@ -466,71 +463,24 @@ document.addEventListener( "DOMContentLoaded", function() {
   ruler.addEventListener("click", function(e) {
     selectTool(this);
     ctx.lineWidth = lineWidth;
-  });
+  }); */
 
-  // COLOR PICKER
-  blackColor.addEventListener("click", function(e) {
-    setColor("black");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  blueColor.addEventListener("click", function(e) {
-    setColor("#2 962ff");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  redColor.addEventListener("click", function(e) {
-    setColor("#f44336");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  greenColor.addEventListener("click", function(e) {
-    setColor("#4caf50");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  customColor.addEventListener("mouseup", function() {
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
-      setColor(customColor.getAttribute("value"));
-    });
-  });
-  customColor.addEventListener("click", function() {
-    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
-    setColor(customColor.getAttribute("value"));
-  });
+  // RECEIVE SETTINGS
 
-  // WIDTH
-  smallWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      setRubberWidth(15);
-    } else {
-      setWidth(2);
+  ipc.on('send-command', function(e, command, parameters) {
+    console.log('Received command!')
+    switch (command) {
+      case "setLine":
+        setColor(command.lineColor);
+        lineWidth(command.lineWidth);
+        setRubberWidth(command.rubberWidth);
+        console.log('Received settings for lines');
+        break;
+      default:
+      console.log('No valid command sent')
+        break;
     }
-    clearButtonSelection(allWidths, "btn-active");
-    this.classList.add("btn-active");
   });
-  mediumWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      setRubberWidth(30);
-    } else {
-      setWidth(4);
-    }
-    clearButtonSelection(allWidths, "btn-active");
-    this.classList.add("btn-active");
-  });
-  bigWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      setRubberWidth(60);
-    } else {
-      setWidth(6);
-    }
-    clearButtonSelection(allWidths, "btn-active");
-    this.classList.add("btn-active");
-  });
-
-  ipc.on()
 
 
   // ==================================================================== //
@@ -672,7 +622,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     loadIntoCanvas(thisFile, currentPage);
   });
 
-  function resetBackstackButtons() {
+  /*function resetBackstackButtons() {
     if(thisFile.pages[currentPage] === undefined){
       undo.style.pointerEvents = 'none';
       redo.style.pointerEvents = 'none';
@@ -698,5 +648,5 @@ document.addEventListener( "DOMContentLoaded", function() {
         undo.classList.remove("btn-disabled");
       }
     }
-  }
+  }*/
 }); // document.ready?
