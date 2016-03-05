@@ -22,6 +22,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 	var bigWidth = document.getElementById("stroke_big");
 	var allWidths = [smallWidth, mediumWidth, bigWidth];
 
+  var rulerContainer = document.getElementById("ruler_container");
+
   // 2: SET VARIABLES FOR SETTINGS
 
   //default values
@@ -31,9 +33,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // 3: SET SUPPORT FUNCTIONS
 	function clearButtonSelection(buttons, _class) {
-		var colors = buttons;
-		for (var i = colors.length - 1; i >= 0; i--) {
-		  colors[i].classList.remove(_class);
+		for (var i = buttons.length - 1; i >= 0; i--) {
+		  buttons[i].classList.remove(_class);
 		}
 	}
 
@@ -102,49 +103,67 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // 5: MAKE SETTINGS FOR WIDTH
   smallWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      rubberWidth = 15
-    } else {
-      lineWidth = 2
-    }
+    rubberWidth = 15
+    lineWidth = 2
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
     sendLine(lineColor, lineWidth, rubberWidth);
   });
   mediumWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      rubberWidth = 40
-    } else {
-      lineWitdh = 4
-    }
+    rubberWidth = 40
+    lineWitdh = 4
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
     sendLine(lineColor, lineWidth, rubberWidth);
   });
   bigWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      rubberWidth = 60
-    } else {
-      lineWidth = 6
-    }
+    rubberWidth = 60
+    lineWidth = 6
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
     sendLine(lineColor, lineWidth, rubberWidth);
   });
 
+  // SETTINGS FOR TOOLS
+  pencil.addEventListener("click", function(e) {
+    showColorButtons();
+    /*if (toolSelected === "rubber") {
+      ctx.strokeStyle = ctx.shadowColor = lineColor;
+      ctx.lineWidth = lineWidth;
+    }*/
+    sendTool(this);
+    //ctx.lineWidth = lineWidth;
+  });
+  rubber.addEventListener("click", function(e) {
+    hideColorButtons();
+    sendTool(this);
+    //ctx.lineWidth = rubberWidth;
+  });
+  ruler.addEventListener("click", function(e) {
+    sendTool(this);
+    //ctx.lineWidth = lineWidth;
+  }); 
+
   // 6: SEND SETTINGS
 
   // this sends a JS Object containing the settings of the line
 	function sendLine(lineColor, lineWidth, rubberWidth) {
+    pencilColor.style.borderBottom = "12px solid " + lineColor;
     ipc.send('send-command', 'canvas', 'setLine', {
       lineColor: lineColor,
       lineWidth: lineWidth,
       rubberWidth: rubberWidth
     });
     console.log('Sent settings!')
+  }
+
+  function sendTool(tool){
+      clearButtonSelection(allTools, "btn-tool-active");
+      tool.classList.add("btn-tool-active");
+    ipc.send('send-command', 'canvas', 'setTool', {tool: tool.id});
   }
 
 	ipc.on('send-command', function(e, command) {
