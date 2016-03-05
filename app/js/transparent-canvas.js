@@ -468,6 +468,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   // RECEIVE SETTINGS
 
   ipc.on('send-command', function(e, command, parameters) {
+  var dialog = require('dialog');
+  dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: target+", "+command});
     console.log('Received command!')
     switch (command) {
       case "setLine":
