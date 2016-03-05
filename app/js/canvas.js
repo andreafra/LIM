@@ -50,7 +50,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   content.style.height = canvasHeight + "px";
 
-  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas><div id="grid"></div>';
+  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><div id="grid"></div>';
   document.getElementById("content").innerHTML = canvasToAdd;
 
   var canvas = document.getElementById("canvas");

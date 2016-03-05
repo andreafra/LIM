@@ -43,9 +43,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   var content = document.getElementById("content");
   var title = document.getElementById("title");
 
-  content.style.height = String(window.innerHeight) + "px";
+  content.style.height = canvasHeight + "px";
 
-  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas><div id="grid"></div>';
+  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><div id="grid"></div>';
   document.getElementById("content").innerHTML = canvasToAdd;
 
   var canvas = document.getElementById("canvas");
@@ -72,9 +72,9 @@ document.addEventListener( "DOMContentLoaded", function() {
       return;
     }
 
-    content.style.height = String(window.innerHeight) + "px";
+    content.style.height = canvasHeight + "px";
 
-    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+(canvasHeight)+'"></canvas><div id="grid"></div>';
+    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><div id="grid"></div>';
     document.getElementById("content").innerHTML = canvasToAdd;
     canvas = document.getElementById("canvas");
     DrawPaddingX = canvas.offsetLeft;
