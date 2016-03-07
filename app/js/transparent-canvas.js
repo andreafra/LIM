@@ -45,7 +45,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   content.style.height = canvasHeight + "px";
 
-  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><div id="grid"></div>';
+  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
   document.getElementById("content").innerHTML = canvasToAdd;
 
   var canvas = document.getElementById("canvas");
@@ -74,7 +74,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     content.style.height = canvasHeight + "px";
 
-    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><div id="grid"></div>';
+    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
     document.getElementById("content").innerHTML = canvasToAdd;
     canvas = document.getElementById("canvas");
     DrawPaddingX = canvas.offsetLeft;
@@ -475,7 +475,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       updateNavButtons();
 
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
-      document.getElementById("grid").style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+      canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
       title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
