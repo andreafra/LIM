@@ -410,7 +410,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function setRubberWidth(width) {
      rubberWidth = width;
-     ctx.lineWidth = width;
   }
 
 
@@ -429,26 +428,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       toolSelected = _tool;
     }
   }
-
-  // TOOL PICKER --da dividere
-  /*pencil.addEventListener("click", function(e) {
-    showColorButtons();
-    if (toolSelected === "rubber") {
-      ctx.strokeStyle = ctx.shadowColor = lineColor;
-      ctx.lineWidth = lineWidth;
-    }
-    selectTool(this);
-    ctx.lineWidth = lineWidth;
-  });
-  rubber.addEventListener("click", function(e) {
-    hideColorButtons();
-    selectTool(this);
-    ctx.lineWidth = rubberWidth;
-  });
-  ruler.addEventListener("click", function(e) {
-    selectTool(this);
-    ctx.lineWidth = lineWidth;
-  }); */
 
   // RECEIVE SETTINGS
 
@@ -501,12 +480,6 @@ document.addEventListener( "DOMContentLoaded", function() {
 
       //DRAW
       //When backgruond changes color, i want rubber to be re-colored to match bg color
-      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++) {
-        if(thisFile.pages[currentPage].lines[i].rubber)
-        {
-          thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
-        }
-      }
       var _lines = thisFile.pages[currentPage].lines;
 
       for (var line = 0; line < _lines.length; line++) {

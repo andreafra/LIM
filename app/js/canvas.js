@@ -50,7 +50,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   content.style.height = canvasHeight + "px";
 
-  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><div id="grid"></div>';
+  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
   document.getElementById("content").innerHTML = canvasToAdd;
 
   var canvas = document.getElementById("canvas");
@@ -80,7 +80,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     content.style.height = canvasHeight + "px";
 
-    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><div id="grid"></div>';
+    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
     document.getElementById("content").innerHTML = canvasToAdd;
     canvas = document.getElementById("canvas");
     DrawPaddingX = canvas.offsetLeft;
@@ -472,7 +472,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function setRubberWidth(width) {
      rubberWidth = width;
-     ctx.lineWidth = width;
   }
   function setBackgroundColor(color) {
     thisFile.settings.canvas.backgroundColor = color;
@@ -481,7 +480,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function setBackgroundImage(image) { // NO .PNG
      thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
-     document.getElementById("grid").style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+     canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
   }
 
   function selectTool(_tool){
@@ -507,22 +506,14 @@ document.addEventListener( "DOMContentLoaded", function() {
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     showColorButtons();
-    if (toolSelected === "rubber") {
-      ctx.strokeStyle = ctx.shadowColor = lineColor;
-      ctx.lineWidth = lineWidth;
-    }
-
     selectTool(this);
-    ctx.lineWidth = lineWidth;
   });
   rubber.addEventListener("click", function(e) {
     hideColorButtons();
     selectTool(this);
-    ctx.lineWidth = rubberWidth;
   });
   ruler.addEventListener("click", function(e) {
     selectTool(this);
-    ctx.lineWidth = lineWidth;
   });
   // COLOR PICKER
   blackColor.addEventListener("click", function(e) {
@@ -559,29 +550,20 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // WIDTH
   smallWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      setRubberWidth(15);
-    } else {
-      setWidth(2);
-    }
+    setRubberWidth(15);
+    setWidth(2);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   mediumWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      setRubberWidth(30);
-    } else {
-      setWidth(4);
-    }
+    setRubberWidth(30);
+    setWidth(4);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   bigWidth.addEventListener("click", function() {
-    if (toolSelected === "rubber") {
-      setRubberWidth(60);
-    } else {
-      setWidth(6);
-    }
+    setRubberWidth(60);
+    setWidth(6);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
@@ -706,7 +688,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       updateNavButtons();
 
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
-      document.getElementById("grid").style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+      canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
       title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
