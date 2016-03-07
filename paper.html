@@ -10,9 +10,10 @@
     <header id="header" style="-webkit-app-region: drag">
       <h1 id="title">unnamed</h1>
       <div id="window-menu">
-        <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
-        <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
+        <button id="menu-back" class="btn btn-menu btn-menu-left btn-white-hover"><i class="material-icons">arrow_back</i></button>
         <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
+        <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
+        <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
       </div>
     </header>
     <div id="content">
@@ -135,6 +136,7 @@
       var closeBtn = document.querySelector('#menu-close');
       var maximBtn = document.querySelector('#menu-maximize');
       var minimBtn = document.querySelector('#menu-minimize');
+      var backBtn = document.querySelector('#menu-back');
       var closeSettings = document.querySelector('#settings_panel_close');
       var openSettings = document.querySelector('#settings_panel_open');
       
@@ -146,6 +148,9 @@
       });
       minimBtn.addEventListener('click', function () {
         ipcRenderer.send('minimize-main-window');
+      });
+      backBtn.addEventListener('click', function() {
+        ipcRenderer.send('back-to-main');
       });
       closeSettings.addEventListener('click', function() {
         document.getElementById('settings_container').classList.add('hidden');

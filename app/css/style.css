@@ -113,6 +113,7 @@ footer {
   display: block;
   position: absolute;
   right: 0;
+  left: 0;
   top: 0;
   bottom: 0; }
 
@@ -292,7 +293,7 @@ footer {
 .toolbar-spacer {
   margin-left: 15px;
   margin-right: 15px;
-  border-left: 1px solid #d5d5d5;
+  border-left: 1px solid #d4d4d4;
   margin-top: 20px;
   margin-bottom: 20px; }
 
@@ -430,7 +431,12 @@ footer {
   border-radius: 5px;
   background: #fff;
   border: none;
-  box-shadow: none; }
+  box-shadow: none;
+  float: right; }
+
+.btn-menu-left {
+  margin-left: 5px;
+  float: left; }
 
 .btn-toolbar {
   align-self: center;

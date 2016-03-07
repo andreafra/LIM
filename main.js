@@ -124,6 +124,7 @@ updater.autoUpdater
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
+var transparentWindow = null;
 var toolbarWindow = null;
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -144,7 +145,7 @@ app.on('ready', function() {
   mainWindow = new BrowserWindow({
     width: 800/*size.width*/,
     height: 600/*size.height*/,
-    transparent:true,
+    transparent:false,
     fullscreen:false,
     frame: false,
     minWidth: 800,
@@ -178,12 +179,26 @@ ipcMain.on('minimize-main-window', function () {
 ipcMain.on('new-default-window', function() {
   mainWindow.loadURL('file://' + __dirname + '/paper.html');
 });
+ipcMain.on('back-to-main', function() {
+  mainWindow.loadURL('file://' + __dirname + '/index.html');
+  mainWindow.show();
+});
 ipcMain.on('new-transparent-window', function() {
-  mainWindow.loadURL('file://' + __dirname + '/transparent.html');
-  mainWindow.maximize();
-
+  mainWindow.hide();
   var electronScreen = electron.screen;
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
+
+  transparentWindow = new BrowserWindow({
+    width: size.width,
+    height: size.height,
+    transparent:true,
+    fullscreen:false,
+    frame: false,
+    minWidth: 800,
+    minHeight: 600
+  });
+  transparentWindow.loadURL('file://' + __dirname + '/transparent.html');
+
   toolbarWindow = new BrowserWindow({
     width: 600/*size.width*/,
     height: 80/*size.height*/,
@@ -198,12 +213,17 @@ ipcMain.on('new-transparent-window', function() {
     y: size.height - 80
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
+  transparentWindow.focus();
+
+  transparentWindow.on('closed', function() {
+    transparentWindow = null;
+  });
 });
 
 ipcMain.on('send-command', function(e, target, command, parameters) {
    switch (target) {
     case "canvas":
-      mainWindow.webContents.send('send-command', command, parameters);
+      transparentWindow.webContents.send('send-command', command, parameters);
       break;
     case "toolbar":
       toolbarWindow.webContents.send('send-command', command, parameters);
