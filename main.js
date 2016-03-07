@@ -181,6 +181,10 @@ ipcMain.on('new-default-window', function() {
 });
 ipcMain.on('back-to-main', function() {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
+  if(transparentWindow!= null && toolbarWindow != null){
+    toolbarWindow.close();
+    transparentWindow.close(true);
+  }
   mainWindow.show();
 });
 ipcMain.on('new-transparent-window', function() {
@@ -205,6 +209,7 @@ ipcMain.on('new-transparent-window', function() {
     transparent:false,
     fullscreen:false,
     frame: false,
+    skipTaskbar: true,
     minWidth: 800,
     minHeight: 80,
     maxHeight: 80,
@@ -215,8 +220,12 @@ ipcMain.on('new-transparent-window', function() {
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
   transparentWindow.focus();
 
-  transparentWindow.on('closed', function() {
+  transparentWindow.on('closed', function(e, keepOpen) {
     transparentWindow = null;
+    if(!keepOpen)  app.quit();
+  });
+  toolbarWindow.on('closed', function() {
+    toolbarWindow = null;
   });
 });
 
