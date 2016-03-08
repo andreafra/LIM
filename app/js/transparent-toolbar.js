@@ -89,10 +89,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
     document.getElementById("body").lastChild.addEventListener("mouseup", function() {
-      lineColor = customColor.getAttribute("value")
+      lineColor = customColor.getAttribute("value");
+      sendLine(lineColor, lineWidth, rubberWidth);
     });
-
-    sendLine(lineColor, lineWidth, rubberWidth);
   });
   customColor.addEventListener("click", function() {
     //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
