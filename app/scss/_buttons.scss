@@ -46,8 +46,8 @@
     border: 2px solid $gray;
     box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 
     &:hover {
       box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
@@ -101,7 +101,7 @@
 .btn-tool-active {
   margin-top: -30px;
   #pencil_color {
-    top: -5px !important;
+    top: -8px !important;
   }
 }
 .btn-ruler-active {
@@ -110,7 +110,7 @@
 
 .btn-toolbar-tool {
   height: $header_height;
-  width: 40px;
+  width: auto;
   img {
     position: relative;
     height: $header_height * 2.5;
@@ -120,8 +120,9 @@
     display: block;
     position: absolute;
     z-index: 400;
-    top: 10px;
+    top: 8px;
     margin-left: 4.5px;
+    margin-top: 3px;
     height: 0;
     width: 0;
     border-top: 12px solid transparent;
@@ -130,10 +131,6 @@
     border-bottom: 12px solid $black;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
-}
-/* Pencil tip fix for transparent window */
-.toolbar-transparent #pencil_color {
-  top: 10px;
 }
 
 @each $color, $name in $colors {

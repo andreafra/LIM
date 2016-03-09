@@ -263,6 +263,10 @@ footer {
   flex-direction: row;
   padding-left: 15px;
   padding-right: 15px;
+  padding-bottom: 3px;
+  li {
+    text-align: center;
+  }
 }
 .toolbar-spacer {
     margin-left: 15px;

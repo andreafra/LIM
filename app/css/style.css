@@ -288,12 +288,15 @@ footer {
   top: 0;
   flex-direction: row;
   padding-left: 15px;
-  padding-right: 15px; }
+  padding-right: 15px;
+  padding-bottom: 3px; }
+  .toolbar-transparent li {
+    text-align: center; }
 
 .toolbar-spacer {
   margin-left: 15px;
   margin-right: 15px;
-  border-left: 1px solid #d4d4d4;
+  border-left: 1px solid #d5d5d5;
   margin-top: 20px;
   margin-bottom: 20px; }
 
@@ -450,8 +453,8 @@ footer {
     border: 2px solid #eeeeee;
     box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 10px;
-    margin-bottom: 10px; }
+    margin-top: 8px;
+    margin-bottom: 8px; }
     .btn-toolbar .btn-circular:hover {
       box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
     .btn-toolbar .btn-circular:active {
@@ -496,14 +499,14 @@ footer {
 .btn-tool-active {
   margin-top: -30px; }
   .btn-tool-active #pencil_color {
-    top: -5px !important; }
+    top: -8px !important; }
 
 .btn-ruler-active {
   margin-top: -30px; }
 
 .btn-toolbar-tool {
   height: 40px;
-  width: 40px; }
+  width: auto; }
   .btn-toolbar-tool img {
     position: relative;
     height: 100px;
@@ -512,8 +515,9 @@ footer {
     display: block;
     position: absolute;
     z-index: 400;
-    top: 10px;
+    top: 8px;
     margin-left: 4.5px;
+    margin-top: 3px;
     height: 0;
     width: 0;
     border-top: 12px solid transparent;
@@ -521,10 +525,6 @@ footer {
     border-right: 7px solid transparent;
     border-bottom: 12px solid #212121;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-
-/* Pencil tip fix for transparent window */
-.toolbar-transparent #pencil_color {
-  top: 10px; }
 
 .btn-azure {
   background-color: #36D3FF; }
