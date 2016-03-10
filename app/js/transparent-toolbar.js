@@ -41,7 +41,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 	function showColorButtons(){
 		var j = document.getElementsByClassName("btn-toolbar-color");
 		for (var i = j.length - 1; i >= 0; i--) {
-		  allColors[i].classList.remove("btn-hidden");
+		  allColors[i].parentElement.classList.remove("btn-hidden");
 		  allColors[i].parentElement.classList.add("btn-visible");
 		  allColors[i].style.pointerEvents = 'auto';
 		};
@@ -50,8 +50,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 	function hideColorButtons(){
 		var j = document.getElementsByClassName("btn-toolbar-color");
 		for (var i = j.length - 1; i >= 0; i--) {
-		  allColors[i].classList.remove("btn-visible");
-		  allColors[i].classList.add("btn-hidden");
+		  allColors[i].parentElement.classList.remove("btn-visible");
+		  allColors[i].parentElement.classList.add("btn-hidden");
 		  allColors[i].style.pointerEvents = 'none';
 		};
 	}

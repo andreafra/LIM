@@ -447,8 +447,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   function showColorButtons(){
     var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
     for (var i = _colorButtons.length - 1; i >= 0; i--) {
-      _colorButtons[i].classList.remove("btn-hidden");
-      _colorButtons[i].classList.add("btn-visible");
+      _colorButtons[i].parentElement.classList.remove("btn-hidden");
+      _colorButtons[i].parentElement.classList.add("btn-visible");
       _colorButtons[i].style.pointerEvents = 'auto';
     };
   }
@@ -456,8 +456,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   function hideColorButtons(){
     var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
     for (var i = _colorButtons.length - 1; i >= 0; i--) {
-      _colorButtons[i].classList.remove("btn-visible");
-      _colorButtons[i].classList.add("btn-hidden");
+      _colorButtons[i].parentElement.classList.remove("btn-visible");
+      _colorButtons[i].parentElement.classList.add("btn-hidden");
       _colorButtons[i].style.pointerEvents = 'none';
     };
   }
