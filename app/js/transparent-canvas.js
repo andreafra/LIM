@@ -4,8 +4,6 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   const ipc = require('electron').ipcRenderer;
 
-  ipc.send("send-command","toolbar","doStuff", {}); //send command "doStuff" to toolbar.
-
 // function to setup a new canvas for drawing
 // Thanks to http://perfectionkills.com/exploring-canvas-drawing-techniques/
 // for the nice explanation :)
@@ -443,6 +441,15 @@ document.addEventListener( "DOMContentLoaded", function() {
         selectTool(parameters.tool);
         console.log('Received settings for tool');
         break;
+      case "undo":
+        undo();
+        break;
+      case "redo":
+        redo();
+        break;
+      case "clearAll":
+        clearAll();
+        break;
       default:
       console.log('No valid command sent')
         break;
@@ -472,11 +479,9 @@ document.addEventListener( "DOMContentLoaded", function() {
 
       resizeCanvas(false);
       resetBackstackButtons();
-      updateNavButtons();
 
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
       canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
-      title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
       //When backgruond changes color, i want rubber to be re-colored to match bg color
@@ -547,14 +552,12 @@ document.addEventListener( "DOMContentLoaded", function() {
   rulerLoader.LoadRuler();
 
   //UNDO & REDO
-  var undo = document.getElementById("undo");
-  var redo = document.getElementById("redo");
   var backstack_counter=0;
   var redo_times = 1;
   //On load
   resetBackstackButtons();
 
-  undo.addEventListener("click",function() {
+  function undo(){
     if(thisFile.pages[currentPage] === undefined) return;
     var _lines = thisFile.pages[currentPage].lines;
     if(_lines.length === 0) return;
@@ -562,9 +565,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     backstack_counter++;
     redo_times=1;
     loadIntoCanvas(thisFile,currentPage);
-  });
+  }
 
-  redo.addEventListener("click",function() {
+  function redo(){
     if(thisFile.pages[currentPage] === undefined) return;
     var _backstack = thisFile.pages[currentPage].backstack;
     if (_backstack.length === 0) return;
@@ -574,12 +577,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     redo_times=1;
     loadIntoCanvas(thisFile,currentPage);
-  });
+  }
 
   // CLEAR ALL
 
-  var clearAllBtn = document.getElementById("clear_all")
-  clearAllBtn.addEventListener("mousedown", function() {
+  function clearAll(){
     var _lines = thisFile.pages[currentPage].lines;
     redo_times=0; //was most likely 1 before, so let's set it to 0 before increasing it
     for (var i = _lines.length - 1; i >= 0; i--) {
@@ -588,33 +590,35 @@ document.addEventListener( "DOMContentLoaded", function() {
       backstack_counter++;
     };
     loadIntoCanvas(thisFile, currentPage);
-  });
+  }
 
-  function resetBackstackButtons() {/*  DA RIVEDERE
-    if(thisFile.pages[currentPage] === undefined){
-      undo.style.pointerEvents = 'none';
+  function resetBackstackButtons() {
+    var _lines = thisFile.pages[currentPage].lines;
+    var _backstack = thisFile.pages[currentPage].backstack;
+    /*if(_backstack.length==0){
+      //DISABLE REDO
       redo.style.pointerEvents = 'none';
+      redo.classList.add("btn-disabled");
     }
     else{
-      var _lines = thisFile.pages[currentPage].lines;
-      var _backstack = thisFile.pages[currentPage].backstack;
-      if(_backstack.length==0){
-        redo.style.pointerEvents = 'none';
-        redo.classList.add("btn-disabled");
-      }
-      else{
-        redo.style.pointerEvents = 'auto';
-        redo.classList.remove("btn-disabled");
-      }
+      //ENABLE REDO
+      redo.style.pointerEvents = 'auto';
+      redo.classList.remove("btn-disabled");
+    }
 
-      if(_lines.length==0){
-        undo.style.pointerEvents = 'none';
-        undo.classList.add("btn-disabled");
-      }
-      else{
-        undo.style.pointerEvents = 'auto';
-        undo.classList.remove("btn-disabled");
-      }
+    if(_lines.length==0){
+      //DISABLE UNDO
+      undo.style.pointerEvents = 'none';
+      undo.classList.add("btn-disabled");
+    }
+    else{
+      //ENABLE REDO
+      undo.style.pointerEvents = 'auto';
+      undo.classList.remove("btn-disabled");
     }*/
+    ipc.send('send-command', 'toolbar', 'updateBackstackButtons', {
+      redo: _backstack.length==0,
+      undo: _lines.length==0
+    })
   }
 }); // document.ready?

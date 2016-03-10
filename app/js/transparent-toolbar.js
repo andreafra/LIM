@@ -22,6 +22,10 @@ document.addEventListener( "DOMContentLoaded", function() {
 	var bigWidth = document.getElementById("stroke_big");
 	var allWidths = [smallWidth, mediumWidth, bigWidth];
 
+  var undo = document.getElementById("undo");
+  var redo = document.getElementById("redo");
+  var clearAllBtn = document.getElementById("clear_all")
+
   var rulerContainer = document.getElementById("ruler_container");
 
   // 2: SET VARIABLES FOR SETTINGS
@@ -146,6 +150,20 @@ document.addEventListener( "DOMContentLoaded", function() {
     //ctx.lineWidth = lineWidth;
   }); 
 
+  //UNDO & REDO
+  var backstack_counter=0;
+  var redo_times = 1;
+
+  undo.addEventListener("click",function() {
+    ipc.send('send-command', 'canvas', 'undo');
+  });
+  redo.addEventListener("click",function() {
+    ipc.send('send-command', 'canvas', 'redo');
+  });
+  clearAllBtn.addEventListener("click",function() {
+    ipc.send('send-command', 'canvas', 'clearAll');
+  });
+
   // 6: SEND SETTINGS
 
   // this sends a JS Object containing the settings of the line
@@ -165,7 +183,34 @@ document.addEventListener( "DOMContentLoaded", function() {
     ipc.send('send-command', 'canvas', 'setTool', {tool: tool.id});
   }
 
-	ipc.on('send-command', function(e, command) {
-		console.log(command);
-	});
+	ipc.on('send-command', function(e, command, parameters) {
+    switch (command) {
+      case "updateBackstackButtons":
+        if(parameters.redo){
+          //DISABLE REDO
+          redo.style.pointerEvents = 'none';
+          redo.classList.add("btn-disabled");
+        }
+        else{
+          //ENABLE REDO
+          redo.style.pointerEvents = 'auto';
+          redo.classList.remove("btn-disabled");
+        }
+
+        if(parameters.undo){
+          //DISABLE UNDO
+          undo.style.pointerEvents = 'none';
+          undo.classList.add("btn-disabled");
+        }
+        else{
+          //ENABLE REDO
+          undo.style.pointerEvents = 'auto';
+          undo.classList.remove("btn-disabled");
+        }
+        break;
+      default:
+        console.log("Unhandled command: " + command);
+        break;
+    }
+  });
 });
