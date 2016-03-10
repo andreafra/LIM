@@ -445,20 +445,20 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   function showColorButtons(){
-    var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = _colorButtons.length - 1; i >= 0; i--) {
-      _colorButtons[i].parentElement.classList.remove("btn-hidden");
-      _colorButtons[i].parentElement.classList.add("btn-visible");
-      _colorButtons[i].style.pointerEvents = 'auto';
+    var j = document.getElementsByClassName("btn-toolbar-color");
+    for (var i = j.length - 1; i >= 0; i--) {
+      allColors[i].parentElement.classList.remove("btn-hidden");
+      allColors[i].parentElement.classList.add("btn-visible");
+      allColors[i].style.pointerEvents = 'auto';
     };
   }
 
   function hideColorButtons(){
-    var _colorButtons = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = _colorButtons.length - 1; i >= 0; i--) {
-      _colorButtons[i].parentElement.classList.remove("btn-visible");
-      _colorButtons[i].parentElement.classList.add("btn-hidden");
-      _colorButtons[i].style.pointerEvents = 'none';
+    var j = document.getElementsByClassName("btn-toolbar-color");
+    for (var i = j.length - 1; i >= 0; i--) {
+      allColors[i].parentElement.classList.remove("btn-visible");
+      allColors[i].parentElement.classList.add("btn-hidden");
+      allColors[i].style.pointerEvents = 'none';
     };
   }
 
