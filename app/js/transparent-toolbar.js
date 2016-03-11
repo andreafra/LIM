@@ -8,7 +8,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 	var pencilColor = document.getElementById("pencil_color");
 	var rubber = document.getElementById("rubber");
 	var ruler = document.getElementById("ruler");
-	var allTools = [pencil, rubber, ruler];
+	var allTools = [pencil, rubber];
 
 	var blackColor = document.getElementById("pencil_black");
 	var blueColor = document.getElementById("pencil_blue");
@@ -34,6 +34,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   var lineColor = "black";
   var lineWidth = 4;
   var rubberWidth = 30;
+
+  var rulerActive = false;
 
   // 3: SET SUPPORT FUNCTIONS
 	function clearButtonSelection(buttons, _class) {
@@ -178,8 +180,15 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   function sendTool(tool){
+    if(tool.id!="ruler"){
       clearButtonSelection(allTools, "btn-tool-active");
       tool.classList.add("btn-tool-active");
+    }
+    else{
+      rulerActive=!rulerActive;
+      if(rulerActive)  tool.classList.add("btn-tool-active");
+      else             tool.classList.remove("btn-tool-active");
+    }
     ipc.send('send-command', 'canvas', 'setTool', {tool: tool.id});
   }
 
