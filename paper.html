@@ -79,26 +79,21 @@
         <li class="toolbar-spacer">
         </li>
         <!-- Color Picker -->
-        <li class="btn-toolbar">
-          <span class="btn-circular btn-toolbar-color btn-active" id="pencil_black"></span>
-          <span class="btn-circular" id="stroke_small"></span>
+        <li class="btn-toolbar btn-container">
+          <div class="btn-row" id="color_picker">
+            <span class="btn-circular btn-toolbar-color btn-active" id="pencil_black"></span>
+            <span class="btn-circular btn-toolbar-color" id="pencil_blue"></span>
+            <span class="btn-circular btn-toolbar-color" id="pencil_red"></span>
+            <span class="btn-circular btn-toolbar-color" id="pencil_green"></span>
+            <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
+          </div>
+          <div class="btn-row" id="width_picker">
+            <span class="btn-circular" id="stroke_small"></span>
+            <span class="btn-circular btn-active" id="stroke_medium"></span>
+            <span class="btn-circular" id="stroke_big"></span>
+          </div>
         </li>
-        <li class="btn-toolbar">
-          <span class="btn-circular btn-toolbar-color" id="pencil_blue"></span>
-          <span class="btn-circular btn-active" id="stroke_medium"></span>
-        </li>
-        <li class="btn-toolbar">
-          <span class="btn-circular btn-toolbar-color" id="pencil_red"></span>
-          <span class="btn-circular" id="stroke_big"></span>
-        </li>
-        <li class="btn-toolbar">
-          <span class="btn-circular btn-toolbar-color" id="pencil_green"></span>
-          <span class="btn-circular btn-invisible"></span>
-        </li>
-        <li class="btn-toolbar btn-toolbar-color">
-          <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
-          <span class="btn-circular btn-invisible"></span>
-        </li>
+        <!-- /Color Picker -->
       </ul>
       <div class="toolbar-center">
         <button id="settings_panel_open" class="btn btn-menu"><i class="material-icons">more_horiz</i></button>
