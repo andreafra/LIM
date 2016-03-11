@@ -515,8 +515,6 @@ document.addEventListener( "DOMContentLoaded", function() {
             }
           }
           else{
-            ctx.shadowBlur = 0.5;
-            ctx.imageSmoothingEnabled = true;
             ctx.strokeStyle = ctx.shadowColor = _line.color;
             ctx.lineWidth = _line.width;
             //Adapted code from startDrawing
