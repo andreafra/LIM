@@ -286,6 +286,7 @@ footer {
   padding: 0;
   right: 0;
   top: 0;
+  height: 80px;
   flex-direction: row;
   padding-left: 15px;
   padding-right: 15px;
@@ -445,25 +446,37 @@ footer {
   align-self: center;
   margin-right: 10px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-  .btn-toolbar .btn-circular {
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 15px;
-    border: 2px solid #eeeeee;
-    box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 8px;
-    margin-bottom: 8px; }
-    .btn-toolbar .btn-circular:hover {
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
-    .btn-toolbar .btn-circular:active {
-      box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
-    .btn-toolbar .btn-circular.btn-invisible {
-      border-color: transparent;
-      box-shadow: none; }
-      .btn-toolbar .btn-circular.btn-invisible:hover, .btn-toolbar .btn-circular.btn-invisible:active {
+
+.btn-container {
+  display: block;
+  height: 80px; }
+  .btn-container .btn-row {
+    display: flex !important;
+    margin: 0;
+    height: 50%; }
+    .btn-container .btn-row:first-child > span {
+      margin-top: 4px; }
+    .btn-container .btn-row:last-child > span {
+      margin-bottom: 4px; }
+    .btn-container .btn-row .btn-circular {
+      display: block;
+      align-self: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 15px;
+      border: 2px solid #eeeeee;
+      box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0px 4px 0px 4px; }
+      .btn-container .btn-row .btn-circular:hover {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
+      .btn-container .btn-row .btn-circular:active {
+        box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
+      .btn-container .btn-row .btn-circular.btn-invisible {
+        border-color: transparent;
         box-shadow: none; }
+        .btn-container .btn-row .btn-circular.btn-invisible:hover, .btn-container .btn-row .btn-circular.btn-invisible:active {
+          box-shadow: none; }
 
 .btn-pager {
   height: 48px;

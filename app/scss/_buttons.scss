@@ -37,29 +37,45 @@
   align-self: center;
   margin-right: 10px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-container {
+  display: block;
+  height: $header_height*2;
 
-  .btn-circular {
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 15px;
-    border: 2px solid $gray;
-    box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 8px;
-    margin-bottom: 8px;
+  .btn-row {
+    display: flex !important;
+    margin: 0;
+    height: 50%;
+    &:first-child > span {
+      margin-top: 4px;
+    }
+    &:last-child > span {
+      margin-bottom: 4px;
+    }
 
-    &:hover {
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-    }
-    &:active {
-      box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
-    }
-    &.btn-invisible {
-      border-color: transparent;
-      box-shadow: none;
-      &:hover, &:active {
+    .btn-circular {
+      display: block;
+      align-self:center;
+      width: 24px;
+      height: 24px;
+      border-radius: 15px;
+      border: 2px solid $gray;
+      box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0px 4px 0px 4px;
+
+      &:hover {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+      &:active {
+        box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
+      }
+      &.btn-invisible {
+        border-color: transparent;
         box-shadow: none;
+        &:hover, &:active {
+          box-shadow: none;
+        }
       }
     }
   }
