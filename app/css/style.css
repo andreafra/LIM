@@ -454,9 +454,9 @@ footer {
     display: flex !important;
     margin: 0;
     height: 50%; }
-    .btn-container .btn-row:first-child > span {
+    .btn-container .btn-row:first-child > span, .btn-container .btn-row:first-child > input {
       margin-top: 4px; }
-    .btn-container .btn-row:last-child > span {
+    .btn-container .btn-row:last-child > span, .btn-container .btn-row:last-child > input {
       margin-bottom: 4px; }
     .btn-container .btn-row .btn-circular {
       display: block;
