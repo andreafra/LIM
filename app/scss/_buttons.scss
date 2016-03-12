@@ -46,11 +46,13 @@
     display: flex !important;
     margin: 0;
     height: 50%;
-    &:first-child > span {
+    &:first-child > span, &:first-child > input {
       margin-top: 4px;
+      padding: 0
     }
-    &:last-child > span {
+    &:last-child > span, &:last-child > input {
       margin-bottom: 4px;
+      padding: 0
     }
 
     .btn-circular {
