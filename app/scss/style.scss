@@ -295,6 +295,14 @@ footer {
   background-clip: border-box;
   font-size: 0;
 }
+#toggle_navbar {
+  color: $red;
+  &:hover {
+    background-color: $red;
+    color: $white;
+    border-radius: 40px;
+  }
+}
 // altezza del cerchiolino
 $circle-height: 24px;
 $circle-small: 6px;
@@ -345,7 +353,6 @@ $circle-big: 14px;
 .hidden {
   display: none !important;
 }
-
 .welcome-content {
   position: fixed;
   display: block;

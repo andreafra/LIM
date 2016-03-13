@@ -204,17 +204,17 @@ ipcMain.on('new-transparent-window', function() {
   transparentWindow.loadURL('file://' + __dirname + '/transparent.html');
 
   toolbarWindow = new BrowserWindow({
-    width: 600/*size.width*/,
+    width: 650/*size.width*/,
     height: 80/*size.height*/,
     transparent:false,
     fullscreen:false,
     frame: false,
     skipTaskbar: true,
-    minWidth: 800,
+    minWidth: 650,
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
-    x: size.width - 600, // anchor the TB in bottomleft
+    x: size.width - 650, // anchor the TB in bottomleft
     y: size.height - 80
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
@@ -241,4 +241,25 @@ ipcMain.on('send-command', function(e, target, command, parameters) {
       console.log('No target in IPC SENDCOMMAND');
       break;
   }
+});
+ipcMain.on('toggle-navbar', function(e, isOpen) {
+  var electronScreen = electron.screen;
+  var size = electronScreen.getPrimaryDisplay().workAreaSize;
+    if (isOpen) {
+      //toolbarWindow.setSize(80, 80);
+      toolbarWindow.setBounds({
+        x: size.width - 80,
+        y: size.height - 80,
+        width: 80,
+        height: 80
+      })
+    } else {
+      //toolbarWindow.setSize(850, 80);
+      toolbarWindow.setBounds({
+        x: size.width - 650,
+        y: size.height - 80,
+        width: 650,
+        height: 80
+      })
+    }
 });

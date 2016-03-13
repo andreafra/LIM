@@ -319,6 +319,13 @@ footer {
   background-clip: border-box;
   font-size: 0; }
 
+#toggle_navbar {
+  color: #FF5039; }
+  #toggle_navbar:hover {
+    background-color: #FF5039;
+    color: #ffffff;
+    border-radius: 40px; }
+
 #stroke_small {
   background: #ffffff; }
   #stroke_small:after {

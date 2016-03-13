@@ -28,6 +28,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var rulerContainer = document.getElementById("ruler_container");
 
+  var toggleNavbar = document.getElementById("toggle_navbar");
   // 2: SET VARIABLES FOR SETTINGS
 
   //default values
@@ -152,7 +153,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     //ctx.lineWidth = lineWidth;
   }); 
 
-  //UNDO & REDO
+  // UNDO & REDO
   var backstack_counter=0;
   var redo_times = 1;
 
@@ -165,6 +166,35 @@ document.addEventListener( "DOMContentLoaded", function() {
   clearAllBtn.addEventListener("click",function() {
     ipc.send('send-command', 'canvas', 'clearAll');
   });
+
+  // TOGGLE NAVBAR
+  var isOpen = true;
+  var liArray = document.getElementById("navbar").getElementsByTagName("li");
+
+  function showLi() {
+    for (var i = liArray.length - 2; i >= 0; i--) {
+      liArray[i].classList.remove("hidden");
+    };
+  }
+  function hideLi() {
+    for (var i = liArray.length - 2; i >= 0; i--) {
+      liArray[i].classList.add("hidden");
+    };
+  }
+
+  toggleNavbar.addEventListener("click", function() {
+    ipc.send('toggle-navbar', isOpen);
+    if (isOpen) {
+      this.innerHTML = "<i class=\"material-icons\">arrow_back</i>";
+      isOpen = false;
+      hideLi()
+    } else {
+      this.innerHTML = "<i class=\"material-icons\">arrow_forward</i>";
+      isOpen = true;
+      showLi()
+    }
+  });
+
 
   // 6: SEND SETTINGS
 
