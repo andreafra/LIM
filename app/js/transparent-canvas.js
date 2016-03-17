@@ -170,8 +170,6 @@ document.addEventListener( "DOMContentLoaded", function() {
 
 
   function startDrawing(e, touch) {
-    console.log("Started drawing!");
-    if (toolSelected === "ruler") return;
     isDrawing = true;
     hasMoved = false; //Not yet
 
@@ -223,7 +221,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     redo_times=1;
   }
   function moveDrawing(e, touch) {
-    if (toolSelected === "ruler") return;
     if (!isDrawing) return;
 
     hasMoved = true;
@@ -520,7 +517,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
             ctx.strokeStyle = _line.color;
             ctx.shadowColor = _line.color;
-            ctx.lineWidth = _line.width;
+            ctx.lineWidth = _line.width+2.2;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
 
@@ -534,9 +531,8 @@ document.addEventListener( "DOMContentLoaded", function() {
               // Draw last line as a straight line while
               // we wait for the next point to be able to calculate
               // the bezier control point
-              ctx.lineTo(p1.x, p1.y);
-              ctx.stroke();
             }
+            ctx.stroke();
           }
         }
       }     
