@@ -9,9 +9,9 @@ module.exports = function(grunt) {
           ignore: "(build|Installer|build-lim.bat|package-lim.bat|publish-lim.bat)",
           overwrite: true,
           out: 'build/',
-          version: "0.36.9" ,
           platform: 'win32',
           arch: 'x64',
+          version: "0.37.2",
           'version-string': {
             CompanyName: 'Andrea Franchini, Alessandro Astone',
             ProductName: 'LIM'
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 	'create-windows-installer': {
 	  x64: {
 		appDirectory: 'build/LIM-win32-x64',
-		outputDirectory: '/Users/aless/Documents/LIM/Installer/x64',
+		outputDirectory: './Installer/x64',
 		authors: 'Andrea Franchini, Alessandro Astone',
 		exe: 'LIM.exe',
 		title: 'LIM',
