@@ -3,10 +3,6 @@ var thisFile;
 document.addEventListener( "DOMContentLoaded", function() {
 
   const ipc = require('electron').ipcRenderer;
-  ipc.on('save-file', function(event,arg1){
-    var saveFile = require('./app/js/save');
-    saveFile.SaveAs(thisFile,rename,arg1);
-  });
 
 // function to setup a new canvas for drawing
 // Thanks to http://perfectionkills.com/exploring-canvas-drawing-techniques/
@@ -14,10 +10,9 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   //define and resize canvas
 
-  var header = document.getElementById("header");
   var footer = document.getElementById("footer");
   var canvasWidth = window.innerWidth;
-  var canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
+  var canvasHeight = window.innerHeight;
 
   thisFile = {
     settings: {
@@ -26,7 +21,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       canvas: {
         x: canvasWidth,
         y: canvasHeight,
-        backgroundColor: "#fff",
         backgroundImage: "none"
       }
     },
@@ -45,7 +39,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   };
 
   var content = document.getElementById("content");
-  var header_height = document.getElementById('header').clientHeight;
   var title = document.getElementById("title");
 
   content.style.height = canvasHeight + "px";
@@ -55,7 +48,6 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var canvas = document.getElementById("canvas");
 
-  canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
   canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
   var DrawPaddingX = canvas.offsetLeft;
@@ -69,7 +61,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   function resizeCanvas(callLoad) {
     canvasWidth = window.innerWidth;
-    canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
+    canvasHeight = window.innerHeight;
     var oldCanvasWidth = thisFile.settings.canvas.x;
     var oldCanvasHeight = thisFile.settings.canvas.y;
     var widthRatio = canvasWidth/oldCanvasWidth;
@@ -157,10 +149,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   ctx.shadowBlur = 0.5;
   ctx.imageSmoothingEnabled = true;
 
-  //default values
+  //default values - just first setup
   var lineColor = "black";
   var lineWidth = 4;
   var rubberWidth = 30;
+
   ctx.strokeStyle = lineColor;
   ctx.shadowColor = lineColor;
   ctx.lineWidth = lineWidth;
@@ -168,8 +161,6 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var toolSelected = "pencil"; // can be "pencil", "rubber"
   var rulerActive = false;
-
-  
 
   var isDrawing, pages = [ ];
   var hasMoved = false;
@@ -295,16 +286,16 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   }
   function endDrawing(e, touch) {
-    //Handle dots
-    if(!hasMoved && isDrawing) {
-      var _x, _y;
-      if (touch) {
-        _x = e.changedTouches[0].clientX - DrawPaddingX;
-        _y = e.changedTouches[0].clientY - DrawPaddingY;
-      } else {
-        _x = e.clientX - DrawPaddingX;
-        _y = e.clientY - DrawPaddingY;
-      }
+  	//Handle dots
+  	if(!hasMoved && isDrawing) {
+  		var _x, _y;
+  		if (touch) {
+  		  _x = e.changedTouches[0].clientX - DrawPaddingX;
+  		  _y = e.changedTouches[0].clientY - DrawPaddingY;
+  		} else {
+  		  _x = e.clientX - DrawPaddingX;
+  		  _y = e.clientY - DrawPaddingY;
+  		}
       if(rulerActive){
         var newPoint = getPointOnRuler(_x,_y);
         _x=newPoint.x;
@@ -317,16 +308,16 @@ document.addEventListener( "DOMContentLoaded", function() {
         clearCircle(ctx,_x,_y,_width/2);
       }
       else{
-        ctx.beginPath();
+    		ctx.beginPath();
 
         ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
 
-        ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
+    		ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
         ctx.fill();
       }
-    }
-  
-   //These points are already saved in startDrawing. No need to save here.
+  	}
+	
+	 //These points are already saved in startDrawing. No need to save here.
     resetBackstackButtons();
     isDrawing = false;
     hasMoved = false;
@@ -380,7 +371,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     context.restore();
   }
 
-
   canvas.onmousedown = function(e) {
     startDrawing(e, false);
   };
@@ -405,63 +395,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     endDrawing();
   });
 
-  var pencil = document.getElementById("pencil");
-  var pencilColor = document.getElementById("pencil_color");
-  var rubber = document.getElementById("rubber");
-  var ruler = document.getElementById("ruler");
-  var allTools = [pencil, rubber, ruler];
-
-  var blackColor = document.getElementById("pencil_black");
-  var blueColor = document.getElementById("pencil_blue");
-  var redColor = document.getElementById("pencil_red");
-  var greenColor = document.getElementById("pencil_green");
-  var customColor = document.getElementById("pencil_other");
-  var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
-
-  var smallWidth = document.getElementById("stroke_small");
-  var mediumWidth = document.getElementById("stroke_medium");
-  var bigWidth = document.getElementById("stroke_big");
-  var allWidths = [smallWidth, mediumWidth, bigWidth];
-
-  var whiteBackground = document.getElementById("background_white");
-  var blackBackground = document.getElementById("background_black");
-  var greenBackground = document.getElementById("background_green");
-  var customBackground = document.getElementById("background_custom");
-
-  var noneBackground = document.getElementById("background_none");
-  var squaredBackground = document.getElementById("background_squared");
-  var squaredMarkedBackground = document.getElementById("background_squared_marked");
-  var linesBackground = document.getElementById("background_lines");
-  var dotsBackground = document.getElementById("background_dots");
-
-  function clearButtonSelection(buttons, _class) {
-    var colors = buttons;
-    for (var i = colors.length - 1; i >= 0; i--) {
-      colors[i].classList.remove(_class);
-    }
-  }
-
-  function showColorButtons(){
-    var j = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = j.length - 1; i >= 0; i--) {
-      allColors[i].parentElement.classList.remove("btn-hidden");
-      allColors[i].parentElement.classList.add("btn-visible");
-      allColors[i].style.pointerEvents = 'auto';
-    };
-  }
-
-  function hideColorButtons(){
-    var j = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = j.length - 1; i >= 0; i--) {
-      allColors[i].parentElement.classList.remove("btn-visible");
-      allColors[i].parentElement.classList.add("btn-hidden");
-      allColors[i].style.pointerEvents = 'none';
-    };
-  }
-
+  // THESE SET THINGS
   function setColor(color){
-    lineColor = color;
-    pencilColor.style.borderBottom = "12px solid " + lineColor;
+    ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = lineColor = color;
   }
   function setWidth(width) {
      lineWidth = width;
@@ -470,198 +406,57 @@ document.addEventListener( "DOMContentLoaded", function() {
   function setRubberWidth(width) {
      rubberWidth = width;
   }
-  function setBackgroundColor(color) {
-    thisFile.settings.canvas.backgroundColor = color;
-    canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
-    loadIntoCanvas(thisFile, currentPage);
-  }
-  function setBackgroundImage(image) { // NO .PNG
-     thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
-     canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
-  }
 
-  function selectTool(_tool){
-    if(_tool.id == "ruler"){
+
+  function selectTool(_tool){ //--da dividere
+    if(_tool == "ruler"){
       rulerActive = !rulerActive;
       var rulerContainer = document.getElementById("ruler_container");
       if(rulerActive){
         rulerContainer.style.display="flex";
-        _tool.classList.add("btn-ruler-active");
       }
       else{
         rulerContainer.style.display="none";
-        _tool.classList.remove("btn-ruler-active");
       }
     }
     else{
-      clearButtonSelection(allTools, "btn-tool-active");
-      _tool.classList.add("btn-tool-active");
-      toolSelected = _tool.id;
+      toolSelected = _tool;
     }
   }
 
-  // TOOL PICKER
-  pencil.addEventListener("click", function(e) {
-    showColorButtons();
-    selectTool(this);
-  });
-  rubber.addEventListener("click", function(e) {
-    hideColorButtons();
-    selectTool(this);
-  });
-  ruler.addEventListener("click", function(e) {
-    selectTool(this);
-  });
-  // COLOR PICKER
-  blackColor.addEventListener("click", function(e) {
-    setColor("black");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  blueColor.addEventListener("click", function(e) {
-    setColor("#2962ff");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  redColor.addEventListener("click", function(e) {
-    setColor("#f44336");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  greenColor.addEventListener("click", function(e) {
-    setColor("#4caf50");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  customColor.addEventListener("mouseup", function() {
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
-      setColor(customColor.getAttribute("value"));
-    });
-  });
-  customColor.addEventListener("click", function() {
-    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
-    setColor(customColor.getAttribute("value"));
-  });
+  // RECEIVE SETTINGS
 
-  // WIDTH
-  smallWidth.addEventListener("click", function() {
-    setRubberWidth(15);
-    setWidth(2);
-    clearButtonSelection(allWidths, "btn-active");
-    this.classList.add("btn-active");
-  });
-  mediumWidth.addEventListener("click", function() {
-    setRubberWidth(30);
-    setWidth(4);
-    clearButtonSelection(allWidths, "btn-active");
-    this.classList.add("btn-active");
-  });
-  bigWidth.addEventListener("click", function() {
-    setRubberWidth(60);
-    setWidth(6);
-    clearButtonSelection(allWidths, "btn-active");
-    this.classList.add("btn-active");
-  });
-  // BACKGROUND COLOR PICKER
-  whiteBackground.addEventListener("click", function(e) {
-    setBackgroundColor("#ffffff");
-  });
-  blackBackground.addEventListener("click", function(e) {
-    setBackgroundColor("#000000");
-  });
-  greenBackground.addEventListener("click", function(e) {
-    setBackgroundColor("#567E3A");
-  });
-  customBackground.addEventListener("mouseup", function() {
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
-      setBackgroundColor(customBackground.getAttribute("value"));
-    });
-  });
-  customBackground.addEventListener("click", function() {
-    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
-    setBackgroundColor(customBackground.getAttribute("value"));
-  });
-
-  function isDark (color) {
-    var c = color.substring(1);      // strip #
-    var rgb = parseInt(c, 16);   // convert rrggbb to decimal
-    var r = (rgb >> 16) & 0xff;  // extract red
-    var g = (rgb >>  8) & 0xff;  // extract green
-    var b = (rgb >>  0) & 0xff;  // extract blue
-
-    var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-
-    if (luma > 40) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  noneBackground.addEventListener("click", function() {
-    setBackgroundImage("none");
-  });
-  squaredBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("squared-light");
-    } else {
-      setBackgroundImage("squared-dark");
-    }
-    console.log(canvas.style.backgroundColor)
-    console.log(isDark(canvas.style.backgroundColor))
-  });
-  squaredMarkedBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("squared-marked-light");
-    } else {
-      setBackgroundImage("squared-marked-dark");
-    }
-  });
-  linesBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("lines-light");
-    } else {
-      setBackgroundImage("lines-dark");
-    }
-  });
-  dotsBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("dots-light");
-    } else {
-      setBackgroundImage("dots-dark");
+  ipc.on('send-command', function(e, command, parameters) {
+    switch (command) {
+      case "setLine":
+        setColor(parameters.lineColor);
+        setWidth(parameters.lineWidth);
+        setRubberWidth(parameters.rubberWidth);
+        console.log('Received settings for lines');
+        break;
+      case "setTool":
+        selectTool(parameters.tool);
+        console.log('Received settings for tool');
+        break;
+      case "undo":
+        undo();
+        break;
+      case "redo":
+        redo();
+        break;
+      case "clearAll":
+        clearAll();
+        break;
+      default:
+      console.log('No valid command sent')
+        break;
     }
   });
 
 
-  //SAVE
-  var saveButton = document.getElementById("save");
-
-  var saveFile = require('./app/js/save');
-
-  saveButton.addEventListener("click", function() {
-    if (thisFile.settings.name=="unnamed") {
-      saveFile.SaveAs(thisFile, rename);
-      console.log('saved as!')
-    } else {
-      saveFile.Save(thisFile);
-      console.log('saved!')
-    }
-  });
-
-  function rename(fileName){
-    thisFile.settings.name == fileName;
-    document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
-  }
-
-  //LOAD
-  var loadButton = document.getElementById("load");
-  var loadFile = require('./app/js/load');
-
-  loadButton.addEventListener("click", function(){
-    loadFile.Load(loadIntoCanvas);
-  });
+  // ==================================================================== //
+  //                    O T H E R   F U N C T I O N S                     //
+  // ==================================================================== //
 
   function loadIntoCanvas(file, page){ /*page is optional. if not set, page will be 0*/
     if (file !== null && file !== undefined) {
@@ -674,7 +469,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
 
       currentPage = page;
-      pageCounter.innerHTML = currentPage+1;
 
       if (thisFile.pages[currentPage] === undefined) {
         thisFile.pages[currentPage] = {lines: [], backstack: []};
@@ -682,20 +476,12 @@ document.addEventListener( "DOMContentLoaded", function() {
 
       resizeCanvas(false);
       resetBackstackButtons();
-      updateNavButtons();
 
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
       canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
-      title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
       //When backgruond changes color, i want rubber to be re-colored to match bg color
-      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++) {
-        if(thisFile.pages[currentPage].lines[i].rubber)
-        {
-          thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
-        }
-      }
       var _lines = thisFile.pages[currentPage].lines;
 
       for (var line = 0; line < _lines.length; line++) {
@@ -745,7 +531,6 @@ document.addEventListener( "DOMContentLoaded", function() {
               // Draw last line as a straight line while
               // we wait for the next point to be able to calculate
               // the bezier control point
-              //ctx.lineTo(p1.x, p1.y);
             }
             ctx.stroke();
           }
@@ -759,14 +544,12 @@ document.addEventListener( "DOMContentLoaded", function() {
   rulerLoader.LoadRuler();
 
   //UNDO & REDO
-  var undo = document.getElementById("undo");
-  var redo = document.getElementById("redo");
   var backstack_counter=0;
   var redo_times = 1;
   //On load
   resetBackstackButtons();
 
-  undo.addEventListener("click",function() {
+  function undo(){
     if(thisFile.pages[currentPage] === undefined) return;
     var _lines = thisFile.pages[currentPage].lines;
     if(_lines.length === 0) return;
@@ -774,9 +557,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     backstack_counter++;
     redo_times=1;
     loadIntoCanvas(thisFile,currentPage);
-  });
+  }
 
-  redo.addEventListener("click",function() {
+  function redo(){
     if(thisFile.pages[currentPage] === undefined) return;
     var _backstack = thisFile.pages[currentPage].backstack;
     if (_backstack.length === 0) return;
@@ -786,12 +569,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     redo_times=1;
     loadIntoCanvas(thisFile,currentPage);
-  });
+  }
 
   // CLEAR ALL
 
-  var clearAllBtn = document.getElementById("clear_all")
-  clearAllBtn.addEventListener("mousedown", function() {
+  function clearAll(){
     var _lines = thisFile.pages[currentPage].lines;
     redo_times=0; //was most likely 1 before, so let's set it to 0 before increasing it
     for (var i = _lines.length - 1; i >= 0; i--) {
@@ -800,80 +582,35 @@ document.addEventListener( "DOMContentLoaded", function() {
       backstack_counter++;
     };
     loadIntoCanvas(thisFile, currentPage);
-  });
+  }
 
   function resetBackstackButtons() {
-    if(thisFile.pages[currentPage] === undefined){
-      undo.style.pointerEvents = 'none';
+    var _lines = thisFile.pages[currentPage].lines;
+    var _backstack = thisFile.pages[currentPage].backstack;
+    /*if(_backstack.length==0){
+      //DISABLE REDO
       redo.style.pointerEvents = 'none';
+      redo.classList.add("btn-disabled");
     }
     else{
-      var _lines = thisFile.pages[currentPage].lines;
-      var _backstack = thisFile.pages[currentPage].backstack;
-      if(_backstack.length==0){
-        redo.style.pointerEvents = 'none';
-        redo.classList.add("btn-disabled");
-      }
-      else{
-        redo.style.pointerEvents = 'auto';
-        redo.classList.remove("btn-disabled");
-      }
-
-      if(_lines.length==0){
-        undo.style.pointerEvents = 'none';
-        undo.classList.add("btn-disabled");
-      }
-      else{
-        undo.style.pointerEvents = 'auto';
-        undo.classList.remove("btn-disabled");
-      }
+      //ENABLE REDO
+      redo.style.pointerEvents = 'auto';
+      redo.classList.remove("btn-disabled");
     }
-  }
 
-  //PAGES
-
-  var pageCounter = document.getElementById("page_counter");
-  var pageNextBtn = document.getElementById("page_next");
-  var pagePrevBtn = document.getElementById("page_prev");
-
-  function pageNext(){
-    loadIntoCanvas(thisFile,currentPage+1);
-  }
-
-  function pagePrev(){
-    loadIntoCanvas(thisFile,currentPage-1);
-  }
-
-  function setPage(_page){
-    loadIntoCanvas(thisFile,_page);
-  }
-
-  pageNextBtn.addEventListener("click", function(){
-    pageNext();
-    updateNavButtons();
-  });
-  pagePrevBtn.addEventListener("click",function(){
-    if(currentPage>0) {
-      pagePrev();
-      updateNavButtons();
+    if(_lines.length==0){
+      //DISABLE UNDO
+      undo.style.pointerEvents = 'none';
+      undo.classList.add("btn-disabled");
     }
-  });
-
-  function updateNavButtons() {
-    if (currentPage === 0) { // we cant go back to prev page
-      pagePrevBtn.classList.add("btn-disabled");
-      pagePrevBtn.style.pointerEvents = 'none';
-    } else {
-      pagePrevBtn.classList.remove("btn-disabled");
-      pagePrevBtn.style.pointerEvents = 'auto';
-    }
-    if ((currentPage + 1) === thisFile.pages.length) { // + replaces -> when there are no more pages
-      pageNextBtn.children[0].innerHTML = "note_add";
-    } else {
-      pageNextBtn.children[0].innerHTML = "arrow_forward";
-    }
+    else{
+      //ENABLE REDO
+      undo.style.pointerEvents = 'auto';
+      undo.classList.remove("btn-disabled");
+    }*/
+    ipc.send('send-command', 'toolbar', 'updateBackstackButtons', {
+      redo: _backstack.length==0,
+      undo: _lines.length==0
+    })
   }
-  // Run once at start
-  updateNavButtons();
-  
 }); // document.ready?

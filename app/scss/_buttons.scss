@@ -26,35 +26,58 @@
   background: #fff;
   border: none;
   box-shadow: none;
+  float: right;
+}
+.btn-menu-left {
+    margin-left: $header_height/8;
+    float: left;
 }
 
 .btn-toolbar {
   align-self: center;
   margin-right: 10px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-container {
+  display: block;
+  height: $header_height*2;
 
-  .btn-circular {
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 15px;
-    border: 2px solid $gray;
-    box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 10px;
-    margin-bottom: 10px;
+  .btn-row {
+    display: flex !important;
+    margin: 0;
+    height: 50%;
+    &:first-child > span, &:first-child > input {
+      margin-top: 4px;
+      padding: 0
+    }
+    &:last-child > span, &:last-child > input {
+      margin-bottom: 4px;
+      padding: 0
+    }
 
-    &:hover {
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-    }
-    &:active {
-      box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
-    }
-    &.btn-invisible {
-      border-color: transparent;
-      box-shadow: none;
-      &:hover, &:active {
+    .btn-circular {
+      display: block;
+      align-self:center;
+      width: 24px;
+      height: 24px;
+      border-radius: 15px;
+      border: 2px solid $gray;
+      box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0px 4px 0px 4px;
+
+      &:hover {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+      &:active {
+        box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
+      }
+      &.btn-invisible {
+        border-color: transparent;
         box-shadow: none;
+        &:hover, &:active {
+          box-shadow: none;
+        }
       }
     }
   }
@@ -96,13 +119,37 @@
 .btn-tool-active {
   margin-top: -30px;
   #pencil_color {
-    top: -5px !important;
+    top: -8px !important;
   }
 }
 .btn-ruler-active {
   margin-top: -30px;
 }
 
+.btn-toolbar-tool {
+  height: $header_height;
+  width: auto;
+  img {
+    position: relative;
+    height: $header_height * 2.5;
+    z-index: 401;
+  }
+  #pencil_color {
+    display: block;
+    position: absolute;
+    z-index: 400;
+    top: 8px;
+    margin-left: 4.5px;
+    margin-top: 3px;
+    height: 0;
+    width: 0;
+    border-top: 12px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid $black;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
 
 @each $color, $name in $colors {
   .btn-#{$name} {
