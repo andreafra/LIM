@@ -247,6 +247,11 @@ document.addEventListener( "DOMContentLoaded", function() {
           undo.classList.remove("btn-disabled");
         }
         break;
+      case "hideLi":
+        toggleNavbar.innerHTML = "<i class=\"material-icons\">arrow_back</i>";
+        isOpen = false;
+        hideLi();
+        break;
       default:
         console.log("Unhandled command: " + command);
         break;

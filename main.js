@@ -227,6 +227,17 @@ ipcMain.on('new-transparent-window', function() {
   toolbarWindow.on('closed', function() {
     toolbarWindow = null;
   });
+
+  transparentWindow.on('minimize', function() {
+    toolbarWindow.setBounds({
+      x: size.width - 80,
+      y: size.height - 80,
+      width: 80,
+      height: 80
+    });
+    transparentWindow.hide();
+    toolbarWindow.webContents.send('send-command', "hideLi");
+  });
 });
 
 ipcMain.on('send-command', function(e, target, command, parameters) {
