@@ -204,13 +204,13 @@ ipcMain.on('new-transparent-window', function() {
   transparentWindow.loadURL('file://' + __dirname + '/transparent.html');
 
   toolbarWindow = new BrowserWindow({
-    width: 650/*size.width*/,
+    width: 700/*size.width*/,
     height: 80/*size.height*/,
     transparent:false,
     fullscreen:false,
     frame: false,
     skipTaskbar: true,
-    minWidth: 650,
+    minWidth: 700,
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
@@ -268,9 +268,9 @@ ipcMain.on('toggle-navbar', function(e, isOpen) {
     } else {
       //toolbarWindow.setSize(850, 80);
       toolbarWindow.setBounds({
-        x: size.width - 650,
+        x: size.width - 700,
         y: size.height - 80,
-        width: 650,
+        width: 700,
         height: 80
       });
       transparentWindow.show()

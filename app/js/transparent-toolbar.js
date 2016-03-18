@@ -24,7 +24,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var undo = document.getElementById("undo");
   var redo = document.getElementById("redo");
-  var clearAllBtn = document.getElementById("clear_all")
+  var clearAllBtn = document.getElementById("clear_all");
+  var backToMainBtn = document.getElementById("back_to_main");
 
   var rulerContainer = document.getElementById("ruler_container");
 
@@ -195,7 +196,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   });
 
-
+  backToMainBtn.addEventListener("click", function() {
+     ipc.send('back-to-main');
+  });
   // 6: SEND SETTINGS
 
   // this sends a JS Object containing the settings of the line
