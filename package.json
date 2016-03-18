@@ -1,8 +1,8 @@
 {
   "name": "LIM",
   "license": "SEE LICENSE IN NOLICENSE.md",
-  "version": "0.2.18",
-  "description": "A simple program to draw on LIM boards",
+  "version": "0.3.0",
+  "description": "An easy software for Interactive Blackboards for dumb teachers.",
   "private": true,
   "main": "main.js",
   "dependencies": {
