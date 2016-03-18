@@ -61,6 +61,7 @@ footer {
   display: block;
   position: absolute;
   right: 0;
+  left: 0;
   top: 0;
   bottom: 0;
 }
@@ -250,32 +251,30 @@ footer {
   padding-right: 20px;
   flex-direction: row-reverse;
 }
+.toolbar-transparent {
+  position: relative;
+  display: flex;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  right: 0;
+  top: 0;
+  height: $header_height*2;
+  //width: 609px !important; // after this value there is blank space
+  flex-direction: row;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 3px;
+  li {
+    text-align: center;
+  }
+}
 .toolbar-spacer {
     margin-left: 15px;
     margin-right: 15px;
-}
-.btn-toolbar-tool {
-  height: $header_height;
-  width: 40px;
-  img {
-    position: relative;
-    height: $header_height * 2.5;
-    z-index: 401;
-  }
-  #pencil_color {
-    display: block;
-    position: absolute;
-    z-index: 400;
-    top: 10px;
-    margin-left: 4.5px;
-    height: 0;
-    width: 0;
-    border-top: 12px solid transparent;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 12px solid $black;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+    border-left: 1px solid darken($gray, 10);
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 #pencil_black {
@@ -295,6 +294,14 @@ footer {
   background-position: center;
   background-clip: border-box;
   font-size: 0;
+}
+#toggle_navbar {
+  color: $red;
+  &:hover {
+    background-color: $red;
+    color: $white;
+    border-radius: 40px;
+  }
 }
 // altezza del cerchiolino
 $circle-height: 24px;
@@ -345,6 +352,67 @@ $circle-big: 14px;
 }
 .hidden {
   display: none !important;
+}
+.welcome-content {
+  position: fixed;
+  display: block;
+  top: $header_height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  
+  -webkit-app-region: no-drag;
+  .welcome-choose {
+    display: flex;
+
+    .btn-full {
+      flex-grow: 1;
+      text-decoration: none !important;
+      text-align: center;
+      font: 1.5em "Futura";
+      color: black;
+      padding-top: 2em;
+      padding-bottom: 2em;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      &:hover {
+        background-color: darken($white, 10)
+      }
+      img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
+      span {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        width: 75%;
+      }
+    }
+  }
+  .welcome-footer {
+    position: absolute;
+    display: block;
+    width: 100%;
+    bottom: 0;
+    ul {
+      padding: 0;
+      display: flex;
+      li {
+        flex-grow: 1;
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+        a {
+          padding: 3px;
+          font: 1em "Futura";
+          color: black;
+          padding-top: 2em;
+        }
+      }
+    }
+  }
 }
 @import "buttons";
 @import "ruler";

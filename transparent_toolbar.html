@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>LIM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="app/css/style.css" type="text/css">
+  </head>
+  <body id="body">
+    <div id="footer">
+      <ul class="toolbar-transparent" id="navbar">
+        <!-- Tool Picker -->
+        <li class="btn-toolbar btn-toolbar-tool btn-tool-active" id="pencil">
+          <img src="app/img/pencil.png">
+          <span id="pencil_color"></span>
+        </li>
+        <li class="btn-toolbar btn-toolbar-tool" id="rubber">
+          <img src="app/img/rubber.png">
+        </li>
+        <li class="btn-toolbar btn-toolbar-tool" id="ruler">
+          <img src="app/img/ruler.png">
+        </li>
+        <li class="toolbar-spacer">
+        </li>
+        <!-- Color Picker -->
+        <li class="btn-toolbar btn-container">
+          <div class="btn-row" id="color_picker">
+            <span class="btn-circular btn-toolbar-color btn-active" id="pencil_black"></span>
+            <span class="btn-circular btn-toolbar-color" id="pencil_blue"></span>
+            <span class="btn-circular btn-toolbar-color" id="pencil_red"></span>
+            <span class="btn-circular btn-toolbar-color" id="pencil_green"></span>
+            <input class="btn-circular jscolor {padding: 5, position:'right', height:60, width:140, onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
+          </div>
+          <div class="btn-row" id="width_picker">
+            <span class="btn-circular" id="stroke_small"></span>
+            <span class="btn-circular btn-active" id="stroke_medium"></span>
+            <span class="btn-circular" id="stroke_big"></span>
+          </div>
+        </li>
+        
+        <!-- /Color Picker -->
+        <li class="toolbar-spacer"></li>
+
+        <li class="btn-pager" id="undo">
+          <i class="material-icons">undo</i>
+        </li>
+        <li class="btn-pager" id="redo">
+          <i class="material-icons">redo</i>
+        </li>
+        <li class="btn-pager" id="clear_all" data-tooltip="CANCELLERAI TUTTO!">
+          <i class="material-icons">delete</i>
+        </li>
+        <li class="toolbar-spacer"></li>
+        <li class="btn-pager" id="back_to_main">
+          <i class="material-icons" style="transform: scale(-1,1)">open_in_new</i>
+        </li>
+        <li class="btn-pager" id="toggle_navbar">
+          <i class="material-icons">arrow_forward</i>
+        </li>
+      </ul>
+    </div>
+    <script src="app/js/transparent-toolbar.js"></script>
+    <script src="app/lib/jscolor.min.js"></script>
+    <script>
+      // COLOR PICKER
+      function updateColor(picker) {
+        document.getElementById("pencil_other").setAttribute("value", "#"+picker);
+      }
+      function updateBackgroundColor(picker) {
+        document.getElementById("background_custom").setAttribute("value", "#"+picker);
+      }
+    </script>
+  </body>
+</html>

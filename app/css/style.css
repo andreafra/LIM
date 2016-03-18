@@ -113,6 +113,7 @@ footer {
   display: block;
   position: absolute;
   right: 0;
+  left: 0;
   top: 0;
   bottom: 0; }
 
@@ -277,30 +278,28 @@ footer {
   padding-right: 20px;
   flex-direction: row-reverse; }
 
+.toolbar-transparent {
+  position: relative;
+  display: flex;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  right: 0;
+  top: 0;
+  height: 80px;
+  flex-direction: row;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 3px; }
+  .toolbar-transparent li {
+    text-align: center; }
+
 .toolbar-spacer {
   margin-left: 15px;
-  margin-right: 15px; }
-
-.btn-toolbar-tool {
-  height: 40px;
-  width: 40px; }
-  .btn-toolbar-tool img {
-    position: relative;
-    height: 100px;
-    z-index: 401; }
-  .btn-toolbar-tool #pencil_color {
-    display: block;
-    position: absolute;
-    z-index: 400;
-    top: 10px;
-    margin-left: 4.5px;
-    height: 0;
-    width: 0;
-    border-top: 12px solid transparent;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 12px solid #212121;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  margin-right: 15px;
+  border-left: 1px solid #d5d5d5;
+  margin-top: 20px;
+  margin-bottom: 20px; }
 
 #pencil_black {
   background: black; }
@@ -319,6 +318,13 @@ footer {
   background-position: center;
   background-clip: border-box;
   font-size: 0; }
+
+#toggle_navbar {
+  color: #FF5039; }
+  #toggle_navbar:hover {
+    background-color: #FF5039;
+    color: #ffffff;
+    border-radius: 40px; }
 
 #stroke_small {
   background: #ffffff; }
@@ -362,6 +368,56 @@ footer {
 .hidden {
   display: none !important; }
 
+.welcome-content {
+  position: fixed;
+  display: block;
+  top: 40px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-app-region: no-drag; }
+  .welcome-content .welcome-choose {
+    display: flex; }
+    .welcome-content .welcome-choose .btn-full {
+      flex-grow: 1;
+      text-decoration: none !important;
+      text-align: center;
+      font: 1.5em "Futura";
+      color: black;
+      padding-top: 2em;
+      padding-bottom: 2em;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+      .welcome-content .welcome-choose .btn-full:hover {
+        background-color: #e6e6e6; }
+      .welcome-content .welcome-choose .btn-full img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block; }
+      .welcome-content .welcome-choose .btn-full span {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        width: 75%; }
+  .welcome-content .welcome-footer {
+    position: absolute;
+    display: block;
+    width: 100%;
+    bottom: 0; }
+    .welcome-content .welcome-footer ul {
+      padding: 0;
+      display: flex; }
+      .welcome-content .welcome-footer ul li {
+        flex-grow: 1;
+        display: inline-block;
+        text-align: center;
+        text-decoration: none; }
+        .welcome-content .welcome-footer ul li a {
+          padding: 3px;
+          font: 1em "Futura";
+          color: black;
+          padding-top: 2em; }
+
 .btn {
   text-align: center;
   -webkit-app-region: no-drag;
@@ -386,31 +442,50 @@ footer {
   border-radius: 5px;
   background: #fff;
   border: none;
-  box-shadow: none; }
+  box-shadow: none;
+  float: right; }
+
+.btn-menu-left {
+  margin-left: 5px;
+  float: left; }
 
 .btn-toolbar {
   align-self: center;
   margin-right: 10px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-  .btn-toolbar .btn-circular {
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 15px;
-    border: 2px solid #eeeeee;
-    box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 10px;
-    margin-bottom: 10px; }
-    .btn-toolbar .btn-circular:hover {
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
-    .btn-toolbar .btn-circular:active {
-      box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
-    .btn-toolbar .btn-circular.btn-invisible {
-      border-color: transparent;
-      box-shadow: none; }
-      .btn-toolbar .btn-circular.btn-invisible:hover, .btn-toolbar .btn-circular.btn-invisible:active {
+
+.btn-container {
+  display: block;
+  height: 80px; }
+  .btn-container .btn-row {
+    display: flex !important;
+    margin: 0;
+    height: 50%; }
+    .btn-container .btn-row:first-child > span, .btn-container .btn-row:first-child > input {
+      margin-top: 4px;
+      padding: 0; }
+    .btn-container .btn-row:last-child > span, .btn-container .btn-row:last-child > input {
+      margin-bottom: 4px;
+      padding: 0; }
+    .btn-container .btn-row .btn-circular {
+      display: block;
+      align-self: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 15px;
+      border: 2px solid #eeeeee;
+      box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0px 4px 0px 4px; }
+      .btn-container .btn-row .btn-circular:hover {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
+      .btn-container .btn-row .btn-circular:active {
+        box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
+      .btn-container .btn-row .btn-circular.btn-invisible {
+        border-color: transparent;
         box-shadow: none; }
+        .btn-container .btn-row .btn-circular.btn-invisible:hover, .btn-container .btn-row .btn-circular.btn-invisible:active {
+          box-shadow: none; }
 
 .btn-pager {
   height: 48px;
@@ -446,10 +521,32 @@ footer {
 .btn-tool-active {
   margin-top: -30px; }
   .btn-tool-active #pencil_color {
-    top: -5px !important; }
+    top: -8px !important; }
 
 .btn-ruler-active {
   margin-top: -30px; }
+
+.btn-toolbar-tool {
+  height: 40px;
+  width: auto; }
+  .btn-toolbar-tool img {
+    position: relative;
+    height: 100px;
+    z-index: 401; }
+  .btn-toolbar-tool #pencil_color {
+    display: block;
+    position: absolute;
+    z-index: 400;
+    top: 8px;
+    margin-left: 4.5px;
+    margin-top: 3px;
+    height: 0;
+    width: 0;
+    border-top: 12px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid #212121;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
 
 .btn-azure {
   background-color: #36D3FF; }

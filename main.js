@@ -124,7 +124,8 @@ updater.autoUpdater
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
-
+var transparentWindow = null;
+var toolbarWindow = null;
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
   // On OS X it is common for applications and their menu bar
@@ -138,9 +139,12 @@ app.on('window-all-closed', function() {
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
   // Create the browser window.
+  var electronScreen = electron.screen;
+  var size = electronScreen.getPrimaryDisplay().workAreaSize;
+
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 800/*size.width*/,
+    height: 600/*size.height*/,
     transparent:false,
     fullscreen:false,
     frame: false,
@@ -171,4 +175,104 @@ ipcMain.on('maximize-main-window', function () {
 });
 ipcMain.on('minimize-main-window', function () {
   mainWindow.minimize();
+});
+ipcMain.on('new-default-window', function() {
+  mainWindow.loadURL('file://' + __dirname + '/paper.html');
+});
+ipcMain.on('back-to-main', function() {
+  mainWindow.loadURL('file://' + __dirname + '/index.html');
+  if(transparentWindow!= null && toolbarWindow != null){
+    toolbarWindow.close();
+    transparentWindow.close();
+  }
+  mainWindow.show();
+});
+ipcMain.on('new-transparent-window', function() {
+  mainWindow.hide();
+  var electronScreen = electron.screen;
+  var size = electronScreen.getPrimaryDisplay().workAreaSize;
+
+  transparentWindow = new BrowserWindow({
+    width: size.width,
+    height: size.height,
+    transparent:true,
+    fullscreen:false,
+    frame: false,
+    skipTaskbar: true,
+    minWidth: 800,
+    minHeight: 600
+  });
+  transparentWindow.loadURL('file://' + __dirname + '/transparent.html');
+
+  toolbarWindow = new BrowserWindow({
+    width: 700/*size.width*/,
+    height: 80/*size.height*/,
+    transparent:false,
+    fullscreen:false,
+    frame: false,
+    skipTaskbar: true,
+    minWidth: 700,
+    minHeight: 80,
+    maxHeight: 80,
+    alwaysOnTop: true, // keep the toolbar ver the canvas
+    x: size.width - 700, // anchor the TB in bottomleft
+    y: size.height - 80
+  });
+  toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
+  transparentWindow.focus();
+
+  transparentWindow.on('closed', function() {
+    transparentWindow = null;
+  });
+  toolbarWindow.on('closed', function() {
+    toolbarWindow = null;
+  });
+
+  transparentWindow.on('minimize', function() {
+    toolbarWindow.setBounds({
+      x: size.width - 80,
+      y: size.height - 80,
+      width: 80,
+      height: 80
+    });
+    transparentWindow.hide();
+    toolbarWindow.webContents.send('send-command', "hideLi");
+  });
+});
+
+ipcMain.on('send-command', function(e, target, command, parameters) {
+   switch (target) {
+    case "canvas":
+      transparentWindow.webContents.send('send-command', command, parameters);
+      break;
+    case "toolbar":
+      toolbarWindow.webContents.send('send-command', command, parameters);
+      break;
+    default:
+      console.log('No target in IPC SENDCOMMAND');
+      break;
+  }
+});
+ipcMain.on('toggle-navbar', function(e, isOpen) {
+  var electronScreen = electron.screen;
+  var size = electronScreen.getPrimaryDisplay().workAreaSize;
+    if (isOpen) {
+      //toolbarWindow.setSize(80, 80);
+      toolbarWindow.setBounds({
+        x: size.width - 80,
+        y: size.height - 80,
+        width: 80,
+        height: 80
+      });
+      transparentWindow.hide()
+    } else {
+      //toolbarWindow.setSize(850, 80);
+      toolbarWindow.setBounds({
+        x: size.width - 700,
+        y: size.height - 80,
+        width: 700,
+        height: 80
+      });
+      transparentWindow.show()
+    }
 });
