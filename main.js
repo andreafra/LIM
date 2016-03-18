@@ -252,7 +252,8 @@ ipcMain.on('toggle-navbar', function(e, isOpen) {
         y: size.height - 80,
         width: 80,
         height: 80
-      })
+      });
+      transparentWindow.hide()
     } else {
       //toolbarWindow.setSize(850, 80);
       toolbarWindow.setBounds({
@@ -260,6 +261,7 @@ ipcMain.on('toggle-navbar', function(e, isOpen) {
         y: size.height - 80,
         width: 650,
         height: 80
-      })
+      });
+      transparentWindow.show()
     }
 });
