@@ -183,7 +183,7 @@ ipcMain.on('back-to-main', function() {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   if(transparentWindow!= null && toolbarWindow != null){
     toolbarWindow.close();
-    transparentWindow.close(true);
+    transparentWindow.close();
   }
   mainWindow.show();
 });
@@ -198,6 +198,7 @@ ipcMain.on('new-transparent-window', function() {
     transparent:true,
     fullscreen:false,
     frame: false,
+    skipTaskbar: true,
     minWidth: 800,
     minHeight: 600
   });
@@ -214,15 +215,14 @@ ipcMain.on('new-transparent-window', function() {
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
-    x: size.width - 650, // anchor the TB in bottomleft
+    x: size.width - 700, // anchor the TB in bottomleft
     y: size.height - 80
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
   transparentWindow.focus();
 
-  transparentWindow.on('closed', function(e, keepOpen) {
+  transparentWindow.on('closed', function() {
     transparentWindow = null;
-    if(!keepOpen)  app.quit();
   });
   toolbarWindow.on('closed', function() {
     toolbarWindow = null;
