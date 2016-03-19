@@ -119,7 +119,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
   mediumWidth.addEventListener("click", function() {
     rubberWidth = 40
-    lineWitdh = 4
+    lineWidth = 4
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
@@ -202,12 +202,12 @@ document.addEventListener( "DOMContentLoaded", function() {
   // 6: SEND SETTINGS
 
   // this sends a JS Object containing the settings of the line
-	function sendLine(lineColor, lineWidth, rubberWidth) {
-    pencilColor.style.borderBottom = "12px solid " + lineColor;
+	function sendLine(_lineColor, _lineWidth, _rubberWidth) {
+    pencilColor.style.borderBottom = "12px solid " + _lineColor;
     ipc.send('send-command', 'canvas', 'setLine', {
-      lineColor: lineColor,
-      lineWidth: lineWidth,
-      rubberWidth: rubberWidth
+      lineColor: _lineColor,
+      lineWidth: _lineWidth,
+      rubberWidth: _rubberWidth
     });
     console.log('Sent settings!')
   }
