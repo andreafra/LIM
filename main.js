@@ -220,6 +220,7 @@ ipcMain.on('new-transparent-window', function() {
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
   transparentWindow.focus();
+  toolbarWindow.blur();
 
   transparentWindow.on('closed', function() {
     transparentWindow = null;
@@ -228,15 +229,18 @@ ipcMain.on('new-transparent-window', function() {
     toolbarWindow = null;
   });
 
-  transparentWindow.on('minimize', function() {
-    toolbarWindow.setBounds({
-      x: size.width - 80,
-      y: size.height - 80,
-      width: 80,
-      height: 80
+  transparentWindow.on('blur', function() {
+    setImmediate(function() {
+      if(toolbarWindow==null || toolbarWindow.isFocused()) return;
+      toolbarWindow.setBounds({
+        x: size.width - 80,
+        y: size.height - 80,
+        width: 80,
+        height: 80
+      });
+      transparentWindow.hide();
+      toolbarWindow.webContents.send('send-command', "hideLi");
     });
-    transparentWindow.hide();
-    toolbarWindow.webContents.send('send-command', "hideLi");
   });
 });
 
