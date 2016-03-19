@@ -1,7 +1,7 @@
 {
   "name": "LIM",
   "license": "SEE LICENSE IN NOLICENSE.md",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "An easy software for Interactive Blackboards for dumb teachers.",
   "private": true,
   "main": "main.js",
