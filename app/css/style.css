@@ -625,7 +625,7 @@ footer {
   justify-content: space-between;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
   #ruler_container:before {
-    content: "RIGHELLO";
+    content: "";
     position: absolute;
     background-color: rgba(255, 255, 255, 0.7);
     margin-top: 20px;
@@ -661,7 +661,15 @@ footer {
   #ruler_container #ruler_left {
     background-color: transparent; }
   #ruler_container #ruler_center {
-    background-color: transparent; }
+    background-color: transparent;
+    display: flex; }
+    #ruler_container #ruler_center #ruler_degrees {
+      text-align: center;
+      align-self: center;
+      width: 100%;
+      z-index: 1;
+      font-size: 1.5em;
+      font-weight: bold; }
   #ruler_container #ruler_right {
     background-color: transparent; }
 
