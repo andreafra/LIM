@@ -99,7 +99,8 @@ updater.check((err, status) => {
 updater.on('update-downloaded', (info) => {
   // Restart the app and install the update
   var dialog = require('dialog');
-  dialog.showMessageBox({ type: 'info', buttons: ['Restart', 'Save and restart', 'Not now'], cancelId: 2, message: "An update has been downloaded. Do you want to restart to install it?"},
+  if(mainWindow != null && mainWindow.webContents.getURL() == ('file://' + __dirname + '/index.html'){
+    dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Salva e riavvia', 'Non ora'], cancelId: 2, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
     function(response) {
       switch(response) {
         case 0:
@@ -112,6 +113,18 @@ updater.on('update-downloaded', (info) => {
           break;
       }
     });
+  }
+  else{
+    dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Non ora'], cancelId: 1, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
+    function(response) {
+      switch(response) {
+        case 0:
+          updater.install();
+          break;
+        case 1:
+          break;
+      }
+  }
 })
 
 ipcMain.on('update',function(){
