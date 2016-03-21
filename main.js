@@ -192,6 +192,7 @@ ipcMain.on('minimize-main-window', function () {
 });
 ipcMain.on('new-default-window', function() {
   mainWindow.loadURL('file://' + __dirname + '/paper.html');
+  mainWindow.maximize();
 });
 ipcMain.on('back-to-main', function() {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
@@ -200,6 +201,7 @@ ipcMain.on('back-to-main', function() {
     transparentWindow.close();
   }
   mainWindow.show();
+  mainWindow.unmaximize();
 });
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();

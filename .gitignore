@@ -10,9 +10,6 @@ Thumbs.db
 .sass-cache/*
 
 # YODEVIL'S WINDOWS STUFF
-build-lim.bat
-publish-lim.bat
-package-lim.bat
 build/*
 Installer/*
 node_modules/*
