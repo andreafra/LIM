@@ -99,7 +99,7 @@ updater.check((err, status) => {
 updater.on('update-downloaded', (info) => {
   // Restart the app and install the update
   var dialog = require('dialog');
-  if(mainWindow != null && mainWindow.webContents.getURL() == ('file://' + __dirname + '/paper.html')){
+  if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
     dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Salva e riavvia', 'Non ora'], cancelId: 2, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
     function(response) {
       switch(response) {
