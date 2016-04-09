@@ -107,7 +107,7 @@ updater.on('update-downloaded', (info) => {
           updater.install();
           break;
         case 1:
-          mainWindow.webContents.send('save-file', updater); //send request to canvas.js, passing the updater file, so that we can update from another script.
+          mainWindow.webContents.send('save-file', 'update'); //send request to canvas.js, passing the updater file, so that we can update from another script.
           break;
         case 2:
           break;
@@ -179,7 +179,23 @@ app.on('ready', function() {
 });
 
 ipcMain.on('close-main-window', function () {
-  app.quit();
+  if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
+    var dialog = require('dialog');
+    dialog.showMessageBox({ type: 'info', buttons: ['Esci','Salva ed esci', 'Annulla'], cancelId: 2, message: "Sei sicuro di voler uscire?"},
+    function(response) {
+      switch(response) {
+        case 0:
+          app.quit();
+          break;
+        case 1:
+          mainWindow.webContents.send('save-file', 'quit');
+          break;
+        case 2:
+          break;
+      }
+    });
+  }
+  else app.quit();
 });
 ipcMain.on('maximize-main-window', function () {
   if(mainWindow.isMaximized())
@@ -195,13 +211,41 @@ ipcMain.on('new-default-window', function() {
   mainWindow.maximize();
 });
 ipcMain.on('back-to-main', function() {
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
-  if(transparentWindow!= null && toolbarWindow != null){
+  if(transparentWindow!= null && toolbarWindow != null){  //If we were on transparent
+    mainWindow.loadURL('file://' + __dirname + '/index.html');
     toolbarWindow.close();
     transparentWindow.close();
+    mainWindow.show();
+    mainWindow.unmaximize();
   }
-  mainWindow.show();
-  mainWindow.unmaximize();
+  else{                                                   //If we were on main
+    if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
+      var dialog = require('dialog');
+      dialog.showMessageBox({ type: 'info', buttons: ['Torna al menu','Salva e torna al menu', 'Annulla'], cancelId: 2, message: "Sei sicuro di voler tornare al menu?"},
+      function(response) {
+        switch(response) {
+          case 0:
+            mainWindow.loadURL('file://' + __dirname + '/index.html');
+            mainWindow.show();
+            mainWindow.unmaximize();
+            break;
+          case 1:
+            mainWindow.webContents.send('save-file','back-to-main');
+            break;
+          case 2:
+            break;
+        }
+      });
+    }
+    else app.quit();
+  }
+});
+ipcMain.on('load-menu', function(){
+  if(mainWindow!=null){
+    mainWindow.loadURL('file://' + __dirname + '/index.html');
+    mainWindow.show();
+    mainWindow.unmaximize();
+  }
 });
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();

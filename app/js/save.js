@@ -12,7 +12,7 @@ else{
 }
 
 // SAVE AS (1st time)
-exports.SaveAs = function(thisFile, callback, update) {
+exports.SaveAs = function(thisFile, rename, action) {
   var fs = require('fs'); 
   dialog.showSaveDialog({ 
     filters: [ { name: 'lim', extensions: ['lim'] } ]
@@ -24,9 +24,18 @@ exports.SaveAs = function(thisFile, callback, update) {
         console.log("Error saving file: " + err);
       }
       else{
-        callback(fileName);
-        if(update){
-          ipc.send('update');
+        rename(fileName);
+        switch(action)
+        {
+          case 'update':
+            ipc.send('update');
+            break;
+          case 'quit':
+            app.quit();
+            break;
+          case 'back-to-main':
+            ipc.send('load-menu');
+            break;
         }
       }
     });
