@@ -500,14 +500,47 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   }
 
+  function loadWidth(_tool){
+    if(_tool=="pencil") {
+      clearButtonSelection(allWidths, "btn-active");
+      switch(lineWidth){
+        case 2:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 4:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 6:
+          bigWidth.classList.add("btn-active");
+          break;
+      }
+    }
+    else if(_tool=="rubber"){
+      clearButtonSelection(allWidths, "btn-active");
+      switch(rubberWidth){
+        case 15:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 30:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 60:
+          bigWidth.classList.add("btn-active");
+          break;
+      }
+    }
+  }
+
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     showColorButtons();
     selectTool(this);
+    loadWidth("pencil");
   });
   rubber.addEventListener("click", function(e) {
     hideColorButtons();
     selectTool(this);
+    loadWidth("rubber");
   });
   ruler.addEventListener("click", function(e) {
     selectTool(this);
@@ -547,20 +580,26 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // WIDTH
   smallWidth.addEventListener("click", function() {
-    setRubberWidth(15);
-    setWidth(2);
+    if(toolSelected=="rubber")
+      setRubberWidth(15);
+    else if(toolSelected=="pencil")
+      setWidth(2);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   mediumWidth.addEventListener("click", function() {
-    setRubberWidth(30);
-    setWidth(4);
+    if(toolSelected=="rubber")
+      setRubberWidth(30);
+    else if(toolSelected=="pencil")
+      setWidth(4);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   bigWidth.addEventListener("click", function() {
-    setRubberWidth(60);
-    setWidth(6);
+    if(toolSelected=="rubber")
+      setRubberWidth(60);
+    else if(toolSelected=="pencil")
+      setWidth(6);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });

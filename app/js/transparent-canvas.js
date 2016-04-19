@@ -407,7 +407,6 @@ document.addEventListener( "DOMContentLoaded", function() {
      rubberWidth = width;
   }
 
-
   function selectTool(_tool){ //--da dividere
     if(_tool == "ruler"){
       rulerActive = !rulerActive;
@@ -421,6 +420,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     else{
       toolSelected = _tool;
+      ipc.send('send-command','toolbar','loadWidth',{tool:_tool});
     }
   }
 
