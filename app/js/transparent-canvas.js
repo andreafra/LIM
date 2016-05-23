@@ -290,17 +290,22 @@ document.addEventListener( "DOMContentLoaded", function() {
   	if(!hasMoved && isDrawing) {
   		var _x, _y;
   		if (touch) {
-  		  _x = e.changedTouches[0].clientX - DrawPaddingX;
-  		  _y = e.changedTouches[0].clientY - DrawPaddingY;
+  		  _x = e.changedTouches[0].clientX;
+  		  _y = e.changedTouches[0].clientY;
   		} else {
-  		  _x = e.clientX - DrawPaddingX;
-  		  _y = e.clientY - DrawPaddingY;
+  		  _x = e.clientX;
+  		  _y = e.clientY;
   		}
       if(rulerActive){
         var newPoint = getPointOnRuler(_x,_y);
         _x=newPoint.x;
         _y=newPoint.y;
       }
+
+      //gotta be responsive
+      _x-= DrawPaddingX;
+      _y-= DrawPaddingY;
+
       var _lines = thisFile.pages[currentPage].lines;
       var _width = _lines[_lines.length-1].width;
 
