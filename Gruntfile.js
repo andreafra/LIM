@@ -12,7 +12,7 @@ module.exports = function(grunt) {
           out: 'build/',
           platform: 'win32',
           arch: 'x64',
-          version: "0.37.2",
+          version: "1.1.1",
           'version-string': {
             CompanyName: 'Andrea Franchini, Alessandro Astone',
             ProductName: 'LIM'

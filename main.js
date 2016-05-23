@@ -8,7 +8,7 @@ var cp = require('child_process');
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 
 // Report crashes to our server.
-electron.crashReporter.start();
+//electron.crashReporter.start();
 
 // ========= //
 // Installer //
