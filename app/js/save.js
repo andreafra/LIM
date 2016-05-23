@@ -1,12 +1,11 @@
 var ipc = require('electron').ipcRenderer;
+const {dialog} = require('electron').remote;
+const {app} = require('electron').remote;
+
 if(require('electron').remote == undefined) //calling from main
 {
   const {dialog} = require('electron');
   const {app} = require('electron');
-}
-else{
-  const {dialog} = require('electron').remote;
-  const {app} = require('electron').remote;
 }
 
 // SAVE AS (1st time)
@@ -47,7 +46,7 @@ exports.Save = function(thisFile) {
                JSON.stringify(thisFile),
                function(err) {
     if(err === null) {
-      dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: "File has been saved to Documents folder as " + thisFile.settings.name});
+      dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: "Il file è stato salvato in " + thisFile.settings.name});
     }
     else console.log("Error saving file: " + err);
   });
