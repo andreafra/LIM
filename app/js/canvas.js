@@ -63,6 +63,30 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var ctx = canvas.getContext('2d');
 
+  // Fixed Line Properties
+  ctx.shadowBlur = 0.5;
+  ctx.imageSmoothingEnabled = true;
+
+  //default values
+  var lineColor = "black";
+  var lineWidth = 4;
+  var rubberWidth = 30;
+  ctx.strokeStyle = lineColor;
+  ctx.shadowColor = lineColor;
+  ctx.lineWidth = lineWidth;
+  //ctx.translate(0.5,0.5);
+
+  var toolSelected = "pencil"; // can be "pencil", "rubber"
+  var rulerActive = false;
+
+  
+
+  var isDrawing, pages = [ ];
+  var hasMoved = false;
+
+  // The current page in the pages[]
+  var currentPage = 0;
+
   window.onresize = function() {
     resizeCanvas(true);
   }
@@ -152,30 +176,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       y: p1.y + (p2.y - p1.y) / 2
     };
   }
-
-  // Fixed Line Properties
-  ctx.shadowBlur = 0.5;
-  ctx.imageSmoothingEnabled = true;
-
-  //default values
-  var lineColor = "black";
-  var lineWidth = 4;
-  var rubberWidth = 30;
-  ctx.strokeStyle = lineColor;
-  ctx.shadowColor = lineColor;
-  ctx.lineWidth = lineWidth;
-  //ctx.translate(0.5,0.5);
-
-  var toolSelected = "pencil"; // can be "pencil", "rubber"
-  var rulerActive = false;
-
-  
-
-  var isDrawing, pages = [ ];
-  var hasMoved = false;
-
-  // The current page in the pages[]
-  var currentPage = 0;
 
 
   function startDrawing(e, touch) {

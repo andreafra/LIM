@@ -1,14 +1,12 @@
-var dialog;
-var app;
 var ipc = require('electron').ipcRenderer;
 if(require('electron').remote == undefined) //calling from main
 {
-  dialog = require('dialog');
-  app = require('app');
+  const {dialog} = require('electron');
+  const {app} = require('electron');
 }
 else{
-  dialog = require('electron').remote.require('dialog');
-  app = require('electron').remote.require('app');
+  const {dialog} = require('electron').remote;
+  const {app} = require('electron').remote;
 }
 
 // SAVE AS (1st time)

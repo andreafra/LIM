@@ -1,11 +1,10 @@
 const electron = require('electron');
 const ipcMain = require('electron').ipcMain;
-
-const app = electron.app;  // Module to control application life.
+const {dialog} = require('electron');
+const {app} = require('electron');  // Module to control application life.
 var path = require('path');
 var cp = require('child_process');
-
-const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
+const {BrowserWindow} = require('electron');  // Module to create native browser window.
 
 // Report crashes to our server.
 //electron.crashReporter.start();
@@ -98,7 +97,6 @@ updater.check((err, status) => {
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
   // Restart the app and install the update
-  var dialog = require('dialog');
   if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
     dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Salva e riavvia', 'Non ora'], cancelId: 2, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
     function(response) {
@@ -180,7 +178,6 @@ app.on('ready', function() {
 
 ipcMain.on('close-main-window', function () {
   if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
-    var dialog = require('dialog');
     dialog.showMessageBox({ type: 'info', buttons: ['Esci','Salva ed esci', 'Annulla'], cancelId: 2, message: "Sei sicuro di voler uscire?"},
     function(response) {
       switch(response) {
@@ -220,7 +217,6 @@ ipcMain.on('back-to-main', function() {
   }
   else{                                                   //If we were on main
     if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
-      var dialog = require('dialog');
       dialog.showMessageBox({ type: 'info', buttons: ['Torna al menu','Salva e torna al menu', 'Annulla'], cancelId: 2, message: "Sei sicuro di voler tornare al menu?"},
       function(response) {
         switch(response) {
@@ -252,18 +248,6 @@ ipcMain.on('new-transparent-window', function() {
   var electronScreen = electron.screen;
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
 
-  transparentWindow = new BrowserWindow({
-    width: size.width,
-    height: size.height,
-    transparent:true,
-    fullscreen:false,
-    frame: false,
-    skipTaskbar: true,
-    minWidth: 800,
-    minHeight: 600
-  });
-  transparentWindow.loadURL('file://' + __dirname + '/transparent.html');
-
   toolbarWindow = new BrowserWindow({
     width: 700/*size.width*/,
     height: 80/*size.height*/,
@@ -279,8 +263,18 @@ ipcMain.on('new-transparent-window', function() {
     y: size.height - 80
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
-  transparentWindow.focus();
-  toolbarWindow.blur();
+
+  transparentWindow = new BrowserWindow({
+    width: size.width,
+    height: size.height,
+    transparent:true,
+    fullscreen:false,
+    frame: false,
+    skipTaskbar: true,
+    minWidth: 800,
+    minHeight: 600
+  });
+  transparentWindow.loadURL('file://' + __dirname + '/transparent.html');
 
   transparentWindow.on('closed', function() {
     transparentWindow = null;
@@ -302,6 +296,10 @@ ipcMain.on('new-transparent-window', function() {
       toolbarWindow.webContents.send('send-command', "hideLi");
     });
   });
+
+  //toolbarWindow.blur();
+  transparentWindow.focus();
+
 });
 
 ipcMain.on('send-command', function(e, target, command, parameters) {
