@@ -56,16 +56,14 @@ document.addEventListener( "DOMContentLoaded", function() {
   var ctx = canvas.getContext('2d');
 
   // Fixed Line Properties
-  ctx.shadowBlur = 0.5;
   ctx.imageSmoothingEnabled = true;
 
   //default values - just first setup
   var lineColor = "black";
-  var lineWidth = 4;
+  var lineWidth = 2;
   var rubberWidth = 30;
 
   ctx.strokeStyle = lineColor;
-  ctx.shadowColor = lineColor;
   ctx.lineWidth = lineWidth;
   //ctx.translate(0.5,0.5);
 
@@ -101,10 +99,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
-    ctx.shadowBlur = 0.5;
     ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = lineColor;
-    ctx.shadowColor = lineColor;
     ctx.lineWidth = lineWidth;
     //Re-bind click events, since we've updated canvas object
     canvas.onmousedown = function(e) {
@@ -260,27 +256,18 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     //SE MATITA
     else{
-      ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+      ctx.strokeStyle = _lines[_lines.length-1].color;
       ctx.lineWidth = _lines[_lines.length-1].width;
 
-      var p1 = _points[0];
-      var p2 = _points[1];
+      var p1 = _points[_points.length-3];
+      var p2 = _points[_points.length-2];
+      var p3 = _points[_points.length-1];
+      if(!p1) p1=p2;
 
       ctx.beginPath();
       ctx.moveTo(p1.x, p1.y);
-
-      for (var i = 1, len = _points.length; i < len; i++) {
-        // we pick the point between pi+1 & pi+2 as the
-        // end point and p1 as our control point
-        var midPoint = midPointBtw(p1, p2);
-        ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-        p1 = _points[i];
-        p2 = _points[i+1];
-      }
-      // Draw last line as a straight line while
-      // we wait for the next point to be able to calculate
-      // the bezier control point
-      ctx.lineTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineTo(p3.x, p3.y);
       ctx.stroke();
     }
   }
@@ -314,7 +301,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       else{
     		ctx.beginPath();
 
-        ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+        ctx.fillStyle = ctx.strokeStyle = _lines[_lines.length-1].color;
 
     		ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
         ctx.fill();
@@ -401,7 +388,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // THESE SET THINGS
   function setColor(color){
-    ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = lineColor = color;
+    ctx.fillStyle = ctx.strokeStyle = lineColor = color;
   }
   function setWidth(width) {
      lineWidth = width;
@@ -502,7 +489,6 @@ document.addEventListener( "DOMContentLoaded", function() {
             ctx.beginPath();
             ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
             ctx.fillStyle = _line.color;
-            ctx.shadowColor = _line.color;
             ctx.strokeStyle = _line.color;
             ctx.fill();
           }
@@ -516,27 +502,23 @@ document.addEventListener( "DOMContentLoaded", function() {
             }
           }
           else{
-            var p1 = _points[0];
-            var p2 = _points[1];
+            var p0 = _points[0];
 
             ctx.strokeStyle = _line.color;
-            ctx.shadowColor = _line.color;
-            ctx.lineWidth = _line.width+2.2;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
+            ctx.lineWidth = _line.width;
 
-            for (var i = 1, len = _points.length; i < len; i++) {
-              // we pick the point between pi+1 & pi+2 as the
-              // end point and p1 as our control point
-              var midPoint = midPointBtw(p1, p2);
-              ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-              p1 = _points[i];
-              p2 = _points[i+1];
-              // Draw last line as a straight line while
-              // we wait for the next point to be able to calculate
-              // the bezier control point
+            for (var i = 2; i <= _points.length; i++) {
+              var p1 = _points[i-3];
+              var p2 = _points[i-2];
+              var p3 = _points[i-1];
+              if(!p1) p1=p2;
+              
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.lineTo(p3.x, p3.y);
+              ctx.stroke();
             }
-            ctx.stroke();
           }
         }
       }     
