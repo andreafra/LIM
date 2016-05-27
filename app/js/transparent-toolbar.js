@@ -34,7 +34,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   //default values
   var lineColor = "black";
-  var lineWidth = 4;
+  var lineWidth = 2;
   var rubberWidth = 30;
 
   var toolSelected = "pencil"; //pencil, rubber
@@ -69,13 +69,13 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(_tool=="pencil") {
       clearButtonSelection(allWidths, "btn-active");
       switch(lineWidth){
-        case 2:
+        case 1:
           smallWidth.classList.add("btn-active");
           break;
-        case 4:
+        case 2:
           mediumWidth.classList.add("btn-active");
           break;
-        case 6:
+        case 4:
           bigWidth.classList.add("btn-active");
           break;
       }
@@ -145,7 +145,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(toolSelected=="rubber")
       rubberWidth = 15;
     if(toolSelected=="pencil")
-      lineWidth = 2;
+      lineWidth = 1;
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
@@ -155,7 +155,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(toolSelected=="rubber")
       rubberWidth = 40;
     if(toolSelected=="pencil")
-      lineWidth = 4;
+      lineWidth = 2;
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
@@ -165,7 +165,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(toolSelected=="rubber")
       rubberWidth = 60;
     if(toolSelected=="pencil")
-      lineWidth = 6;
+      lineWidth = 4;
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 

@@ -64,15 +64,15 @@ document.addEventListener( "DOMContentLoaded", function() {
   var ctx = canvas.getContext('2d');
 
   // Fixed Line Properties
-  ctx.shadowBlur = 0.5;
+  //ctx.shadowBlur = 0.5;
   ctx.imageSmoothingEnabled = true;
 
   //default values
   var lineColor = "black";
-  var lineWidth = 4;
+  var lineWidth = 2;
   var rubberWidth = 30;
   ctx.strokeStyle = lineColor;
-  ctx.shadowColor = lineColor;
+  //ctx.shadowColor = lineColor;
   ctx.lineWidth = lineWidth;
   //ctx.translate(0.5,0.5);
 
@@ -110,10 +110,10 @@ document.addEventListener( "DOMContentLoaded", function() {
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
-    ctx.shadowBlur = 0.5;
+    //ctx.shadowBlur = 0.5;
     ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = lineColor;
-    ctx.shadowColor = lineColor;
+    //ctx.shadowColor = lineColor;
     ctx.lineWidth = lineWidth;
     //Re-bind click events, since we've updated canvas object
     canvas.onmousedown = function(e) {
@@ -270,7 +270,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     //SE MATITA
     else{
-      ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+      //ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
       ctx.lineWidth = _lines[_lines.length-1].width;
 
       var p1 = _points[0];
@@ -324,7 +324,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       else{
         ctx.beginPath();
 
-        ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+        //ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
 
         ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
         ctx.fill();
@@ -509,13 +509,13 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(_tool=="pencil") {
       clearButtonSelection(allWidths, "btn-active");
       switch(lineWidth){
-        case 2:
+        case 1:
           smallWidth.classList.add("btn-active");
           break;
-        case 4:
+        case 2:
           mediumWidth.classList.add("btn-active");
           break;
-        case 6:
+        case 4:
           bigWidth.classList.add("btn-active");
           break;
       }
@@ -756,7 +756,7 @@ document.addEventListener( "DOMContentLoaded", function() {
             ctx.beginPath();
             ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
             ctx.fillStyle = _line.color;
-            ctx.shadowColor = _line.color;
+            //ctx.shadowColor = _line.color;
             ctx.strokeStyle = _line.color;
             ctx.fill();
           }
@@ -774,8 +774,8 @@ document.addEventListener( "DOMContentLoaded", function() {
             var p2 = _points[1];
 
             ctx.strokeStyle = _line.color;
-            ctx.shadowColor = _line.color;
-            ctx.lineWidth = _line.width+2.2;
+            //ctx.shadowColor = _line.color;
+            ctx.lineWidth = _line.width;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
 
