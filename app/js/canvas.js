@@ -588,7 +588,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(toolSelected=="rubber")
       setRubberWidth(15);
     else if(toolSelected=="pencil")
-      setWidth(2);
+      setWidth(1);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
@@ -596,7 +596,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(toolSelected=="rubber")
       setRubberWidth(30);
     else if(toolSelected=="pencil")
-      setWidth(4);
+      setWidth(2);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
@@ -604,7 +604,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(toolSelected=="rubber")
       setRubberWidth(60);
     else if(toolSelected=="pencil")
-      setWidth(6);
+      setWidth(4);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
