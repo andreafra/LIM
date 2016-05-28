@@ -65,7 +65,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   ctx.strokeStyle = lineColor;
   ctx.lineWidth = lineWidth;
-  //ctx.translate(0.5,0.5);
+  ctx.translate(0.5,0.5);
+  ctx.lineCap="round";
 
   var toolSelected = "pencil"; // can be "pencil", "rubber"
   var rulerActive = false;
@@ -102,6 +103,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
+    ctx.translate(0.5,0.5);
+    ctx.lineCap="round";
+    
     //Re-bind click events, since we've updated canvas object
     canvas.onmousedown = function(e) {
       startDrawing(e, false);
