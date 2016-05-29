@@ -78,7 +78,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   var toolSelected = "pencil"; // can be "pencil", "rubber"
   var rulerActive = false;
 
-  
+  var drawingMethod = "linear";
 
   var isDrawing, pages = [ ];
   var hasMoved = false;
@@ -112,8 +112,12 @@ document.addEventListener( "DOMContentLoaded", function() {
     ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
-    ctx.translate(0.5,0.5);
     ctx.lineCap="round";
+
+    if(drawingMethod=="linear")
+      translate(ctx,0.5,0.5);
+    else if(drawingMethod=="quadratic")
+      translate(ctx,0.0,0.0);
     
     //Re-bind click events, since we've updated canvas object
     canvas.onmousedown = function(e) {
@@ -273,16 +277,39 @@ document.addEventListener( "DOMContentLoaded", function() {
       ctx.strokeStyle = _lines[_lines.length-1].color;
       ctx.lineWidth = _lines[_lines.length-1].width;
 
-      var p1 = _points[_points.length-3];
-      var p2 = _points[_points.length-2];
-      var p3 = _points[_points.length-1];
-      if(!p1) p1=p2;
+      if(drawingMethod == "linear"){
+        var p1 = _points[_points.length-3];
+        var p2 = _points[_points.length-2];
+        var p3 = _points[_points.length-1];
+        if(!p1) p1=p2;
 
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.lineTo(p3.x, p3.y);
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.lineTo(p3.x, p3.y);
+        ctx.stroke();
+      }
+
+      else if(drawingMethod == "quadratic"){
+        ctx.beginPath();
+        ctx.moveTo(_points[0].x, _points[0].y);
+
+        for (var i = 0; i < _points.length - 2; i++) {
+          var c = (_points[i].x + _points[i + 1].x) / 2;
+          var d = (_points[i].y + _points[i + 1].y) / 2;
+       
+          ctx.quadraticCurveTo(_points[i].x, _points[i].y, c, d);
+        }
+       
+        // For the last 2 points
+        ctx.quadraticCurveTo(
+            _points[i].x,
+            _points[i].y,
+            _points[i + 1].x,
+            _points[i + 1].y
+        );
+        ctx.stroke();
+      }
     }
   }
   function endDrawing(e, touch) {
@@ -429,6 +456,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   var squaredMarkedBackground = document.getElementById("background_squared_marked");
   var linesBackground = document.getElementById("background_lines");
   var dotsBackground = document.getElementById("background_dots");
+
+  var drawingLinear = document.getElementById("drawing_linear");
+  var drawingQuadratic = document.getElementById("drawing_quadratic");
 
   function clearButtonSelection(buttons, _class) {
     var colors = buttons;
@@ -669,6 +699,23 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   });
 
+  //Change drawing method
+  drawingLinear.addEventListener("click", function() {
+    drawingMethod = "linear";
+    translate(ctx,0.5,0.5);
+    loadIntoCanvas(thisFile, currentPage);
+  });
+
+  drawingQuadratic.addEventListener("click", function() {
+    drawingMethod = "quadratic";
+    translate(ctx,0.0,0.0);
+    loadIntoCanvas(thisFile, currentPage);
+  });
+
+  function translate(context,x,y){
+    context.resetTransform();
+    context.translate(x,y);
+  }
 
   //SAVE
   var saveButton = document.getElementById("save");
@@ -766,16 +813,40 @@ document.addEventListener( "DOMContentLoaded", function() {
             ctx.lineWidth = _line.width;
 
             for (var i = 2; i <= _points.length; i++) {
-              var p1 = _points[i-3];
-              var p2 = _points[i-2];
-              var p3 = _points[i-1];
-              if(!p1) p1=p2;
-              
-              ctx.beginPath();
-              ctx.moveTo(p1.x, p1.y);
-              ctx.lineTo(p2.x, p2.y);
-              ctx.lineTo(p3.x, p3.y);
-              ctx.stroke();
+
+              if(drawingMethod == "linear"){
+                var p1 = _points[i-3];
+                var p2 = _points[i-2];
+                var p3 = _points[i-1];
+                if(!p1) p1=p2;
+                
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.lineTo(p3.x, p3.y);
+                ctx.stroke();
+              }
+
+              else if(drawingMethod == "quadratic"){
+                ctx.beginPath();
+                ctx.moveTo(_points[0].x, _points[0].y);
+
+                for (var p = 0; p < i - 2; p++) {
+                  var c = (_points[p].x + _points[p + 1].x) / 2;
+                  var d = (_points[p].y + _points[p + 1].y) / 2;
+               
+                  ctx.quadraticCurveTo(_points[p].x, _points[p].y, c, d);
+                }
+               
+                // For the last 2 points
+                ctx.quadraticCurveTo(
+                    _points[p].x,
+                    _points[p].y,
+                    _points[p + 1].x,
+                    _points[p + 1].y
+                );
+                ctx.stroke();
+              }
             }
           }
         }
