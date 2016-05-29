@@ -294,7 +294,7 @@ document.addEventListener( "DOMContentLoaded", function() {
         ctx.beginPath();
         ctx.moveTo(_points[0].x, _points[0].y);
 
-        for (var i = 1; i < _points.length - 2; i++) {
+        for (var i = 0; i < _points.length - 2; i++) {
           var c = (_points[i].x + _points[i + 1].x) / 2;
           var d = (_points[i].y + _points[i + 1].y) / 2;
        
@@ -831,7 +831,7 @@ document.addEventListener( "DOMContentLoaded", function() {
                 ctx.beginPath();
                 ctx.moveTo(_points[0].x, _points[0].y);
 
-                for (var p = 1; p < i - 2; p++) {
+                for (var p = 0; p < i - 2; p++) {
                   var c = (_points[p].x + _points[p + 1].x) / 2;
                   var d = (_points[p].y + _points[p + 1].y) / 2;
                
