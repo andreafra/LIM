@@ -112,8 +112,12 @@ document.addEventListener( "DOMContentLoaded", function() {
     ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
-    ctx.translate(0.5,0.5);
     ctx.lineCap="round";
+
+    if(drawingMethod=="linear")
+      translate(ctx,0.5,0.5);
+    else if(drawingMethod=="quadratic")
+      translate(ctx,0.0,0.0);
     
     //Re-bind click events, since we've updated canvas object
     canvas.onmousedown = function(e) {
@@ -698,13 +702,20 @@ document.addEventListener( "DOMContentLoaded", function() {
   //Change drawing method
   drawingLinear.addEventListener("click", function() {
     drawingMethod = "linear";
+    translate(ctx,0.5,0.5);
     loadIntoCanvas(thisFile, currentPage);
   });
 
   drawingQuadratic.addEventListener("click", function() {
     drawingMethod = "quadratic";
+    translate(ctx,0.0,0.0);
     loadIntoCanvas(thisFile, currentPage);
   });
+
+  function translate(context,x,y){
+    context.resetTransform();
+    context.translate(x,y);
+  }
 
   //SAVE
   var saveButton = document.getElementById("save");
