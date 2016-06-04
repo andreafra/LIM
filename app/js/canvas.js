@@ -191,8 +191,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     var _x, _y, _points = [ ];
     if (touch) {
-      _x = e.touches[0].clientX;
-      _y = e.touches[0].clientY;
+      _x = e.changedTouches[0].clientX;
+      _y = e.changedTouches[0].clientY;
     } else {
       _x = e.clientX;
       _y = e.clientY;
@@ -417,15 +417,18 @@ document.addEventListener( "DOMContentLoaded", function() {
   };
   // TOUCH SUPPORT
   canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault();
     startDrawing(e, true);
   });
 
   canvas.addEventListener("touchmove", function(e) {
+    e.preventDefault();
     moveDrawing(e, true);
   });
 
   canvas.addEventListener("touchend", function(e) {
-    endDrawing();
+    e.preventDefault();
+    endDrawing(e, true);
   });
 
   var pencil = document.getElementById("pencil");
