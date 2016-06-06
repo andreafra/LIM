@@ -81,32 +81,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     resizeCanvas(true);
   }
 
-  function resizeCanvas(callLoad) {
-    canvasWidth = window.innerWidth;
-    canvasHeight = window.innerHeight;
-    var oldCanvasWidth = thisFile.settings.canvas.x;
-    var oldCanvasHeight = thisFile.settings.canvas.y;
-    var widthRatio = canvasWidth/oldCanvasWidth;
-    var heightRatio = canvasHeight/oldCanvasHeight;
-    if(canvasWidth==oldCanvasWidth && canvasHeight == oldCanvasHeight) {
-      return;
-    }
-
-    content.style.height = canvasHeight + "px";
-
-    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
-    document.getElementById("content").innerHTML = canvasToAdd;
-    canvas = document.getElementById("canvas");
-    DrawPaddingX = canvas.offsetLeft;
-    DrawPaddingY = canvas.offsetTop;
-    ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
-    ctx.strokeStyle = lineColor;
-    ctx.lineWidth = lineWidth;
-    ctx.translate(0.5,0.5);
-    ctx.lineCap="round";
-    
-    //Re-bind click events, since we've updated canvas object
+  function bindEvents(){
     canvas.onmousedown = function(e) {
       startDrawing(e, false);
     };
@@ -144,6 +119,35 @@ document.addEventListener( "DOMContentLoaded", function() {
         e.preventDefault();
       }
     }, false);
+  }
+
+  function resizeCanvas(callLoad) {
+    canvasWidth = window.innerWidth;
+    canvasHeight = window.innerHeight;
+    var oldCanvasWidth = thisFile.settings.canvas.x;
+    var oldCanvasHeight = thisFile.settings.canvas.y;
+    var widthRatio = canvasWidth/oldCanvasWidth;
+    var heightRatio = canvasHeight/oldCanvasHeight;
+    if(canvasWidth==oldCanvasWidth && canvasHeight == oldCanvasHeight) {
+      return;
+    }
+
+    content.style.height = canvasHeight + "px";
+
+    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
+    document.getElementById("content").innerHTML = canvasToAdd;
+    canvas = document.getElementById("canvas");
+    DrawPaddingX = canvas.offsetLeft;
+    DrawPaddingY = canvas.offsetTop;
+    ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = lineWidth;
+    ctx.translate(0.5,0.5);
+    ctx.lineCap="round";
+    
+    //Re-bind click events, since we've updated canvas object
+    bindEvents();
 
     //Adapt points
     for(var i=0; i<thisFile.pages.length; i++){
@@ -382,29 +386,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     context.restore();
   }
 
-  canvas.onmousedown = function(e) {
-    startDrawing(e, false);
-  };
-
-  canvas.onmousemove = function(e) {
-    moveDrawing(e, false);
-  };
-
-  canvas.onmouseup = function(e) {
-    endDrawing(e, false);
-  };
-  // TOUCH SUPPORT
-  canvas.addEventListener("touchstart", function(e) {
-    startDrawing(e, true);
-  });
-
-  canvas.addEventListener("touchmove", function(e) {
-    moveDrawing(e, true);
-  });
-
-  canvas.addEventListener("touchend", function(e) {
-    endDrawing();
-  });
+  bindEvents();
 
   // THESE SET THINGS
   function setColor(color){
