@@ -3,7 +3,7 @@
 @import "materialIcons";
 @import "animations";
 $header_height: 40px;
-
+$font-stack: "Roboto", Helvetica, Arial, sans-serif;
 body {
   position: fixed;
   top: 0;
@@ -369,7 +369,7 @@ $circle-big: 14px;
       flex-grow: 1;
       text-decoration: none !important;
       text-align: center;
-      font: 1.5em "Futura";
+      font: 1.5em $font-stack;
       color: black;
       padding-top: 2em;
       padding-bottom: 2em;
@@ -406,7 +406,7 @@ $circle-big: 14px;
         text-decoration: none;
         a {
           padding: 3px;
-          font: 1em "Futura";
+          font: 1em $font-stack;
           color: black;
           padding-top: 2em;
         }
