@@ -90,6 +90,46 @@ document.addEventListener( "DOMContentLoaded", function() {
     resizeCanvas(true);
   }
 
+  function bindEvents(){
+    canvas.onmousedown = function(e) {
+      startDrawing(e, false);
+    };
+    canvas.onmousemove = function(e) {
+      moveDrawing(e, false);
+    };
+    canvas.onmouseup = function(e) {
+      endDrawing(e, false);
+    };
+    // TOUCH SUPPORT
+    canvas.addEventListener("touchstart", function(e) {
+      startDrawing(e, true);
+    }, false);
+
+    canvas.addEventListener("touchmove", function(e) {
+      moveDrawing(e, true);
+    }, false);
+
+    canvas.addEventListener("touchend", function(e) {
+      endDrawing(e, true);
+    }, false);
+    // Prevent scrolling when touching the canvas
+    document.body.addEventListener("touchstart", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+    document.body.addEventListener("touchend", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+    document.body.addEventListener("touchmove", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+  }
+
   function resizeCanvas(callLoad) {
     canvasWidth = window.innerWidth;
     canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
@@ -120,27 +160,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       translate(ctx,0.0,0.0);
     
     //Re-bind click events, since we've updated canvas object
-    canvas.onmousedown = function(e) {
-      startDrawing(e, false);
-    };
-    canvas.onmousemove = function(e) {
-      moveDrawing(e, false);
-    };
-    canvas.onmouseup = function(e) {
-      endDrawing(e, false);
-    };
-    // TOUCH SUPPORT
-    canvas.addEventListener("touchstart", function(e) {
-      startDrawing(e, true);
-    });
-
-    canvas.addEventListener("touchmove", function(e) {
-      moveDrawing(e, true);
-    });
-
-    canvas.addEventListener("touchend", function(e) {
-      endDrawing();
-    });
+    bindEvents();
 
     //Adapt points
     for(var i=0; i<thisFile.pages.length; i++){
@@ -404,45 +424,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
 
-  canvas.onmousedown = function(e) {
-    startDrawing(e, false);
-  };
-
-  canvas.onmousemove = function(e) {
-    moveDrawing(e, false);
-  };
-
-  canvas.onmouseup = function(e) {
-    endDrawing(e, false);
-  };
-  // TOUCH SUPPORT
-  canvas.addEventListener("touchstart", function(e) {
-    startDrawing(e, true);
-  }, false);
-
-  canvas.addEventListener("touchmove", function(e) {
-    moveDrawing(e, true);
-  }, false);
-
-  canvas.addEventListener("touchend", function(e) {
-    endDrawing(e, true);
-  }, false);
-  // Prevent scrolling when touching the canvas
-  document.body.addEventListener("touchstart", function (e) {
-    if (e.target == canvas) {
-      e.preventDefault();
-    }
-  }, false);
-  document.body.addEventListener("touchend", function (e) {
-    if (e.target == canvas) {
-      e.preventDefault();
-    }
-  }, false);
-  document.body.addEventListener("touchmove", function (e) {
-    if (e.target == canvas) {
-      e.preventDefault();
-    }
-  }, false);
+  bindEvents();
 
   var pencil = document.getElementById("pencil");
   var pencilColor = document.getElementById("pencil_color");
