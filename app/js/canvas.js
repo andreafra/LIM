@@ -417,19 +417,32 @@ document.addEventListener( "DOMContentLoaded", function() {
   };
   // TOUCH SUPPORT
   canvas.addEventListener("touchstart", function(e) {
-    e.preventDefault();
     startDrawing(e, true);
-  });
+  }, false);
 
   canvas.addEventListener("touchmove", function(e) {
-    e.preventDefault();
     moveDrawing(e, true);
-  });
+  }, false);
 
   canvas.addEventListener("touchend", function(e) {
-    e.preventDefault();
     endDrawing(e, true);
-  });
+  }, false);
+  // Prevent scrolling when touching the canvas
+  document.body.addEventListener("touchstart", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
+  document.body.addEventListener("touchend", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
+  document.body.addEventListener("touchmove", function (e) {
+    if (e.target == canvas) {
+      e.preventDefault();
+    }
+  }, false);
 
   var pencil = document.getElementById("pencil");
   var pencilColor = document.getElementById("pencil_color");
