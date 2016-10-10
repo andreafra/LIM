@@ -158,7 +158,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       translate(ctx,0.5,0.5);
     else if(drawingMethod=="quadratic")
       translate(ctx,0.0,0.0);
-    
+
     //Re-bind click events, since we've updated canvas object
     bindEvents();
 
@@ -266,7 +266,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       _x = e.changedTouches[0].clientX;
       _y = e.changedTouches[0].clientY;
     } else {
-      canvas.style.cursor = "crosshair";
+      canvas.style.cursor = "none";
       _x = e.clientX;
       _y = e.clientY;
     }
@@ -290,7 +290,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     //SE GOMMA
     if (toolSelected === "rubber") {
       clearCircle(ctx,_x,_y,rubberWidth/2);
-    } 
+    }
 
     //SE MATITA
     else{
@@ -317,10 +317,10 @@ document.addEventListener( "DOMContentLoaded", function() {
         for (var i = 0; i < _points.length - 2; i++) {
           var c = (_points[i].x + _points[i + 1].x) / 2;
           var d = (_points[i].y + _points[i + 1].y) / 2;
-       
+
           ctx.quadraticCurveTo(_points[i].x, _points[i].y, c, d);
         }
-       
+
         // For the last 2 points
         ctx.quadraticCurveTo(
             _points[i].x,
@@ -368,7 +368,7 @@ document.addEventListener( "DOMContentLoaded", function() {
         ctx.fill();
       }
     }
-  
+
    //These points are already saved in startDrawing. No need to save here.
     resetBackstackButtons();
     isDrawing = false;
@@ -748,7 +748,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       console.log("loading file " + file.settings.name);
       thisFile = file;
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      
+
       if (page === undefined || page === null) {
         page = 0;
       }
@@ -817,7 +817,7 @@ document.addEventListener( "DOMContentLoaded", function() {
                 var p2 = _points[i-2];
                 var p3 = _points[i-1];
                 if(!p1) p1=p2;
-                
+
                 ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
                 ctx.lineTo(p2.x, p2.y);
@@ -832,10 +832,10 @@ document.addEventListener( "DOMContentLoaded", function() {
                 for (var p = 0; p < i - 2; p++) {
                   var c = (_points[p].x + _points[p + 1].x) / 2;
                   var d = (_points[p].y + _points[p + 1].y) / 2;
-               
+
                   ctx.quadraticCurveTo(_points[p].x, _points[p].y, c, d);
                 }
-               
+
                 // For the last 2 points
                 ctx.quadraticCurveTo(
                     _points[p].x,
@@ -848,7 +848,7 @@ document.addEventListener( "DOMContentLoaded", function() {
             }
           }
         }
-      }     
+      }
     } else console.log("error loading file: " + file);
   }
 
@@ -973,5 +973,5 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   // Run once at start
   updateNavButtons();
-  
+
 }); // document.ready?

@@ -18,7 +18,7 @@ var handleStartupEvent = function() {
   }
 
    function executeSquirrelCommand(args, done) {
-      var updateDotExe = path.resolve(path.dirname(process.execPath), 
+      var updateDotExe = path.resolve(path.dirname(process.execPath),
          '..', 'update.exe');
       var child = cp.spawn(updateDotExe, args, { detached: true });
       child.on('close', function(code) {
@@ -243,13 +243,14 @@ ipcMain.on('load-menu', function(){
     mainWindow.unmaximize();
   }
 });
+const toolbarWidth = 750;
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();
   var electronScreen = electron.screen;
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
 
   toolbarWindow = new BrowserWindow({
-    width: 700/*size.width*/,
+    width: toolbarWidth/*size.width*/,
     height: 80/*size.height*/,
     transparent:false,
     fullscreen:false,
@@ -259,7 +260,7 @@ ipcMain.on('new-transparent-window', function() {
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
-    x: size.width - 700, // anchor the TB in bottomleft
+    x: size.width - toolbarWidth, // anchor the TB in bottomleft
     y: size.height - 80
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
@@ -330,9 +331,9 @@ ipcMain.on('toggle-navbar', function(e, isOpen) {
     } else {
       //toolbarWindow.setSize(850, 80);
       toolbarWindow.setBounds({
-        x: size.width - 700,
+        x: size.width - toolbarWidth,
         y: size.height - 80,
-        width: 700,
+        width: toolbarWidth,
         height: 80
       });
       transparentWindow.show()

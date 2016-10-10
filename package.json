@@ -25,6 +25,7 @@
     }
   ],
   "devDependencies": {
+    "electron": "^1.4.3",
     "grunt": "^0.4.5",
     "grunt-electron": "^2.0.1",
     "grunt-electron-installer": "^1.2.1"

@@ -143,13 +143,14 @@ footer {
   position: relative;
   margin-top: 30px;
   box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
-  width: 400px;
-  height: 450px;
+  width: 800px;
+  height: 550px;
   text-align: center;
   background-color: #ffffff;
-  border-radius: 5px; }
+  border-radius: 5px;
+  font-size: 0; }
   #settings_panel h1 {
-    font-size: 1.8em;
+    font-size: 1.8rem;
     font-weight: lighter;
     margin: 0;
     padding-top: 10px;
@@ -163,10 +164,12 @@ footer {
   right: 5px; }
 
 .settings_list {
-  width: 50%;
-  padding-left: 25%;
+  width: 40%;
+  display: inline-block;
   list-style: none;
-  font-size: 1.2rem; }
+  font-size: 1.2rem;
+  padding: 0 5% 0 5%;
+  vertical-align: top; }
   .settings_list .settings_list_heading {
     width: 100%;
     font-size: 0.7em;
@@ -174,9 +177,8 @@ footer {
     text-transform: uppercase;
     letter-spacing: 0.2em;
     text-align: left;
-    padding-left: 62px;
     margin-top: 16px;
-    color: #999999; }
+    color: gray; }
   .settings_list .settings_list_element {
     display: flex;
     text-align: left;
@@ -190,54 +192,71 @@ footer {
       align-self: center; }
     .settings_list .settings_list_element span {
       width: 100%;
-      padding-left: 32px; }
+      padding-left: 32px;
+      align-self: center; }
     .settings_list .settings_list_element:hover {
       background-color: #eeeeee; }
+  .settings_list .settings_list_picker {
+    width: 100%;
+    text-align: left; }
   .settings_list .settings_list_circular_picker {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding-top: 10px; }
-    .settings_list .settings_list_circular_picker span, .settings_list .settings_list_circular_picker input {
-      display: block;
-      width: 24px;
-      height: 24px;
-      border-radius: 15px;
-      border: 2px solid #eeeeee;
-      box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
-      font-size: 0;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-      .settings_list .settings_list_circular_picker span:hover, .settings_list .settings_list_circular_picker input:hover {
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
-      .settings_list .settings_list_circular_picker span:active, .settings_list .settings_list_circular_picker input:active {
+    display: block;
+    padding-top: 10px;
+    text-align: left; }
+    .settings_list .settings_list_circular_picker div {
+      display: flex;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0.25em 0 0.25em 0;
+      border-radius: 100px; }
+      .settings_list .settings_list_circular_picker div:hover {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        background: #eeeeee; }
+      .settings_list .settings_list_circular_picker div:active {
         box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2); }
-    .settings_list .settings_list_circular_picker #background_white {
+      .settings_list .settings_list_circular_picker div h6 {
+        display: inline-block;
+        margin: 0;
+        padding-left: 1em;
+        font-weight: normal;
+        align-self: center; }
+      .settings_list .settings_list_circular_picker div span, .settings_list .settings_list_circular_picker div input {
+        display: inline-block;
+        align-self: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 15px;
+        border: 2px solid #eeeeee;
+        box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
+        font-size: 0;
+        background-color: #ffffff; }
+    .settings_list .settings_list_circular_picker #background_white span {
       background-color: #ffffff; }
-    .settings_list .settings_list_circular_picker #background_black {
+    .settings_list .settings_list_circular_picker #background_black span {
       background-color: #212121; }
-    .settings_list .settings_list_circular_picker #background_green {
+    .settings_list .settings_list_circular_picker #background_green span {
       background-color: #567E3A; }
-    .settings_list .settings_list_circular_picker #background_transparent {
+    .settings_list .settings_list_circular_picker #background_transparent span {
       background-image: url("../img/nocolor.png"); }
-    .settings_list .settings_list_circular_picker #background_custom {
+    .settings_list .settings_list_circular_picker #background_custom span {
       background-image: url("../img/colors.png");
       background-position: center;
       background-clip: border-box; }
-    .settings_list .settings_list_circular_picker #background_none {
+    .settings_list .settings_list_circular_picker #background_none span {
       background-image: none; }
-    .settings_list .settings_list_circular_picker #background_squared {
+    .settings_list .settings_list_circular_picker #background_squared span {
       background-image: url("../img/grid/squared-dark.png");
       background-position: 15px 15px;
       background-size: 48px 48px; }
-    .settings_list .settings_list_circular_picker #background_squared_marked {
+    .settings_list .settings_list_circular_picker #background_squared_marked span {
       background-image: url("../img/grid/squared-marked-dark.png");
       background-position: 15px 15px;
       background-size: 48px 48px; }
-    .settings_list .settings_list_circular_picker #background_lines {
+    .settings_list .settings_list_circular_picker #background_lines span {
       background-image: url("../img/grid/lines-dark.png");
       background-position: 15px 15px;
       background-size: 12px 12px; }
-    .settings_list .settings_list_circular_picker #background_dots {
+    .settings_list .settings_list_circular_picker #background_dots span {
       background-image: url("../img/grid/dots-dark.png"); }
 
 /* end of settings */
@@ -261,9 +280,16 @@ footer {
 
 .toolbar-center {
   position: relative;
-  width: 50px;
+  width: 100px;
+  height: 100%;
   margin-left: auto;
   margin-right: auto; }
+  .toolbar-center #settings_panel_open {
+    padding: 0.5em; }
+    .toolbar-center #settings_panel_open i {
+      font-size: 1.4em; }
+    .toolbar-center #settings_panel_open span {
+      font-size: 1.2em; }
 
 .toolbar-right {
   position: absolute;
@@ -320,11 +346,11 @@ footer {
   font-size: 0; }
 
 #toggle_navbar {
-  color: #FF5039; }
+  color: #ffffff;
+  background-color: #FF5039;
+  border-radius: 40px; }
   #toggle_navbar:hover {
-    background-color: #FF5039;
-    color: #ffffff;
-    border-radius: 40px; }
+    background-color: #ff7d6c; }
 
 #stroke_small {
   background: #ffffff; }
@@ -426,6 +452,8 @@ footer {
   height: 24px;
   width: 24px;
   border-radius: 2px;
+  border: none;
+  background: #ffffff;
   cursor: default; }
   .btn:focus {
     outline: none; }
@@ -444,6 +472,13 @@ footer {
   border: none;
   box-shadow: none;
   float: right; }
+  .btn-menu.btn-flex {
+    width: auto;
+    height: auto;
+    display: flex; }
+    .btn-menu.btn-flex span, .btn-menu.btn-flex i {
+      display: inline-block;
+      align-self: center; }
 
 .btn-menu-left {
   margin-left: 5px;
@@ -494,6 +529,10 @@ footer {
   align-self: center;
   border-radius: 2px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .btn-pager.btn-flex {
+    width: auto;
+    padding-left: 1em;
+    padding-right: 1em; }
   .btn-pager i, .btn-pager span {
     align-self: center;
     margin-left: auto;
@@ -548,65 +587,13 @@ footer {
     border-bottom: 12px solid #212121;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
 
-.btn-azure {
-  background-color: #36D3FF; }
-
-.btn-azure-hover:hover {
-  background-color: #36D3FF;
-  color: #ffffff; }
-.btn-azure-hover:active {
-  background-color: #00a2cf;
-  color: #ffffff; }
-
-.btn-purple {
-  background-color: #9A53E8; }
-
-.btn-purple-hover:hover {
-  background-color: #9A53E8;
-  color: #ffffff; }
-.btn-purple-hover:active {
-  background-color: #6719bc;
-  color: #ffffff; }
-
-.btn-red {
-  background-color: #FF5039; }
-
-.btn-red-hover:hover {
-  background-color: #FF5039;
-  color: #ffffff; }
-.btn-red-hover:active {
-  background-color: #d21800;
-  color: #ffffff; }
-
-.btn-yellow {
-  background-color: #FFFF00; }
-
-.btn-yellow-hover:hover {
-  background-color: #FFFF00;
-  color: #ffffff; }
-.btn-yellow-hover:active {
-  background-color: #999900;
-  color: #ffffff; }
-
-.btn-green {
-  background-color: #71FF3C; }
-
-.btn-green-hover:hover {
-  background-color: #71FF3C;
-  color: #ffffff; }
-.btn-green-hover:active {
-  background-color: #3ad500;
-  color: #ffffff; }
-
-.btn-white {
-  background-color: #ffffff; }
-
-.btn-white-hover:hover {
-  background-color: #ffffff;
-  color: #212121; }
-.btn-white-hover:active {
-  background-color: #cccccc;
-  color: #212121; }
+.btn-option {
+  margin-top: 1em;
+  border-radius: 100px;
+  background: #eeeeee;
+  width: auto;
+  height: auto;
+  padding: 1em; }
 
 #ruler_container {
   position: absolute;

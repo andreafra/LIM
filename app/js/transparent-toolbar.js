@@ -185,7 +185,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
   ruler.addEventListener("click", function(e) {
     sendTool(this);
-  }); 
+  });
 
   // UNDO & REDO
   var backstack_counter=0;
@@ -219,11 +219,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   toggleNavbar.addEventListener("click", function() {
     ipc.send('toggle-navbar', isOpen);
     if (isOpen) {
-      this.innerHTML = "<i class=\"material-icons\">arrow_back</i>";
+      this.innerHTML = "<i class=\"material-icons\">mode_edit</i>";
       isOpen = false;
       hideLi()
     } else {
-      this.innerHTML = "<i class=\"material-icons\">arrow_forward</i>";
+      this.innerHTML = "<i class=\"material-icons\">visibility_off</i>";
       isOpen = true;
       showLi()
     }
