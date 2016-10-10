@@ -104,6 +104,15 @@
       modalBackground.addEventListener('click', function() {
         modalBackground.classList.add('hidden');
       });
+
+      //open links externally by default
+      var shell = require('electron').shell;
+      document.querySelectorAll('a[href^="http"]').forEach(function (element) { 
+        element.addEventListener('click', function(event) {
+          event.preventDefault();
+          shell.openExternal(this.href);
+        });
+      });
     </script>
   </body>
 </html>
