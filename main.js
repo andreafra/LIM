@@ -266,10 +266,13 @@ ipcMain.on('new-transparent-window', function() {
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
 
   transparentWindow = new BrowserWindow({
+    acceptFirstMouse:true,
     width: size.width,
     height: size.height,
     transparent:true,
-    fullscreen:false,
+    movable:false,
+    resizable:false,
+    fullscreen:true,
     frame: false,
     skipTaskbar: true,
     minWidth: 800,

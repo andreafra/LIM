@@ -86,21 +86,31 @@ document.addEventListener( "DOMContentLoaded", function() {
       startDrawing(e, false);
     };
     canvas.onmousemove = function(e) {
-      moveDrawing(e, false);
+      if(!isDrawing && (e.which==1 || e.which==2)){
+        startDrawing(e, false);
+      }
+      else{
+        moveDrawing(e, false);
+      }
     };
     canvas.onmouseup = function(e) {
       endDrawing(e, false);
     };
     // TOUCH SUPPORT
-    canvas.addEventListener("touchstart", function(e) {
+    canvas.addEventListener("touchstart", function (e) {
       startDrawing(e, true);
     }, false);
 
-    canvas.addEventListener("touchmove", function(e) {
-      moveDrawing(e, true);
+    canvas.addEventListener("touchmove", function (e) {
+      if(!isDrawing){
+        startDrawing(e, true);
+      }
+      else{
+        moveDrawing(e, true);
+      }
     }, false);
 
-    canvas.addEventListener("touchend", function(e) {
+    canvas.addEventListener("touchend", function (e) {
       endDrawing(e, true);
     }, false);
     // Prevent scrolling when touching the canvas
@@ -118,6 +128,13 @@ document.addEventListener( "DOMContentLoaded", function() {
       if (e.target == canvas) {
         e.preventDefault();
       }
+    }, false);
+    //Stop drawing if cursor leaves canvas
+    canvas.addEventListener("mouseleave", function (e) {
+      endDrawing(e, true);
+    }, false);
+    canvas.addEventListener("touchleave", function (e) {
+      endDrawing(e, true);
     }, false);
   }
 

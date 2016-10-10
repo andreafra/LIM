@@ -128,6 +128,13 @@ document.addEventListener( "DOMContentLoaded", function() {
         e.preventDefault();
       }
     }, false);
+    //Stop drawing if cursor leaves canvas
+    canvas.addEventListener("mouseleave", function (e) {
+      endDrawing(e, true);
+    }, false);
+    canvas.addEventListener("touchleave", function (e) {
+      endDrawing(e, true);
+    }, false);
   }
 
   function resizeCanvas(callLoad) {
