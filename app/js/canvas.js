@@ -55,6 +55,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var canvas = document.getElementById("canvas");
 
+  canvas.style.cursor = "crosshair";
   canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
   canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
@@ -86,30 +87,40 @@ document.addEventListener( "DOMContentLoaded", function() {
   // The current page in the pages[]
   var currentPage = 0;
 
+  //FIX FUCKING CHROMIUM BUG
+  var ignoreNextMove = false;
+
   window.onresize = function() {
     resizeCanvas(true);
   }
 
   function bindEvents(){
-    canvas.onmousedown = function(e) {
+    canvas.addEventListener("mousedown", function (e) {
       startDrawing(e, false);
-    };
-    canvas.onmousemove = function(e) {
+    }, false);
+    canvas.addEventListener("mousemove", function (e) {
+      //FIX FUCKING CHROMIUM BUG
+      if(ignoreNextMove)
+      {
+          ignoreNextMove = false;
+          return;
+      }
       moveDrawing(e, false);
-    };
-    canvas.onmouseup = function(e) {
+    }, false);
+    canvas.addEventListener("mouseup", function (e) {
+      ignoreNextMove = true;
       endDrawing(e, false);
-    };
+    }, false);
     // TOUCH SUPPORT
-    canvas.addEventListener("touchstart", function(e) {
+    canvas.addEventListener("touchstart", function (e) {
       startDrawing(e, true);
     }, false);
 
-    canvas.addEventListener("touchmove", function(e) {
+    canvas.addEventListener("touchmove", function (e) {
       moveDrawing(e, true);
     }, false);
 
-    canvas.addEventListener("touchend", function(e) {
+    canvas.addEventListener("touchend", function (e) {
       endDrawing(e, true);
     }, false);
     // Prevent scrolling when touching the canvas
@@ -153,6 +164,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
     document.getElementById("content").innerHTML = canvasToAdd;
     canvas = document.getElementById("canvas");
+    canvas.style.cursor = "crosshair";
+
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
@@ -213,6 +226,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     isDrawing = true;
     hasMoved = false; //Not yet
 
+    canvas.style.cursor="none";
+
     if(thisFile.pages[currentPage] === undefined)
       thisFile.pages[currentPage] = {lines: [], backstack: []};
 
@@ -261,7 +276,10 @@ document.addEventListener( "DOMContentLoaded", function() {
     redo_times=1;
   }
   function moveDrawing(e, touch) {
-    if (!isDrawing) return;
+    if (!isDrawing) {
+      canvas.style.cursor="crosshair";
+      return;
+    }
 
     hasMoved = true;
     var _x, _y, _points;
@@ -269,11 +287,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     _points = _lines[_lines.length-1].points;
 
     if (touch) {
-      canvas.style.cursor = "none";
       _x = e.changedTouches[0].clientX;
       _y = e.changedTouches[0].clientY;
     } else {
-      canvas.style.cursor = "none";
       _x = e.clientX;
       _y = e.clientY;
     }
@@ -504,7 +520,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   function setBackgroundColor(color) {
     thisFile.settings.canvas.backgroundColor = color;
     canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
-    loadIntoCanvas(thisFile, currentPage);
   }
   function setBackgroundImage(image) { // NO .PNG
      thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
