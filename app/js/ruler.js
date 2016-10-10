@@ -47,6 +47,7 @@ exports.LoadRuler = function(){
   });
 
   ruler_right.addEventListener("mouseup", function(){rotation_down = false;});
+  ruler_right.addEventListener("mouseleave", function(){rotation_down = false;});
   ruler_right.addEventListener("mousemove", function(event) {
     if(!rotation_down) return;
     var _topLeftRect = ruler_topLeft.getBoundingClientRect();
@@ -102,6 +103,7 @@ exports.LoadRuler = function(){
                                   _center.x - event.clientX) * 180 / Math.PI;
   });
   ruler_left.addEventListener("mouseup", function(){rotation_down = false;});
+  ruler_left.addEventListener("mouseleave", function(){rotation_down = false;});
   ruler_left.addEventListener("mousemove", function(event) {
     if(!rotation_down) return;
     var _topLeftRect = ruler_topLeft.getBoundingClientRect();
@@ -159,6 +161,8 @@ ruler_text.innerHTML=(displayRotation|0) +"°";
     startingRotation = Math.atan2(event.touches[0].clientY - _center.y,
                                   event.touches[0].clientX - _center.x) * 180 / Math.PI;
   });
+  ruler_right.addEventListener("touchend", function(){rotation_down = false;});
+  ruler_right.addEventListener("touchleave", function(){rotation_down = false;});
   ruler_right.addEventListener("touchmove", function(event) {
     var _topLeftRect = ruler_topLeft.getBoundingClientRect();
     var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
@@ -214,6 +218,8 @@ ruler_text.innerHTML=(displayRotation|0) +"°";
     startingRotation = Math.atan2(_center.y - event.touches[0].clientY,
                                   _center.x - event.touches[0].clientX) * 180 / Math.PI;
   });
+  ruler_left.addEventListener("touchend", function(){rotation_down = false;});
+  ruler_left.addEventListener("touchleave", function(){rotation_down = false;});
   ruler_left.addEventListener("touchmove", function(event) {
     var _topLeftRect = ruler_topLeft.getBoundingClientRect();
     var _bottomRightRect = ruler_bottomRight.getBoundingClientRect();
@@ -249,8 +255,9 @@ ruler_text.innerHTML=(displayRotation|0) +"°";
   var lastTouch;
   //Mouse drag
   var drag_down = false;
-  ruler_center.addEventListener("mousedown", function(event){drag_down = true; lastTouch={x: event.clientX, y: event.clientY}})
-  ruler_center.addEventListener("mouseup", function(){drag_down = false; lastTouch = undefined})
+  ruler_center.addEventListener("mousedown", function(event){drag_down = true; lastTouch={x: event.clientX, y: event.clientY}});
+  ruler_center.addEventListener("mouseup", function(){drag_down = false; lastTouch = undefined});
+  ruler_center.addEventListener("mouseleave", function(){drag_down = false; lastTouch = undefined});
   ruler_center.addEventListener("mousemove", function(event) {
     if(!drag_down) return;
     if(lastTouch === undefined) return;
@@ -271,8 +278,9 @@ ruler_text.innerHTML=(displayRotation|0) +"°";
   });
 
   //Touch drag
-  ruler_center.addEventListener("touchstart", function(event){drag_down = true; lastTouch={x: event.touches[0].clientX, y: event.touches[0].clientY}})
-  ruler_center.addEventListener("touchend", function(){drag_down = false; lastTouch = undefined})
+  ruler_center.addEventListener("touchstart", function(event){drag_down = true; lastTouch={x: event.touches[0].clientX, y: event.touches[0].clientY}});
+  ruler_center.addEventListener("touchend", function(){drag_down = false; lastTouch = undefined});
+  ruler_center.addEventListener("touchleave", function(){drag_down = false; lastTouch = undefined});
   ruler_center.addEventListener("touchmove", function(event) {
     if(!drag_down) return;
     if(lastTouch === undefined) return;

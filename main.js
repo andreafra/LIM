@@ -1,14 +1,13 @@
 const electron = require('electron');
 const ipcMain = require('electron').ipcMain;
-
-const app = electron.app;  // Module to control application life.
+const {dialog} = require('electron');
+const {app} = require('electron');  // Module to control application life.
 var path = require('path');
 var cp = require('child_process');
-
-const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
+const {BrowserWindow} = require('electron');  // Module to create native browser window.
 
 // Report crashes to our server.
-electron.crashReporter.start();
+//electron.crashReporter.start();
 
 // ========= //
 // Installer //
@@ -19,7 +18,7 @@ var handleStartupEvent = function() {
   }
 
    function executeSquirrelCommand(args, done) {
-      var updateDotExe = path.resolve(path.dirname(process.execPath), 
+      var updateDotExe = path.resolve(path.dirname(process.execPath),
          '..', 'update.exe');
       var child = cp.spawn(updateDotExe, args, { detached: true });
       child.on('close', function(code) {
@@ -98,7 +97,6 @@ updater.check((err, status) => {
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
   // Restart the app and install the update
-  var dialog = require('dialog');
   if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
     dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Salva e riavvia', 'Non ora'], cancelId: 2, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
     function(response) {
@@ -107,7 +105,7 @@ updater.on('update-downloaded', (info) => {
           updater.install();
           break;
         case 1:
-          mainWindow.webContents.send('save-file', updater); //send request to canvas.js, passing the updater file, so that we can update from another script.
+          mainWindow.webContents.send('save-file', 'update'); //send request to canvas.js, passing the updater file, so that we can update from another script.
           break;
         case 2:
           break;
@@ -179,7 +177,22 @@ app.on('ready', function() {
 });
 
 ipcMain.on('close-main-window', function () {
-  app.quit();
+  if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
+    dialog.showMessageBox({ type: 'info', buttons: ['Esci','Salva ed esci', 'Annulla'], cancelId: 2, message: "Sei sicuro di voler uscire?"},
+    function(response) {
+      switch(response) {
+        case 0:
+          app.quit();
+          break;
+        case 1:
+          mainWindow.webContents.send('save-file', 'quit');
+          break;
+        case 2:
+          break;
+      }
+    });
+  }
+  else app.quit();
 });
 ipcMain.on('maximize-main-window', function () {
   if(mainWindow.isMaximized())
@@ -195,33 +208,49 @@ ipcMain.on('new-default-window', function() {
   mainWindow.maximize();
 });
 ipcMain.on('back-to-main', function() {
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
-  if(transparentWindow!= null && toolbarWindow != null){
+  if(transparentWindow!= null && toolbarWindow != null){  //If we were on transparent
+    mainWindow.loadURL('file://' + __dirname + '/index.html');
     toolbarWindow.close();
     transparentWindow.close();
+    mainWindow.show();
+    mainWindow.unmaximize();
   }
-  mainWindow.show();
-  mainWindow.unmaximize();
+  else{                                                   //If we were on main
+    if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
+      dialog.showMessageBox({ type: 'info', buttons: ['Torna al menu','Salva e torna al menu', 'Annulla'], cancelId: 2, message: "Sei sicuro di voler tornare al menu?"},
+      function(response) {
+        switch(response) {
+          case 0:
+            mainWindow.loadURL('file://' + __dirname + '/index.html');
+            mainWindow.show();
+            mainWindow.unmaximize();
+            break;
+          case 1:
+            mainWindow.webContents.send('save-file','back-to-main');
+            break;
+          case 2:
+            break;
+        }
+      });
+    }
+    else app.quit();
+  }
 });
+ipcMain.on('load-menu', function(){
+  if(mainWindow!=null){
+    mainWindow.loadURL('file://' + __dirname + '/index.html');
+    mainWindow.show();
+    mainWindow.unmaximize();
+  }
+});
+const toolbarWidth = 750;
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();
   var electronScreen = electron.screen;
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
 
-  transparentWindow = new BrowserWindow({
-    width: size.width,
-    height: size.height,
-    transparent:true,
-    fullscreen:false,
-    frame: false,
-    skipTaskbar: true,
-    minWidth: 800,
-    minHeight: 600
-  });
-  transparentWindow.loadURL('file://' + __dirname + '/transparent.html');
-
   toolbarWindow = new BrowserWindow({
-    width: 700/*size.width*/,
+    width: toolbarWidth/*size.width*/,
     height: 80/*size.height*/,
     transparent:false,
     fullscreen:false,
@@ -231,12 +260,25 @@ ipcMain.on('new-transparent-window', function() {
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
-    x: size.width - 700, // anchor the TB in bottomleft
+    x: size.width - toolbarWidth, // anchor the TB in bottomleft
     y: size.height - 80
   });
   toolbarWindow.loadURL('file://' + __dirname + '/transparent_toolbar.html');
-  transparentWindow.focus();
-  toolbarWindow.blur();
+
+  transparentWindow = new BrowserWindow({
+    acceptFirstMouse:true,
+    width: size.width,
+    height: size.height,
+    transparent:true,
+    movable:false,
+    resizable:false,
+    fullscreen:true,
+    frame: false,
+    skipTaskbar: true,
+    minWidth: 800,
+    minHeight: 600
+  });
+  transparentWindow.loadURL('file://' + __dirname + '/transparent.html');
 
   transparentWindow.on('closed', function() {
     transparentWindow = null;
@@ -258,6 +300,10 @@ ipcMain.on('new-transparent-window', function() {
       toolbarWindow.webContents.send('send-command', "hideLi");
     });
   });
+
+  //toolbarWindow.blur();
+  transparentWindow.focus();
+
 });
 
 ipcMain.on('send-command', function(e, target, command, parameters) {
@@ -288,9 +334,9 @@ ipcMain.on('toggle-navbar', function(e, isOpen) {
     } else {
       //toolbarWindow.setSize(850, 80);
       toolbarWindow.setBounds({
-        x: size.width - 700,
+        x: size.width - toolbarWidth,
         y: size.height - 80,
-        width: 700,
+        width: toolbarWidth,
         height: 80
       });
       transparentWindow.show()

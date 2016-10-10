@@ -1,4 +1,4 @@
-const dialog = require('electron').remote.require('dialog');
+const {dialog} = require('electron').remote;
 
 exports.Load = function(callback) {
 	dialog.showOpenDialog

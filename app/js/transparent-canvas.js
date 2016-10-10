@@ -1,7 +1,7 @@
 var thisFile;
 
 document.addEventListener( "DOMContentLoaded", function() {
-
+  //require('electron').remote.getCurrentWindow().toggleDevTools();
   const ipc = require('electron').ipcRenderer;
 
 // function to setup a new canvas for drawing
@@ -48,6 +48,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var canvas = document.getElementById("canvas");
 
+  canvas.style.cursor = "crosshair";
   canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
   var DrawPaddingX = canvas.offsetLeft;
@@ -55,8 +56,97 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var ctx = canvas.getContext('2d');
 
+  // Fixed Line Properties
+  ctx.imageSmoothingEnabled = true;
+
+  //default values - just first setup
+  var lineColor = "black";
+  var lineWidth = 2;
+  var rubberWidth = 30;
+
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = lineWidth;
+  ctx.translate(0.5,0.5);
+  ctx.lineCap="round";
+
+  var toolSelected = "pencil"; // can be "pencil", "rubber"
+  var rulerActive = false;
+
+  var isDrawing, pages = [ ];
+  var hasMoved = false;
+
+  // The current page in the pages[]
+  var currentPage = 0;
+
+  //FIX FUCKING CHROMIUM BUG
+  var ignoreNextMove = false;
+
   window.onresize = function() {
     resizeCanvas(true);
+  }
+
+  function bindEvents(){
+    canvas.addEventListener("mousedown", function (e) {
+      startDrawing(e, false);
+    }, false);
+    canvas.addEventListener("mousemove", function (e) {
+      //FIX FUCKING CHROMIUM BUG
+      if(ignoreNextMove)
+      {
+          ignoreNextMove = false;
+          return;
+      }
+      if(!isDrawing && (e.which==1 || e.which==2)){
+        startDrawing(e, false);
+      }
+      else{
+        moveDrawing(e, false);
+      }
+    }, false);
+    canvas.addEventListener("mouseup", function (e) {
+      ignoreNextMove = true;
+      endDrawing(e, false);
+    }, false);
+    // TOUCH SUPPORT
+    canvas.addEventListener("touchstart", function (e) {
+      startDrawing(e, true);
+    }, false);
+
+    canvas.addEventListener("touchmove", function (e) {
+      if(!isDrawing){
+        startDrawing(e, true);
+      }
+      else{
+        moveDrawing(e, true);
+      }
+    }, false);
+
+    canvas.addEventListener("touchend", function (e) {
+      endDrawing(e, true);
+    }, false);
+    // Prevent scrolling when touching the canvas
+    document.body.addEventListener("touchstart", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+    document.body.addEventListener("touchend", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+    document.body.addEventListener("touchmove", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+    //Stop drawing if cursor leaves canvas
+    canvas.addEventListener("mouseleave", function (e) {
+      endDrawing(e, true);
+    }, false);
+    canvas.addEventListener("touchleave", function (e) {
+      endDrawing(e, true);
+    }, false);
   }
 
   function resizeCanvas(callLoad) {
@@ -75,36 +165,19 @@ document.addEventListener( "DOMContentLoaded", function() {
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
     document.getElementById("content").innerHTML = canvasToAdd;
     canvas = document.getElementById("canvas");
+    canvas.style.cursor = "crosshair";
+    
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
-    ctx.shadowBlur = 0.5;
     ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = lineColor;
-    ctx.shadowColor = lineColor;
     ctx.lineWidth = lineWidth;
+    ctx.translate(0.5,0.5);
+    ctx.lineCap="round";
+    
     //Re-bind click events, since we've updated canvas object
-    canvas.onmousedown = function(e) {
-      startDrawing(e, false);
-    };
-    canvas.onmousemove = function(e) {
-      moveDrawing(e, false);
-    };
-    canvas.onmouseup = function(e) {
-      endDrawing(e, false);
-    };
-    // TOUCH SUPPORT
-    canvas.addEventListener("touchstart", function(e) {
-      startDrawing(e, true);
-    });
-
-    canvas.addEventListener("touchmove", function(e) {
-      moveDrawing(e, true);
-    });
-
-    canvas.addEventListener("touchend", function(e) {
-      endDrawing();
-    });
+    bindEvents();
 
     //Adapt points
     for(var i=0; i<thisFile.pages.length; i++){
@@ -145,41 +218,19 @@ document.addEventListener( "DOMContentLoaded", function() {
     };
   }
 
-  // Fixed Line Properties
-  ctx.shadowBlur = 0.5;
-  ctx.imageSmoothingEnabled = true;
-
-  //default values - just first setup
-  var lineColor = "black";
-  var lineWidth = 4;
-  var rubberWidth = 30;
-
-  ctx.strokeStyle = lineColor;
-  ctx.shadowColor = lineColor;
-  ctx.lineWidth = lineWidth;
-  //ctx.translate(0.5,0.5);
-
-  var toolSelected = "pencil"; // can be "pencil", "rubber"
-  var rulerActive = false;
-
-  var isDrawing, pages = [ ];
-  var hasMoved = false;
-
-  // The current page in the pages[]
-  var currentPage = 0;
-
-
   function startDrawing(e, touch) {
     isDrawing = true;
     hasMoved = false; //Not yet
+
+    canvas.style.cursor="none";
 
     if(thisFile.pages[currentPage] === undefined)
       thisFile.pages[currentPage] = {lines: [], backstack: []};
 
     var _x, _y, _points = [ ];
     if (touch) {
-      _x = e.touches[0].clientX;
-      _y = e.touches[0].clientY;
+      _x = e.changedTouches[0].clientX;
+      _y = e.changedTouches[0].clientY;
     } else {
       _x = e.clientX;
       _y = e.clientY;
@@ -221,7 +272,10 @@ document.addEventListener( "DOMContentLoaded", function() {
     redo_times=1;
   }
   function moveDrawing(e, touch) {
-    if (!isDrawing) return;
+    if (!isDrawing) {
+      canvas.style.cursor="crosshair";
+      return;
+    }
 
     hasMoved = true;
     var _x, _y, _points;
@@ -229,11 +283,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     _points = _lines[_lines.length-1].points;
 
     if (touch) {
-      canvas.style.cursor = "none";
       _x = e.changedTouches[0].clientX;
       _y = e.changedTouches[0].clientY;
     } else {
-      canvas.style.cursor = "crosshair";
       _x = e.clientX;
       _y = e.clientY;
     }
@@ -261,27 +313,18 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     //SE MATITA
     else{
-      ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+      ctx.strokeStyle = _lines[_lines.length-1].color;
       ctx.lineWidth = _lines[_lines.length-1].width;
 
-      var p1 = _points[0];
-      var p2 = _points[1];
+      var p1 = _points[_points.length-3];
+      var p2 = _points[_points.length-2];
+      var p3 = _points[_points.length-1];
+      if(!p1) p1=p2;
 
       ctx.beginPath();
       ctx.moveTo(p1.x, p1.y);
-
-      for (var i = 1, len = _points.length; i < len; i++) {
-        // we pick the point between pi+1 & pi+2 as the
-        // end point and p1 as our control point
-        var midPoint = midPointBtw(p1, p2);
-        ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-        p1 = _points[i];
-        p2 = _points[i+1];
-      }
-      // Draw last line as a straight line while
-      // we wait for the next point to be able to calculate
-      // the bezier control point
-      ctx.lineTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineTo(p3.x, p3.y);
       ctx.stroke();
     }
   }
@@ -290,17 +333,22 @@ document.addEventListener( "DOMContentLoaded", function() {
   	if(!hasMoved && isDrawing) {
   		var _x, _y;
   		if (touch) {
-  		  _x = e.changedTouches[0].clientX - DrawPaddingX;
-  		  _y = e.changedTouches[0].clientY - DrawPaddingY;
+  		  _x = e.changedTouches[0].clientX;
+  		  _y = e.changedTouches[0].clientY;
   		} else {
-  		  _x = e.clientX - DrawPaddingX;
-  		  _y = e.clientY - DrawPaddingY;
+  		  _x = e.clientX;
+  		  _y = e.clientY;
   		}
       if(rulerActive){
         var newPoint = getPointOnRuler(_x,_y);
         _x=newPoint.x;
         _y=newPoint.y;
       }
+
+      //gotta be responsive
+      _x-= DrawPaddingX;
+      _y-= DrawPaddingY;
+
       var _lines = thisFile.pages[currentPage].lines;
       var _width = _lines[_lines.length-1].width;
 
@@ -310,7 +358,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       else{
     		ctx.beginPath();
 
-        ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+        ctx.fillStyle = ctx.strokeStyle = _lines[_lines.length-1].color;
 
     		ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
         ctx.fill();
@@ -371,33 +419,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     context.restore();
   }
 
-  canvas.onmousedown = function(e) {
-    startDrawing(e, false);
-  };
-
-  canvas.onmousemove = function(e) {
-    moveDrawing(e, false);
-  };
-
-  canvas.onmouseup = function(e) {
-    endDrawing(e, false);
-  };
-  // TOUCH SUPPORT
-  canvas.addEventListener("touchstart", function(e) {
-    startDrawing(e, true);
-  });
-
-  canvas.addEventListener("touchmove", function(e) {
-    moveDrawing(e, true);
-  });
-
-  canvas.addEventListener("touchend", function(e) {
-    endDrawing();
-  });
+  bindEvents();
 
   // THESE SET THINGS
   function setColor(color){
-    ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = lineColor = color;
+    ctx.fillStyle = ctx.strokeStyle = lineColor = color;
   }
   function setWidth(width) {
      lineWidth = width;
@@ -406,7 +432,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   function setRubberWidth(width) {
      rubberWidth = width;
   }
-
 
   function selectTool(_tool){ //--da dividere
     if(_tool == "ruler"){
@@ -421,6 +446,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     else{
       toolSelected = _tool;
+      ipc.send('send-command','toolbar','loadWidth',{tool:_tool});
     }
   }
 
@@ -498,7 +524,6 @@ document.addEventListener( "DOMContentLoaded", function() {
             ctx.beginPath();
             ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
             ctx.fillStyle = _line.color;
-            ctx.shadowColor = _line.color;
             ctx.strokeStyle = _line.color;
             ctx.fill();
           }
@@ -512,27 +537,23 @@ document.addEventListener( "DOMContentLoaded", function() {
             }
           }
           else{
-            var p1 = _points[0];
-            var p2 = _points[1];
+            var p0 = _points[0];
 
             ctx.strokeStyle = _line.color;
-            ctx.shadowColor = _line.color;
-            ctx.lineWidth = _line.width+2.2;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
+            ctx.lineWidth = _line.width;
 
-            for (var i = 1, len = _points.length; i < len; i++) {
-              // we pick the point between pi+1 & pi+2 as the
-              // end point and p1 as our control point
-              var midPoint = midPointBtw(p1, p2);
-              ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-              p1 = _points[i];
-              p2 = _points[i+1];
-              // Draw last line as a straight line while
-              // we wait for the next point to be able to calculate
-              // the bezier control point
+            for (var i = 2; i <= _points.length; i++) {
+              var p1 = _points[i-3];
+              var p2 = _points[i-2];
+              var p3 = _points[i-1];
+              if(!p1) p1=p2;
+              
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.lineTo(p3.x, p3.y);
+              ctx.stroke();
             }
-            ctx.stroke();
           }
         }
       }     

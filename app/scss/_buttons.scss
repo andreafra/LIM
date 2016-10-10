@@ -6,6 +6,8 @@
   height: 24px;
   width: 24px;
   border-radius: 2px;
+  border: none;
+  background: $white;
   cursor: default;
   &:focus {
     outline: none;
@@ -27,6 +29,15 @@
   border: none;
   box-shadow: none;
   float: right;
+  &.btn-flex {
+    width: auto;
+    height: auto;
+    display: flex;
+    span, i {
+      display: inline-block;
+      align-self: center;
+    }
+  }
 }
 .btn-menu-left {
     margin-left: $header_height/8;
@@ -89,6 +100,11 @@
   align-self: center;
   border-radius: 2px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  &.btn-flex {
+    width: auto;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
   i, span {
     align-self: center;
     margin-left: auto;
@@ -151,26 +167,11 @@
   }
 }
 
-@each $color, $name in $colors {
-  .btn-#{$name} {
-    background-color: $color;
-  }
-  .btn-#{$name}-hover {
-    &:hover {
-      background-color: $color;
-      @if $color != $white {
-        color: $white;
-      } @else {
-        color: $black;
-      }
-    }
-    &:active {
-      background-color: darken($color, 20);
-      @if $color != $white {
-        color: $white;
-      } @else {
-        color: $black;
-      }
-    }
-  }
+.btn-option {
+  margin-top: 1em;
+  border-radius: 100px;
+  background: $gray;
+  width: auto;
+  height: auto;
+  padding: 1em;
 }

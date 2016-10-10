@@ -55,6 +55,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var canvas = document.getElementById("canvas");
 
+  canvas.style.cursor = "crosshair";
   canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
   canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
@@ -63,8 +64,88 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var ctx = canvas.getContext('2d');
 
+  // Fixed Line Properties
+  ctx.imageSmoothingEnabled = true;
+
+  //default values
+  var lineColor = "black";
+  var lineWidth = 2;
+  var rubberWidth = 30;
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = lineWidth;
+  ctx.translate(0.5,0.5);
+  ctx.lineCap="round";
+
+  var toolSelected = "pencil"; // can be "pencil", "rubber"
+  var rulerActive = false;
+
+  var drawingMethod = "linear";
+
+  var isDrawing, pages = [ ];
+  var hasMoved = false;
+
+  // The current page in the pages[]
+  var currentPage = 0;
+
+  //FIX FUCKING CHROMIUM BUG
+  var ignoreNextMove = false;
+
   window.onresize = function() {
     resizeCanvas(true);
+  }
+
+  function bindEvents(){
+    canvas.addEventListener("mousedown", function (e) {
+      startDrawing(e, false);
+    }, false);
+    canvas.addEventListener("mousemove", function (e) {
+      //FIX FUCKING CHROMIUM BUG
+      if(ignoreNextMove)
+      {
+          ignoreNextMove = false;
+          return;
+      }
+      moveDrawing(e, false);
+    }, false);
+    canvas.addEventListener("mouseup", function (e) {
+      ignoreNextMove = true;
+      endDrawing(e, false);
+    }, false);
+    // TOUCH SUPPORT
+    canvas.addEventListener("touchstart", function (e) {
+      startDrawing(e, true);
+    }, false);
+
+    canvas.addEventListener("touchmove", function (e) {
+      moveDrawing(e, true);
+    }, false);
+
+    canvas.addEventListener("touchend", function (e) {
+      endDrawing(e, true);
+    }, false);
+    // Prevent scrolling when touching the canvas
+    document.body.addEventListener("touchstart", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+    document.body.addEventListener("touchend", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+    document.body.addEventListener("touchmove", function (e) {
+      if (e.target == canvas) {
+        e.preventDefault();
+      }
+    }, false);
+    //Stop drawing if cursor leaves canvas
+    canvas.addEventListener("mouseleave", function (e) {
+      endDrawing(e, true);
+    }, false);
+    canvas.addEventListener("touchleave", function (e) {
+      endDrawing(e, true);
+    }, false);
   }
 
   function resizeCanvas(callLoad) {
@@ -83,36 +164,23 @@ document.addEventListener( "DOMContentLoaded", function() {
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
     document.getElementById("content").innerHTML = canvasToAdd;
     canvas = document.getElementById("canvas");
+    canvas.style.cursor = "crosshair";
+
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
-    ctx.shadowBlur = 0.5;
     ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = lineColor;
-    ctx.shadowColor = lineColor;
     ctx.lineWidth = lineWidth;
+    ctx.lineCap="round";
+
+    if(drawingMethod=="linear")
+      translate(ctx,0.5,0.5);
+    else if(drawingMethod=="quadratic")
+      translate(ctx,0.0,0.0);
+
     //Re-bind click events, since we've updated canvas object
-    canvas.onmousedown = function(e) {
-      startDrawing(e, false);
-    };
-    canvas.onmousemove = function(e) {
-      moveDrawing(e, false);
-    };
-    canvas.onmouseup = function(e) {
-      endDrawing(e, false);
-    };
-    // TOUCH SUPPORT
-    canvas.addEventListener("touchstart", function(e) {
-      startDrawing(e, true);
-    });
-
-    canvas.addEventListener("touchmove", function(e) {
-      moveDrawing(e, true);
-    });
-
-    canvas.addEventListener("touchend", function(e) {
-      endDrawing();
-    });
+    bindEvents();
 
     //Adapt points
     for(var i=0; i<thisFile.pages.length; i++){
@@ -153,42 +221,20 @@ document.addEventListener( "DOMContentLoaded", function() {
     };
   }
 
-  // Fixed Line Properties
-  ctx.shadowBlur = 0.5;
-  ctx.imageSmoothingEnabled = true;
-
-  //default values
-  var lineColor = "black";
-  var lineWidth = 4;
-  var rubberWidth = 30;
-  ctx.strokeStyle = lineColor;
-  ctx.shadowColor = lineColor;
-  ctx.lineWidth = lineWidth;
-  //ctx.translate(0.5,0.5);
-
-  var toolSelected = "pencil"; // can be "pencil", "rubber"
-  var rulerActive = false;
-
-  
-
-  var isDrawing, pages = [ ];
-  var hasMoved = false;
-
-  // The current page in the pages[]
-  var currentPage = 0;
-
 
   function startDrawing(e, touch) {
     isDrawing = true;
     hasMoved = false; //Not yet
+
+    canvas.style.cursor="none";
 
     if(thisFile.pages[currentPage] === undefined)
       thisFile.pages[currentPage] = {lines: [], backstack: []};
 
     var _x, _y, _points = [ ];
     if (touch) {
-      _x = e.touches[0].clientX;
-      _y = e.touches[0].clientY;
+      _x = e.changedTouches[0].clientX;
+      _y = e.changedTouches[0].clientY;
     } else {
       _x = e.clientX;
       _y = e.clientY;
@@ -230,7 +276,10 @@ document.addEventListener( "DOMContentLoaded", function() {
     redo_times=1;
   }
   function moveDrawing(e, touch) {
-    if (!isDrawing) return;
+    if (!isDrawing) {
+      canvas.style.cursor="crosshair";
+      return;
+    }
 
     hasMoved = true;
     var _x, _y, _points;
@@ -238,11 +287,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     _points = _lines[_lines.length-1].points;
 
     if (touch) {
-      canvas.style.cursor = "none";
       _x = e.changedTouches[0].clientX;
       _y = e.changedTouches[0].clientY;
     } else {
-      canvas.style.cursor = "crosshair";
       _x = e.clientX;
       _y = e.clientY;
     }
@@ -266,32 +313,46 @@ document.addEventListener( "DOMContentLoaded", function() {
     //SE GOMMA
     if (toolSelected === "rubber") {
       clearCircle(ctx,_x,_y,rubberWidth/2);
-    } 
+    }
 
     //SE MATITA
     else{
-      ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+      ctx.strokeStyle = _lines[_lines.length-1].color;
       ctx.lineWidth = _lines[_lines.length-1].width;
 
-      var p1 = _points[0];
-      var p2 = _points[1];
+      if(drawingMethod == "linear"){
+        var p1 = _points[_points.length-3];
+        var p2 = _points[_points.length-2];
+        var p3 = _points[_points.length-1];
+        if(!p1) p1=p2;
 
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-
-      for (var i = 1, len = _points.length; i < len; i++) {
-        // we pick the point between pi+1 & pi+2 as the
-        // end point and p1 as our control point
-        var midPoint = midPointBtw(p1, p2);
-        ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-        p1 = _points[i];
-        p2 = _points[i+1];
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.lineTo(p3.x, p3.y);
+        ctx.stroke();
       }
-      // Draw last line as a straight line while
-      // we wait for the next point to be able to calculate
-      // the bezier control point
-      ctx.lineTo(p1.x, p1.y);
-      ctx.stroke();
+
+      else if(drawingMethod == "quadratic"){
+        ctx.beginPath();
+        ctx.moveTo(_points[0].x, _points[0].y);
+
+        for (var i = 0; i < _points.length - 2; i++) {
+          var c = (_points[i].x + _points[i + 1].x) / 2;
+          var d = (_points[i].y + _points[i + 1].y) / 2;
+
+          ctx.quadraticCurveTo(_points[i].x, _points[i].y, c, d);
+        }
+
+        // For the last 2 points
+        ctx.quadraticCurveTo(
+            _points[i].x,
+            _points[i].y,
+            _points[i + 1].x,
+            _points[i + 1].y
+        );
+        ctx.stroke();
+      }
     }
   }
   function endDrawing(e, touch) {
@@ -299,17 +360,22 @@ document.addEventListener( "DOMContentLoaded", function() {
     if(!hasMoved && isDrawing) {
       var _x, _y;
       if (touch) {
-        _x = e.changedTouches[0].clientX - DrawPaddingX;
-        _y = e.changedTouches[0].clientY - DrawPaddingY;
+        _x = e.changedTouches[0].clientX;
+        _y = e.changedTouches[0].clientY;
       } else {
-        _x = e.clientX - DrawPaddingX;
-        _y = e.clientY - DrawPaddingY;
+        _x = e.clientX;
+        _y = e.clientY;
       }
       if(rulerActive){
         var newPoint = getPointOnRuler(_x,_y);
         _x=newPoint.x;
         _y=newPoint.y;
       }
+
+      //gotta be responsive
+      _x-= DrawPaddingX;
+      _y-= DrawPaddingY;
+
       var _lines = thisFile.pages[currentPage].lines;
       var _width = _lines[_lines.length-1].width;
 
@@ -319,13 +385,13 @@ document.addEventListener( "DOMContentLoaded", function() {
       else{
         ctx.beginPath();
 
-        ctx.fillStyle = ctx.strokeStyle = ctx.shadowColor = _lines[_lines.length-1].color;
+        ctx.fillStyle = ctx.strokeStyle = _lines[_lines.length-1].color;
 
         ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
         ctx.fill();
       }
     }
-  
+
    //These points are already saved in startDrawing. No need to save here.
     resetBackstackButtons();
     isDrawing = false;
@@ -381,29 +447,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
 
-  canvas.onmousedown = function(e) {
-    startDrawing(e, false);
-  };
-
-  canvas.onmousemove = function(e) {
-    moveDrawing(e, false);
-  };
-
-  canvas.onmouseup = function(e) {
-    endDrawing(e, false);
-  };
-  // TOUCH SUPPORT
-  canvas.addEventListener("touchstart", function(e) {
-    startDrawing(e, true);
-  });
-
-  canvas.addEventListener("touchmove", function(e) {
-    moveDrawing(e, true);
-  });
-
-  canvas.addEventListener("touchend", function(e) {
-    endDrawing();
-  });
+  bindEvents();
 
   var pencil = document.getElementById("pencil");
   var pencilColor = document.getElementById("pencil_color");
@@ -433,6 +477,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   var squaredMarkedBackground = document.getElementById("background_squared_marked");
   var linesBackground = document.getElementById("background_lines");
   var dotsBackground = document.getElementById("background_dots");
+
+  var drawingLinear = document.getElementById("drawing_linear");
+  var drawingQuadratic = document.getElementById("drawing_quadratic");
 
   function clearButtonSelection(buttons, _class) {
     var colors = buttons;
@@ -473,7 +520,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   function setBackgroundColor(color) {
     thisFile.settings.canvas.backgroundColor = color;
     canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
-    loadIntoCanvas(thisFile, currentPage);
   }
   function setBackgroundImage(image) { // NO .PNG
      thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
@@ -500,14 +546,47 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   }
 
+  function loadWidth(_tool){
+    if(_tool=="pencil") {
+      clearButtonSelection(allWidths, "btn-active");
+      switch(lineWidth){
+        case 1:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 2:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 4:
+          bigWidth.classList.add("btn-active");
+          break;
+      }
+    }
+    else if(_tool=="rubber"){
+      clearButtonSelection(allWidths, "btn-active");
+      switch(rubberWidth){
+        case 15:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 30:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 60:
+          bigWidth.classList.add("btn-active");
+          break;
+      }
+    }
+  }
+
   // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     showColorButtons();
     selectTool(this);
+    loadWidth("pencil");
   });
   rubber.addEventListener("click", function(e) {
     hideColorButtons();
     selectTool(this);
+    loadWidth("rubber");
   });
   ruler.addEventListener("click", function(e) {
     selectTool(this);
@@ -547,20 +626,26 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // WIDTH
   smallWidth.addEventListener("click", function() {
-    setRubberWidth(15);
-    setWidth(2);
+    if(toolSelected=="rubber")
+      setRubberWidth(15);
+    else if(toolSelected=="pencil")
+      setWidth(1);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   mediumWidth.addEventListener("click", function() {
-    setRubberWidth(30);
-    setWidth(4);
+    if(toolSelected=="rubber")
+      setRubberWidth(30);
+    else if(toolSelected=="pencil")
+      setWidth(2);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
   bigWidth.addEventListener("click", function() {
-    setRubberWidth(60);
-    setWidth(6);
+    if(toolSelected=="rubber")
+      setRubberWidth(60);
+    else if(toolSelected=="pencil")
+      setWidth(4);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
   });
@@ -634,6 +719,23 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   });
 
+  //Change drawing method
+  drawingLinear.addEventListener("click", function() {
+    drawingMethod = "linear";
+    translate(ctx,0.5,0.5);
+    loadIntoCanvas(thisFile, currentPage);
+  });
+
+  drawingQuadratic.addEventListener("click", function() {
+    drawingMethod = "quadratic";
+    translate(ctx,0.0,0.0);
+    loadIntoCanvas(thisFile, currentPage);
+  });
+
+  function translate(context,x,y){
+    context.resetTransform();
+    context.translate(x,y);
+  }
 
   //SAVE
   var saveButton = document.getElementById("save");
@@ -668,7 +770,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       console.log("loading file " + file.settings.name);
       thisFile = file;
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      
+
       if (page === undefined || page === null) {
         page = 0;
       }
@@ -712,7 +814,6 @@ document.addEventListener( "DOMContentLoaded", function() {
             ctx.beginPath();
             ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
             ctx.fillStyle = _line.color;
-            ctx.shadowColor = _line.color;
             ctx.strokeStyle = _line.color;
             ctx.fill();
           }
@@ -726,31 +827,50 @@ document.addEventListener( "DOMContentLoaded", function() {
             }
           }
           else{
-            var p1 = _points[0];
-            var p2 = _points[1];
+            var p0 = _points[0];
 
             ctx.strokeStyle = _line.color;
-            ctx.shadowColor = _line.color;
-            ctx.lineWidth = _line.width+2.2;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
+            ctx.lineWidth = _line.width;
 
-            for (var i = 1, len = _points.length; i < len; i++) {
-              // we pick the point between pi+1 & pi+2 as the
-              // end point and p1 as our control point
-              var midPoint = midPointBtw(p1, p2);
-              ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-              p1 = _points[i];
-              p2 = _points[i+1];
-              // Draw last line as a straight line while
-              // we wait for the next point to be able to calculate
-              // the bezier control point
-              //ctx.lineTo(p1.x, p1.y);
+            for (var i = 2; i <= _points.length; i++) {
+
+              if(drawingMethod == "linear"){
+                var p1 = _points[i-3];
+                var p2 = _points[i-2];
+                var p3 = _points[i-1];
+                if(!p1) p1=p2;
+
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.lineTo(p3.x, p3.y);
+                ctx.stroke();
+              }
+
+              else if(drawingMethod == "quadratic"){
+                ctx.beginPath();
+                ctx.moveTo(_points[0].x, _points[0].y);
+
+                for (var p = 0; p < i - 2; p++) {
+                  var c = (_points[p].x + _points[p + 1].x) / 2;
+                  var d = (_points[p].y + _points[p + 1].y) / 2;
+
+                  ctx.quadraticCurveTo(_points[p].x, _points[p].y, c, d);
+                }
+
+                // For the last 2 points
+                ctx.quadraticCurveTo(
+                    _points[p].x,
+                    _points[p].y,
+                    _points[p + 1].x,
+                    _points[p + 1].y
+                );
+                ctx.stroke();
+              }
             }
-            ctx.stroke();
           }
         }
-      }     
+      }
     } else console.log("error loading file: " + file);
   }
 
@@ -875,5 +995,5 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   // Run once at start
   updateNavButtons();
-  
+
 }); // document.ready?

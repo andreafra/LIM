@@ -5,6 +5,28 @@
     <title>LIM - Nuovo documento</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="app/css/style.css" type="text/css">
+    <style type="text/css">
+      #modal-background {
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGklEQVQImWNgYGBYZmJiMoXBxMRkCgMDwzIAHgwDrawJG44AAAAASUVORK5CYII=) repeat;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+      #modal {
+        margin-top: 200px;
+        background: white;
+        border-radius: 3px;
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 3em;
+        text-align: center;
+      }
+    </style>
   </head>
   <body id="body" class="background">
     <header id="header" style="-webkit-app-region: drag">
@@ -28,10 +50,19 @@
       </div>
       <div class="welcome-footer">
         <ul>
-          <li><a href="">Informazioni</a></li>
-          <li><a href="">Supporto</a></li>
-          <li><a href="">Segnala un problema</a></li>
+          <li><a href="#" id="info">Informazioni</a></li>
+          <li><a href="https://github.com/QUB3X/LIM/wiki">Supporto</a></li>
+          <li><a href="https://github.com/QUB3X/LIM/issues">Segnala un problema</a></li>
         </ul>
+      </div>
+    </div>
+    <div id="modal-background" class="hidden">
+      <div id="modal">
+        <p>
+          <i class="material-icons" style="color:teal">code</i> with <i class="material-icons" style="color:red">favorite</i>
+          <br>
+          by <a href="">Alessandro Astone</a> &amp; <a href="">Andrea Franchini</a>
+        </p>
       </div>
     </div>
 
@@ -58,6 +89,29 @@
       });
       transparentWindow.addEventListener('click', function () {
         ipcRenderer.send('new-transparent-window');
+      });
+      // MODAL
+      var modalBackground = document.getElementById('modal-background');
+      var modal = document.getElementById('modal');
+      var infoBtn = document.getElementById('info');
+      infoBtn.addEventListener('click', function() {
+        if (modalBackground.classList.contains('hidden')) {
+          modalBackground.classList.remove('hidden');
+        } else {
+          modalBackground.classList.add('hidden');
+        }
+      });
+      modalBackground.addEventListener('click', function() {
+        modalBackground.classList.add('hidden');
+      });
+
+      //open links externally by default
+      var shell = require('electron').shell;
+      document.querySelectorAll('a[href^="http"]').forEach(function (element) { 
+        element.addEventListener('click', function(event) {
+          event.preventDefault();
+          shell.openExternal(this.href);
+        });
       });
     </script>
   </body>

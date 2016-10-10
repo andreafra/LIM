@@ -1,18 +1,15 @@
-var dialog;
-var app;
 var ipc = require('electron').ipcRenderer;
+const {dialog} = require('electron').remote;
+const {app} = require('electron').remote;
+
 if(require('electron').remote == undefined) //calling from main
 {
-  dialog = require('dialog');
-  app = require('app');
-}
-else{
-  dialog = require('electron').remote.require('dialog');
-  app = require('electron').remote.require('app');
+  const {dialog} = require('electron');
+  const {app} = require('electron');
 }
 
 // SAVE AS (1st time)
-exports.SaveAs = function(thisFile, callback, update) {
+exports.SaveAs = function(thisFile, rename, action) {
   var fs = require('fs'); 
   dialog.showSaveDialog({ 
     filters: [ { name: 'lim', extensions: ['lim'] } ]
@@ -24,9 +21,18 @@ exports.SaveAs = function(thisFile, callback, update) {
         console.log("Error saving file: " + err);
       }
       else{
-        callback(fileName);
-        if(update){
-          ipc.send('update');
+        rename(fileName);
+        switch(action)
+        {
+          case 'update':
+            ipc.send('update');
+            break;
+          case 'quit':
+            app.quit();
+            break;
+          case 'back-to-main':
+            ipc.send('load-menu');
+            break;
         }
       }
     });
@@ -40,7 +46,7 @@ exports.Save = function(thisFile) {
                JSON.stringify(thisFile),
                function(err) {
     if(err === null) {
-      dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: "File has been saved to Documents folder as " + thisFile.settings.name});
+      dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: "Il file è stato salvato in " + thisFile.settings.name});
     }
     else console.log("Error saving file: " + err);
   });

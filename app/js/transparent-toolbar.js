@@ -34,9 +34,10 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   //default values
   var lineColor = "black";
-  var lineWidth = 4;
+  var lineWidth = 2;
   var rubberWidth = 30;
 
+  var toolSelected = "pencil"; //pencil, rubber
   var rulerActive = false;
 
   // 3: SET SUPPORT FUNCTIONS
@@ -63,6 +64,37 @@ document.addEventListener( "DOMContentLoaded", function() {
 		  allColors[i].style.pointerEvents = 'none';
 		};
 	}
+
+  function loadWidth(_tool){
+    if(_tool=="pencil") {
+      clearButtonSelection(allWidths, "btn-active");
+      switch(lineWidth){
+        case 1:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 2:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 4:
+          bigWidth.classList.add("btn-active");
+          break;
+      }
+    }
+    else if(_tool=="rubber"){
+      clearButtonSelection(allWidths, "btn-active");
+      switch(rubberWidth){
+        case 15:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 30:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 60:
+          bigWidth.classList.add("btn-active");
+          break;
+      }
+    }
+  }
 
   // 4: MAKE SETTINGS FOR COLOR PICKER
   blackColor.addEventListener("click", function(e) {
@@ -110,24 +142,30 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // 5: MAKE SETTINGS FOR WIDTH
   smallWidth.addEventListener("click", function() {
-    rubberWidth = 15
-    lineWidth = 2
+    if(toolSelected=="rubber")
+      rubberWidth = 15;
+    if(toolSelected=="pencil")
+      lineWidth = 1;
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
     sendLine(lineColor, lineWidth, rubberWidth);
   });
   mediumWidth.addEventListener("click", function() {
-    rubberWidth = 40
-    lineWidth = 4
+    if(toolSelected=="rubber")
+      rubberWidth = 40;
+    if(toolSelected=="pencil")
+      lineWidth = 2;
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
     sendLine(lineColor, lineWidth, rubberWidth);
   });
   bigWidth.addEventListener("click", function() {
-    rubberWidth = 60
-    lineWidth = 6
+    if(toolSelected=="rubber")
+      rubberWidth = 60;
+    if(toolSelected=="pencil")
+      lineWidth = 4;
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("btn-active");
 
@@ -137,22 +175,17 @@ document.addEventListener( "DOMContentLoaded", function() {
   // SETTINGS FOR TOOLS
   pencil.addEventListener("click", function(e) {
     showColorButtons();
-    /*if (toolSelected === "rubber") {
-      ctx.strokeStyle = ctx.shadowColor = lineColor;
-      ctx.lineWidth = lineWidth;
-    }*/
+    toolSelected="pencil";
     sendTool(this);
-    //ctx.lineWidth = lineWidth;
   });
   rubber.addEventListener("click", function(e) {
     hideColorButtons();
+    toolSelected="rubber";
     sendTool(this);
-    //ctx.lineWidth = rubberWidth;
   });
   ruler.addEventListener("click", function(e) {
     sendTool(this);
-    //ctx.lineWidth = lineWidth;
-  }); 
+  });
 
   // UNDO & REDO
   var backstack_counter=0;
@@ -186,11 +219,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   toggleNavbar.addEventListener("click", function() {
     ipc.send('toggle-navbar', isOpen);
     if (isOpen) {
-      this.innerHTML = "<i class=\"material-icons\">arrow_back</i>";
+      this.innerHTML = "<i class=\"material-icons\">mode_edit</i>";
       isOpen = false;
       hideLi()
     } else {
-      this.innerHTML = "<i class=\"material-icons\">arrow_forward</i>";
+      this.innerHTML = "<i class=\"material-icons\">visibility_off</i>";
       isOpen = true;
       showLi()
     }
@@ -254,6 +287,9 @@ document.addEventListener( "DOMContentLoaded", function() {
         toggleNavbar.innerHTML = "<i class=\"material-icons\">arrow_back</i>";
         isOpen = false;
         hideLi();
+        break;
+      case "loadWidth":
+        loadWidth(parameters.tool);
         break;
       default:
         console.log("Unhandled command: " + command);

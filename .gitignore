@@ -8,7 +8,8 @@ ehthumbs.db
 Thumbs.db
 .sass-cache
 .sass-cache/*
-
+.vscode
+.vscode/*
 # YODEVIL'S WINDOWS STUFF
 build/*
 Installer/*

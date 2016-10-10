@@ -44,21 +44,48 @@
             <i class="material-icons">folder</i>
             <span>Apri...</span>
           </li>
+          <li class="settings_list_heading">Metodo di disegno</li>
+          <li class="settings_list_picker">
+            <button class="btn btn-option" id="drawing_linear">Lineare</button>
+            <button class="btn btn-option" id="drawing_quadratic">Quadratica</button>
+          </li>
+        </ul>
+        <ul class="settings_list">
           <li class="settings_list_heading">Colore di sfondo</li>
           <li class="settings_list_circular_picker">
-            <span id="background_white"></span>
-            <span id="background_black"></span>
-            <span id="background_green"></span>
-            <span id="background_transparent"></span>
-            <input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff" id="background_custom"></span>
+            <div id="background_white"><span></span>
+              <h6>Bianco</h6>
+            </div>
+            <div id="background_black"><span></span>
+              <h6>Nero</h6>
+            </div>
+            <div id="background_green"><span></span>
+              <h6>Verde</h6>
+            </div>
+            <div id="background_transparent"><span></span>
+              <h6>Trasparente</h6>
+            </div>
+            <div id="background_custom"><input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff">
+              <h6>Personalizzato</h6>
+            </div>
           </li>
           <li class="settings_list_heading">Tipo di sfondo</li>
           <li class="settings_list_circular_picker">
-            <span id="background_none"></span>
-            <span id="background_squared"></span>
-            <span id="background_squared_marked"></span>
-            <span id="background_lines"></span>
-            <span id="background_dots"></span>
+            <div id="background_none"><span></span>
+              <h6>Nessuno</h6>
+            </div>
+            <div id="background_squared"><span></span>
+              <h6>Quadretti</h6>
+            </div>
+            <div id="background_squared_marked"><span></span>
+              <h6>Quadretti 2</h6>
+            </div>
+            <div id="background_lines"><span></span>
+              <h6>Linee</h6>
+            </div>
+            <div id="background_dots"><span></span>
+              <h6>Punti</h6>
+            </div>
           </li>
         </ul>
       </div>
@@ -96,7 +123,7 @@
         <!-- /Color Picker -->
       </ul>
       <div class="toolbar-center">
-        <button id="settings_panel_open" class="btn btn-menu"><i class="material-icons">more_horiz</i></button>
+        <button id="settings_panel_open" class="btn btn-menu btn-flex"><i class="material-icons">settings</i><span>Menu</span></button>
       </div>
       <ul class="toolbar-right">
         <li class="btn-pager" id="page_next">
@@ -134,7 +161,7 @@
       var backBtn = document.querySelector('#menu-back');
       var closeSettings = document.querySelector('#settings_panel_close');
       var openSettings = document.querySelector('#settings_panel_open');
-      
+
       closeBtn.addEventListener('click', function () {
         ipcRenderer.send('close-main-window');
       });
