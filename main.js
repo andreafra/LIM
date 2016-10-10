@@ -105,7 +105,7 @@ updater.on('update-downloaded', (info) => {
           updater.install();
           break;
         case 1:
-          mainWindow.webContents.send('save-file', 'update'); //send request to canvas.js, passing the updater file, so that we can update from another script.
+          mainWindow.webContents.send('save-file', 'update'); //send request to canvas.js
           break;
         case 2:
           break;

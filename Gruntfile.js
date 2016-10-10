@@ -7,7 +7,7 @@ module.exports = function(grunt) {
           name: "LIM",
           dir: '.',
           ignore: "(build|Installer|build-lim.bat|package-lim.bat|publish-lim.bat)",
-          icon: 'icon-1024@2x',
+          icon: 'icon',
           overwrite: true,
           out: 'build/',
           platform: 'win32',
@@ -34,8 +34,8 @@ module.exports = function(grunt) {
 		authors: 'Andrea Franchini, Alessandro Astone',
 		exe: 'LIM.exe',
 		title: 'LIM',
-		iconUrl: 'https://www.dropbox.com/s/qid9g6mme99v16o/icon-1024%402x.ico?dl=1',
-		setupIcon: 'icon-1024@2x.ico',
+		iconUrl: 'https://raw.githubusercontent.com/QUB3X/LIM/master/icon.ico',
+		setupIcon: 'icon.ico',
 		noMsi: true
 	  }/*,
 	  ia32: {
