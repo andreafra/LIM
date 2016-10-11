@@ -16,8 +16,7 @@
         <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
       </div>
     </header>
-    <div id="content">
-    </div>
+    <div id="content"></div>
     <div id="ruler_container">
       <div id="top_left"></div>
       <div id="top_right"></div>
@@ -97,6 +96,10 @@
           <img src="app/img/pencil.png">
           <span id="pencil_color"></span>
         </li>
+        <li class="btn-toolbar btn-toolbar-tool" id="marker">
+          <img src="app/img/pencil.png"><!--TEMP-->
+          <span id="marker_color"></span>
+        </li>
         <li class="btn-toolbar btn-toolbar-tool" id="rubber">
           <img src="app/img/rubber.png">
         </li>
@@ -112,13 +115,19 @@
             <span class="btn-circular btn-toolbar-color" id="pencil_blue"></span>
             <span class="btn-circular btn-toolbar-color" id="pencil_red"></span>
             <span class="btn-circular btn-toolbar-color" id="pencil_green"></span>
+            <span class="btn-circular btn-toolbar-color" id="pencil_yellow"></span>
+            <span class="btn-circular btn-toolbar-color" id="pencil_white"></span>
             <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
           </div>
           <div class="btn-row" id="width_picker">
             <span class="btn-circular" id="stroke_small"></span>
             <span class="btn-circular btn-active" id="stroke_medium"></span>
             <span class="btn-circular" id="stroke_big"></span>
+            <span class="" id="stroke_slider"></span>
           </div>
+        </li>
+        <li class="btn-toolbar flex-container">
+          <div id="color-picker"></div>
         </li>
         <!-- /Color Picker -->
       </ul>
