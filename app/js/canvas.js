@@ -455,6 +455,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   var ruler = document.getElementById("ruler");
   var allTools = [pencil, rubber, ruler];
 
+  var colorPicker = document.getElementById("color_picker");
   var blackColor = document.getElementById("pencil_black");
   var blueColor = document.getElementById("pencil_blue");
   var redColor = document.getElementById("pencil_red");
@@ -489,21 +490,19 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   function showColorButtons(){
-    var j = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = j.length - 1; i >= 0; i--) {
-      allColors[i].parentElement.classList.remove("btn-hidden");
-      allColors[i].parentElement.classList.add("btn-visible");
+    colorPicker.classList.remove("btn-hidden");
+    colorPicker.classList.add("btn-visible");
+    for (var i = allColors.length -1; i >= 0; i--) {
       allColors[i].style.pointerEvents = 'auto';
-    };
+    }
   }
 
   function hideColorButtons(){
-    var j = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = j.length - 1; i >= 0; i--) {
-      allColors[i].parentElement.classList.remove("btn-visible");
-      allColors[i].parentElement.classList.add("btn-hidden");
+    colorPicker.classList.remove("btn-visible");
+    colorPicker.classList.add("btn-hidden");
+    for (var i = allColors.length -1; i >= 0; i--) {
       allColors[i].style.pointerEvents = 'none';
-    };
+    }
   }
 
   function setColor(color){
