@@ -64,9 +64,6 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var ctx = canvas.getContext('2d');
 
-  // Fixed Line Properties
-  ctx.imageSmoothingEnabled = true;
-
   //default values
   var lineColor = "black";
   var lineWidth = 2;
@@ -74,7 +71,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   ctx.strokeStyle = lineColor;
   ctx.lineWidth = lineWidth;
   ctx.translate(0.5,0.5);
-  ctx.lineCap="round";
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
 
   var toolSelected = "pencil"; // can be "pencil", "rubber"
   var rulerActive = false;
@@ -169,15 +167,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
-    ctx.lineCap="round";
-
-    if(drawingMethod=="linear")
-      translate(ctx,0.5,0.5);
-    else if(drawingMethod=="quadratic")
-      translate(ctx,0.0,0.0);
+    translate(ctx,0.5,0.5);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
 
     //Re-bind click events, since we've updated canvas object
     bindEvents();
@@ -320,39 +314,16 @@ document.addEventListener( "DOMContentLoaded", function() {
       ctx.strokeStyle = _lines[_lines.length-1].color;
       ctx.lineWidth = _lines[_lines.length-1].width;
 
-      if(drawingMethod == "linear"){
-        var p1 = _points[_points.length-3];
-        var p2 = _points[_points.length-2];
-        var p3 = _points[_points.length-1];
-        if(!p1) p1=p2;
+      var p1 = _points[_points.length-3];
+      var p2 = _points[_points.length-2];
+      var p3 = _points[_points.length-1];
+      if(!p1) p1=p2;
 
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.lineTo(p3.x, p3.y);
-        ctx.stroke();
-      }
-
-      else if(drawingMethod == "quadratic"){
-        ctx.beginPath();
-        ctx.moveTo(_points[0].x, _points[0].y);
-
-        for (var i = 0; i < _points.length - 2; i++) {
-          var c = (_points[i].x + _points[i + 1].x) / 2;
-          var d = (_points[i].y + _points[i + 1].y) / 2;
-
-          ctx.quadraticCurveTo(_points[i].x, _points[i].y, c, d);
-        }
-
-        // For the last 2 points
-        ctx.quadraticCurveTo(
-            _points[i].x,
-            _points[i].y,
-            _points[i + 1].x,
-            _points[i + 1].y
-        );
-        ctx.stroke();
-      }
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineTo(p3.x, p3.y);
+      ctx.stroke();
     }
   }
   function endDrawing(e, touch) {
@@ -478,9 +449,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   var squaredMarkedBackground = document.getElementById("background_squared_marked");
   var linesBackground = document.getElementById("background_lines");
   var dotsBackground = document.getElementById("background_dots");
-
-  var drawingLinear = document.getElementById("drawing_linear");
-  var drawingQuadratic = document.getElementById("drawing_quadratic");
 
   function clearButtonSelection(buttons, _class) {
     var colors = buttons;
@@ -718,19 +686,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   });
 
-  //Change drawing method
-  drawingLinear.addEventListener("click", function() {
-    drawingMethod = "linear";
-    translate(ctx,0.5,0.5);
-    loadIntoCanvas(thisFile, currentPage);
-  });
-
-  drawingQuadratic.addEventListener("click", function() {
-    drawingMethod = "quadratic";
-    translate(ctx,0.0,0.0);
-    loadIntoCanvas(thisFile, currentPage);
-  });
-
   function translate(context,x,y){
     context.resetTransform();
     context.translate(x,y);
@@ -790,13 +745,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
-      //When backgruond changes color, i want rubber to be re-colored to match bg color
-      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++) {
-        if(thisFile.pages[currentPage].lines[i].rubber)
-        {
-          thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
-        }
-      }
       var _lines = thisFile.pages[currentPage].lines;
 
       for (var line = 0; line < _lines.length; line++) {
@@ -826,47 +774,18 @@ document.addEventListener( "DOMContentLoaded", function() {
             }
           }
           else{
-            var p0 = _points[0];
-
             ctx.strokeStyle = _line.color;
             ctx.lineWidth = _line.width;
+            ctx.beginPath();
 
-            for (var i = 2; i <= _points.length; i++) {
+            for (var i = 0; i < _points.length-1; i++) {
+                var p1 = _points[i];
+                var p2 = _points[i+1];
 
-              if(drawingMethod == "linear"){
-                var p1 = _points[i-3];
-                var p2 = _points[i-2];
-                var p3 = _points[i-1];
-                if(!p1) p1=p2;
-
-                ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
                 ctx.lineTo(p2.x, p2.y);
-                ctx.lineTo(p3.x, p3.y);
-                ctx.stroke();
               }
-
-              else if(drawingMethod == "quadratic"){
-                ctx.beginPath();
-                ctx.moveTo(_points[0].x, _points[0].y);
-
-                for (var p = 0; p < i - 2; p++) {
-                  var c = (_points[p].x + _points[p + 1].x) / 2;
-                  var d = (_points[p].y + _points[p + 1].y) / 2;
-
-                  ctx.quadraticCurveTo(_points[p].x, _points[p].y, c, d);
-                }
-
-                // For the last 2 points
-                ctx.quadraticCurveTo(
-                    _points[p].x,
-                    _points[p].y,
-                    _points[p + 1].x,
-                    _points[p + 1].y
-                );
-                ctx.stroke();
-              }
-            }
+            ctx.stroke();
           }
         }
       }

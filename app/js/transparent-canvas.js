@@ -67,7 +67,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   ctx.strokeStyle = lineColor;
   ctx.lineWidth = lineWidth;
   ctx.translate(0.5,0.5);
-  ctx.lineCap="round";
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
 
   var toolSelected = "pencil"; // can be "pencil", "rubber"
   var rulerActive = false;
