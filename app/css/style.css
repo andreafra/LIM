@@ -323,12 +323,9 @@ footer {
 #stroke_slider[type=range] {
   -webkit-appearance: none;
   /* Hides the slider so that custom slider can be made */
-  width: 102px;
   background: transparent;
-  /* Otherwise white in Chrome */ }
-#stroke_slider[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; }
-#stroke_slider[type=range]:focus {
+  /* Otherwise white in Chrome */
+  width: 102px;
   outline: none; }
 #stroke_slider[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -339,7 +336,8 @@ footer {
   background: #212121;
   cursor: pointer;
   margin-top: -10px;
-  box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24); }
+  box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
 #stroke_slider[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 12px;
@@ -349,8 +347,10 @@ footer {
   background: #ffffff;
   border-radius: 15px;
   box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24); }
-#stroke_slider[type=range]:focus::-webkit-slider-runnable-track {
-  background: #03A9F4; }
+
+.slider-active::-webkit-slider-thumb {
+  border: 2px solid #FFFF00 !important;
+  transform: scale(1.2); }
 
 #settings_container {
   position: absolute;

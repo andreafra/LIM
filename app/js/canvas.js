@@ -448,6 +448,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   var smallWidth = $ID("stroke_small");
   var mediumWidth = $ID("stroke_medium");
   var bigWidth = $ID("stroke_big");
+  var customWidth = $ID("stroke_slider");
   var allWidths = [smallWidth, mediumWidth, bigWidth];
 
   var whiteBackground = $ID("background_white");
@@ -462,9 +463,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   var dotsBackground = $ID("background_dots");
 
   function clearButtonSelection(buttons, _class) {
-    var colors = buttons;
-    for (var i = colors.length - 1; i >= 0; i--) {
-      colors[i].classList.remove(_class);
+    for (var i = buttons.length - 1; i >= 0; i--) {
+      buttons[i].classList.remove(_class);
     }
   }
 
@@ -525,8 +525,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   function loadWidth(_tool){
-    if(_tool=="pencil") {
       clearButtonSelection(allWidths, "btn-active");
+      customWidth.classList.remove("slider-active");
+    if(_tool=="pencil") {
       switch(lineWidth){
         case 1:
           smallWidth.classList.add("btn-active");
@@ -537,10 +538,13 @@ document.addEventListener( "DOMContentLoaded", function() {
         case 4:
           bigWidth.classList.add("btn-active");
           break;
+        default:
+          customWidth.value=lineWidth;
+          customWidth.classList.add("slider-active");
+          break;
       }
     }
     else if(_tool=="rubber"){
-      clearButtonSelection(allWidths, "btn-active");
       switch(rubberWidth){
         case 15:
           smallWidth.classList.add("btn-active");
@@ -550,6 +554,10 @@ document.addEventListener( "DOMContentLoaded", function() {
           break;
         case 60:
           bigWidth.classList.add("btn-active");
+          break;
+        default:
+          customWidth.value=rubberWidth/15;
+          customWidth.classList.add("slider-active");
           break;
       }
     }
@@ -603,6 +611,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     else if(toolSelected=="pencil")
       setWidth(1);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
   });
   mediumWidth.addEventListener("click", function() {
@@ -611,6 +620,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     else if(toolSelected=="pencil")
       setWidth(2);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
   });
   bigWidth.addEventListener("click", function() {
@@ -619,7 +629,23 @@ document.addEventListener( "DOMContentLoaded", function() {
     else if(toolSelected=="pencil")
       setWidth(4);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
+  });
+  customWidth.addEventListener("click", function() {
+    if(toolSelected=="rubber")
+      setRubberWidth(this.value*15);
+    else if(toolSelected=="pencil")
+      setWidth(this.value);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("slider-active");
+  });
+  customWidth.addEventListener("input", function() {
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
+    if(toolSelected=="rubber")
+      setRubberWidth(this.value*15);
+    else if(toolSelected=="pencil")
+      setWidth(this.value);
   });
   // BACKGROUND COLOR PICKER
   whiteBackground.addEventListener("click", function(e) {

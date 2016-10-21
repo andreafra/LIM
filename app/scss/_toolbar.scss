@@ -162,14 +162,8 @@ $circle-big: 14px;
 #stroke_slider {
   &[type=range] {
     -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-    width: 102px;
     background: transparent; /* Otherwise white in Chrome */
-    
-  }
-  &[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-  }
-  &[type=range]:focus {
+    width: 102px;
     outline: none;
   }
   &[type=range]::-webkit-slider-thumb {
@@ -182,6 +176,7 @@ $circle-big: 14px;
     cursor: pointer;
     margin-top:-10px;
     box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
   &[type=range]::-webkit-slider-runnable-track {
     width: 100%;
@@ -193,8 +188,8 @@ $circle-big: 14px;
     border-radius: 15px;
     box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
   }
-
-  &[type=range]:focus::-webkit-slider-runnable-track {
-    background: #03A9F4;
-  }
+}
+.slider-active::-webkit-slider-thumb {
+    border: 2px solid #FFFF00 !important;
+    transform: scale(1.2);
 }
