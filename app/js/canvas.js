@@ -1,5 +1,11 @@
 var thisFile;
 
+function $ID(__id) {
+  return document.getElementById(__id);
+}
+function $CLASS(__class) {
+  return document.getElementsByClassName(__class);
+}
 document.addEventListener( "DOMContentLoaded", function() {
 
   const ipc = require('electron').ipcRenderer;
@@ -14,8 +20,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   //define and resize canvas
 
-  var header = document.getElementById("header");
-  var footer = document.getElementById("footer");
+  var header = $ID("header");
+  var footer = $ID("footer");
   var canvasWidth = window.innerWidth;
   var canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
 
@@ -44,16 +50,16 @@ document.addEventListener( "DOMContentLoaded", function() {
     // }]
   };
 
-  var content = document.getElementById("content");
+  var content = $ID("content");
   var header_height = document.getElementById('header').clientHeight;
-  var title = document.getElementById("title");
+  var title = $ID("title");
 
   content.style.height = canvasHeight + "px";
 
   var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
-  document.getElementById("content").innerHTML = canvasToAdd;
+  $ID("content").innerHTML = canvasToAdd;
 
-  var canvas = document.getElementById("canvas");
+  var canvas = $ID("canvas");
 
   canvas.style.cursor = "crosshair";
   canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
@@ -160,8 +166,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     content.style.height = canvasHeight + "px";
 
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
-    document.getElementById("content").innerHTML = canvasToAdd;
-    canvas = document.getElementById("canvas");
+    $ID("content").innerHTML = canvasToAdd;
+    canvas = $ID("canvas");
     canvas.style.cursor = "crosshair";
 
     DrawPaddingX = canvas.offsetLeft;
@@ -370,8 +376,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   function getPointOnRuler(_x,_y){
-    var ruler_topLeft = document.getElementById("top_left");
-    var ruler_topRight = document.getElementById("top_right");
+    var ruler_topLeft = $ID("top_left");
+    var ruler_topRight = $ID("top_right");
     var _topLeftRect = ruler_topLeft.getBoundingClientRect();
     var _topRightRect = ruler_topRight.getBoundingClientRect();
     var _x1 = _topLeftRect.left;
@@ -420,35 +426,40 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   bindEvents();
 
-  var pencil = document.getElementById("pencil");
-  var pencilColor = document.getElementById("pencil_color");
-  var rubber = document.getElementById("rubber");
-  var ruler = document.getElementById("ruler");
-  var allTools = [pencil, rubber, ruler];
+  var pencil = $ID("pencil");
+  var pencilColor = $ID("pencil_color");
+  var marker = $ID("marker");
+  var markerColor = $ID("marker_color");
+  var rubber = $ID("rubber");
+  var ruler = $ID("ruler");
+  var allTools = [pencil, marker, rubber, ruler];
 
-  var colorPicker = document.getElementById("color_picker");
-  var blackColor = document.getElementById("pencil_black");
-  var blueColor = document.getElementById("pencil_blue");
-  var redColor = document.getElementById("pencil_red");
-  var greenColor = document.getElementById("pencil_green");
-  var customColor = document.getElementById("pencil_other");
-  var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
+  var colorPicker = $ID("color_picker");
+  /*
+  var blackColor = $ID("pencil_black");
+  var blueColor = $ID("pencil_blue");
+  var redColor = $ID("pencil_red");
+  var greenColor = $ID("pencil_green");
+  var customColor = $ID("pencil_other");
+*/
 
-  var smallWidth = document.getElementById("stroke_small");
-  var mediumWidth = document.getElementById("stroke_medium");
-  var bigWidth = document.getElementById("stroke_big");
+  var allColors = $CLASS("btn-toolbar-color");
+
+  var smallWidth = $ID("stroke_small");
+  var mediumWidth = $ID("stroke_medium");
+  var bigWidth = $ID("stroke_big");
   var allWidths = [smallWidth, mediumWidth, bigWidth];
 
-  var whiteBackground = document.getElementById("background_white");
-  var blackBackground = document.getElementById("background_black");
-  var greenBackground = document.getElementById("background_green");
-  var customBackground = document.getElementById("background_custom");
+  var whiteBackground = $ID("background_white");
+  var blackBackground = $ID("background_black");
+  var greenBackground = $ID("background_green");
+  var customBackground = $ID("background_custom");
 
-  var noneBackground = document.getElementById("background_none");
-  var squaredBackground = document.getElementById("background_squared");
-  var squaredMarkedBackground = document.getElementById("background_squared_marked");
-  var linesBackground = document.getElementById("background_lines");
-  var dotsBackground = document.getElementById("background_dots");
+  var noneBackground = $ID("background_none");
+  var squaredBackground = $ID("background_squared");
+  var squaredMarkedBackground = $ID("background_squared_marked");
+  var linesBackground = $ID("background_lines");
+  var dotsBackground = $ID("background_dots");
 
   function clearButtonSelection(buttons, _class) {
     var colors = buttons;
@@ -496,7 +507,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   function selectTool(_tool){
     if(_tool.id == "ruler"){
       rulerActive = !rulerActive;
-      var rulerContainer = document.getElementById("ruler_container");
+      var rulerContainer = $ID("ruler_container");
       if(rulerActive){
         rulerContainer.style.display="flex";
         _tool.classList.add("btn-ruler-active");
@@ -558,31 +569,24 @@ document.addEventListener( "DOMContentLoaded", function() {
   ruler.addEventListener("click", function(e) {
     selectTool(this);
   });
+
+
   // COLOR PICKER
-  blackColor.addEventListener("click", function(e) {
-    setColor("black");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  blueColor.addEventListener("click", function(e) {
-    setColor("#2962ff");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  redColor.addEventListener("click", function(e) {
-    setColor("#f44336");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  greenColor.addEventListener("click", function(e) {
-    setColor("#4caf50");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
+
+  for (var i = 0; i < $CLASS("btn-toolbar-color").length; i++) {
+    var element = $CLASS("btn-toolbar-color")[i];
+    element.addEventListener("click", function() {
+      setColor(this.getAttribute("value"));
+      clearButtonSelection(allColors, "btn-active");
+      this.classList.add("btn-active");
+    });
+  }
+
+  /*
   customColor.addEventListener("mouseup", function() {
     clearButtonSelection(allColors, "btn-active");
     this.classList.add("btn-active");
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
+    $ID("body").lastChild.addEventListener("mouseup", function() {
       setColor(customColor.getAttribute("value"));
     });
   });
@@ -590,6 +594,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
     setColor(customColor.getAttribute("value"));
   });
+  */
 
   // WIDTH
   smallWidth.addEventListener("click", function() {
@@ -627,7 +632,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     setBackgroundColor("#567E3A");
   });
   customBackground.addEventListener("mouseup", function() {
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
+    $ID("body").lastChild.addEventListener("mouseup", function() {
       setBackgroundColor(customBackground.getAttribute("value"));
     });
   });
@@ -692,7 +697,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   //SAVE
-  var saveButton = document.getElementById("save");
+  var saveButton = $ID("save");
 
   var saveFile = require('./app/js/save');
 
@@ -708,11 +713,11 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   function rename(fileName){
     thisFile.settings.name == fileName;
-    document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
+    $ID("title").innerHTML=thisFile.settings.name.split("\\").pop();
   }
 
   //LOAD
-  var loadButton = document.getElementById("load");
+  var loadButton = $ID("load");
   var loadFile = require('./app/js/load');
 
   loadButton.addEventListener("click", function(){
@@ -797,8 +802,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   rulerLoader.LoadRuler();
 
   //UNDO & REDO
-  var undo = document.getElementById("undo");
-  var redo = document.getElementById("redo");
+  var undo = $ID("undo");
+  var redo = $ID("redo");
   var backstack_counter=0;
   var redo_times = 1;
   //On load
@@ -828,7 +833,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // CLEAR ALL
 
-  var clearAllBtn = document.getElementById("clear_all")
+  var clearAllBtn = $ID("clear_all")
   clearAllBtn.addEventListener("mousedown", function() {
     var _lines = thisFile.pages[currentPage].lines;
     redo_times=0; //was most likely 1 before, so let's set it to 0 before increasing it
@@ -870,9 +875,9 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   //PAGES
 
-  var pageCounter = document.getElementById("page_counter");
-  var pageNextBtn = document.getElementById("page_next");
-  var pagePrevBtn = document.getElementById("page_prev");
+  var pageCounter = $ID("page_counter");
+  var pageNextBtn = $ID("page_next");
+  var pagePrevBtn = $ID("page_prev");
 
   function pageNext(){
     loadIntoCanvas(thisFile,currentPage+1);

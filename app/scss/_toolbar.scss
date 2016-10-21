@@ -105,12 +105,7 @@ footer {
 #pencil_white {
   background: #ffffff;
 }
-#pencil_other {
-  background-image: url("../img/colors.png");
-  background-position: center;
-  background-clip: border-box;
-  font-size: 0;
-}
+
 #toggle_navbar {
   color: $white;
   background-color: $red;
@@ -165,12 +160,41 @@ $circle-big: 14px;
   }
 }
 #stroke_slider {
-  width: 33px * 4;
-  height: 24px;
-  border: 2px solid $gray;
-  margin-left: 4px;
-  align-self: center;
-  background: $white;
-  border-radius: 15px;
-  box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+  &[type=range] {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    width: 102px;
+    background: transparent; /* Otherwise white in Chrome */
+    
+  }
+  &[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  }
+  &[type=range]:focus {
+    outline: none;
+  }
+  &[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 2px solid $gray;
+    height: 28px;
+    width: 28px;
+    border-radius: 100px;
+    background: $black;
+    cursor: pointer;
+    margin-top:-10px;
+    box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+  }
+  &[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 12px;
+    border: 2px solid $gray;
+    margin-left: 4px;
+    align-self: center;
+    background: $white;
+    border-radius: 15px;
+    box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+  }
+
+  &[type=range]:focus::-webkit-slider-runnable-track {
+    background: #03A9F4;
+  }
 }

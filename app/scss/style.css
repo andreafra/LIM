@@ -277,6 +277,12 @@ footer {
 #pencil_white {
   background: #ffffff; }
 
+#pencil_other {
+  background-image: url("../img/colors.png");
+  background-position: center;
+  background-clip: border-box;
+  font-size: 0; }
+
 #toggle_navbar {
   color: #ffffff;
   background-color: #FF5039;
@@ -320,37 +326,15 @@ footer {
     background: black;
     margin: 5px; }
 
-#stroke_slider[type=range] {
-  -webkit-appearance: none;
-  /* Hides the slider so that custom slider can be made */
-  width: 102px;
-  background: transparent;
-  /* Otherwise white in Chrome */ }
-#stroke_slider[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; }
-#stroke_slider[type=range]:focus {
-  outline: none; }
-#stroke_slider[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  border: 2px solid #eeeeee;
-  height: 28px;
-  width: 28px;
-  border-radius: 100px;
-  background: #212121;
-  cursor: pointer;
-  margin-top: -10px;
-  box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24); }
-#stroke_slider[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 12px;
+#stroke_slider {
+  width: 132px;
+  height: 24px;
   border: 2px solid #eeeeee;
   margin-left: 4px;
   align-self: center;
   background: #ffffff;
   border-radius: 15px;
   box-shadow: 0 1px 1.5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.24); }
-#stroke_slider[type=range]:focus::-webkit-slider-runnable-track {
-  background: #03A9F4; }
 
 #settings_container {
   position: absolute;

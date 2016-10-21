@@ -106,19 +106,18 @@
         <!-- Color Picker -->
         <li class="btn-toolbar btn-container">
           <div class="btn-row" id="color_picker">
-            <span class="btn-circular btn-toolbar-color btn-active" id="pencil_black"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_blue"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_red"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_green"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_yellow"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_white"></span>
-            <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
+            <span class="btn-circular btn-toolbar-color btn-active" value="#000000" id="pencil_black"></span>
+            <span class="btn-circular btn-toolbar-color" value="#2979FF" id="pencil_blue"></span>
+            <span class="btn-circular btn-toolbar-color" value="#F44336" id="pencil_red"></span>
+            <span class="btn-circular btn-toolbar-color" value="#00C853" id="pencil_green"></span>
+            <span class="btn-circular btn-toolbar-color" value="#FFD600" id="pencil_yellow"></span>
+            <span class="btn-circular btn-toolbar-color" value="#FFFFFF" id="pencil_white"></span>
           </div>
           <div class="btn-row" id="width_picker">
             <span class="btn-circular" id="stroke_small"></span>
             <span class="btn-circular btn-active" id="stroke_medium"></span>
             <span class="btn-circular" id="stroke_big"></span>
-            <span class="" id="stroke_slider"></span>
+            <input id="stroke_slider" type="range" data-tooltip="DIMENSIONE: 10px"></input>
           </div>
         </li>
         <li class="btn-toolbar flex-container">
