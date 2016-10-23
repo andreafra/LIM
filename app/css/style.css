@@ -242,7 +242,7 @@ footer {
 .toolbar-spacer {
   margin-left: 15px;
   margin-right: 15px;
-  border-left: 1px solid #d4d4d4;
+  border-left: 1px solid #d5d5d5;
   margin-top: 20px;
   margin-bottom: 20px; }
 
@@ -599,6 +599,8 @@ footer {
   margin-top: -30px; }
   .btn-tool-active #pencil_color {
     top: -8px !important; }
+  .btn-tool-active #marker_color {
+    top: 8px !important; }
 
 .btn-ruler-active {
   margin-top: -30px; }
@@ -624,6 +626,15 @@ footer {
     border-right: 7px solid transparent;
     border-bottom: 12px solid #212121;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .btn-toolbar-tool #marker_color {
+    height: 20px;
+    width: 12px;
+    top: 22px;
+    margin-left: -7px;
+    background: red;
+    position: absolute;
+    border-radius: 2px;
+    transform: skewY(23deg); }
 
 .btn-option {
   margin-top: 1em;
