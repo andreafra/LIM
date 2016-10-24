@@ -121,13 +121,20 @@
           </div>
         </li>
         <li class="btn-toolbar flex-container">
-          <div id="color-picker"></div>
+          <!--SEE: http://codepen.io/QUB3X/pen/EgAGXJ?editors=1100-->
+          <div class="color-picker-panel">
+            <div class="spectrum-map">
+              <button id="spectrum-cursor" class="color-cursor"></button>
+              <canvas id="spectrum-canvas"></canvas>
+            </div>
+            <div class="hue-map">
+              <button id="hue-cursor" class="color-cursor"></button>
+              <canvas id="hue-canvas"></canvas>
+            </div>
+          </div>
         </li>
         <!-- /Color Picker -->
       </ul>
-      <div class="toolbar-center">
-        <button id="settings_panel_open" class="btn btn-menu btn-flex"><i class="material-icons">settings</i><span>Menu</span></button>
-      </div>
       <ul class="toolbar-right">
         <li class="btn-pager" id="page_next">
           <i class="material-icons">arrow_forward</i>
@@ -151,11 +158,16 @@
         <li class="btn-pager" id="clear_all" data-tooltip="CANCELLERAI TUTTO!">
           <i class="material-icons">delete</i>
         </li>
+        <li class="toolbar-spacer">
+        <li class="btn-pager btn-flex btn-highlight" id="settings_panel_open">
+          <i class="material-icons">settings</i><span class="btn-label">Menu</span>
+        </li>
       </ul>
 
     </footer>
     <script src="app/js/canvas.js"></script>
     <script src="app/lib/jscolor.min.js"></script>
+    <script src="app/js/colorpicker.js"></script>
     <script>
       const ipcRenderer = require('electron').ipcRenderer;
       var closeBtn = document.querySelector('#menu-close');
@@ -165,13 +177,13 @@
       var closeSettings = document.querySelector('#settings_panel_close');
       var openSettings = document.querySelector('#settings_panel_open');
 
-      closeBtn.addEventListener('click', function () {
+      closeBtn.addEventListener('click', function() {
         ipcRenderer.send('close-main-window');
       });
-      maximBtn.addEventListener('click', function () {
+      maximBtn.addEventListener('click', function() {
         ipcRenderer.send('maximize-main-window');
       });
-      minimBtn.addEventListener('click', function () {
+      minimBtn.addEventListener('click', function() {
         ipcRenderer.send('minimize-main-window');
       });
       backBtn.addEventListener('click', function() {
@@ -184,6 +196,7 @@
         document.getElementById('settings_container').classList.remove('hidden');
       });
       // COLOR PICKER
+      
       function updateColor(picker) {
         document.getElementById("pencil_other").setAttribute("value", "#"+picker);
       }
