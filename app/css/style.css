@@ -634,7 +634,8 @@ footer {
     background: red;
     position: absolute;
     border-radius: 2px;
-    transform: skewY(23deg); }
+    transform: skewY(23deg);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
 
 .btn-option {
   margin-top: 1em;

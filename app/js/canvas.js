@@ -43,10 +43,10 @@ document.addEventListener( "DOMContentLoaded", function() {
     // pages: [{
     //   lines: [
     //     {points: [{x:0,y:0}],
-    //      color: "#fff", width: 4, rubber: true}],
+    //      color: "#fff", width: 4, tool: 1}],
     //    backstack: [
     //      {points: [{x:0,y:0}],
-    //      color: "#fff", width: 4, rubber: true}]
+    //      color: "#fff", width: 4, tool: 1}]
     // }]
   };
 
@@ -71,22 +71,18 @@ document.addEventListener( "DOMContentLoaded", function() {
   var ctx = canvas.getContext('2d');
 
   //default values
-  var lineColor = "black";
+  var lineColor = "#000000";
   var lineWidth = 2;
+  var markerWidth = 10;
   var rubberWidth = 30;
-  ctx.strokeStyle = lineColor;
-  ctx.lineWidth = lineWidth;
-  ctx.translate(0.5,0.5);
+  translate(ctx,0.5,0.5);
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
 
-  var toolSelected = "pencil"; // can be "pencil", "rubber"
+  var toolSelected = 1; //1=pencil, 2=marker, 3=rubber
   var rulerActive = false;
 
-  var drawingMethod = "linear";
-
   var isDrawing, pages = [ ];
-  var hasMoved = false;
 
   // The current page in the pages[]
   var currentPage = 0;
@@ -145,7 +141,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     }, false);
     //Stop drawing if cursor leaves canvas
     canvas.addEventListener("mouseleave", function (e) {
-      endDrawing(e, true);
+      if(isDrawing)
+        endDrawing(e, true);
     }, false);
     canvas.addEventListener("touchleave", function (e) {
       endDrawing(e, true);
@@ -173,8 +170,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
-    ctx.strokeStyle = lineColor;
-    ctx.lineWidth = lineWidth;
     translate(ctx,0.5,0.5);
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
@@ -221,10 +216,17 @@ document.addEventListener( "DOMContentLoaded", function() {
     };
   }
 
+  function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : null;
+  }
 
   function startDrawing(e, touch) {
     isDrawing = true;
-    hasMoved = false; //Not yet
 
     canvas.style.cursor="none";
 
@@ -251,29 +253,29 @@ document.addEventListener( "DOMContentLoaded", function() {
     _x-= DrawPaddingX;
     _y-= DrawPaddingY;
 
+    //Set transparency
+    _color_to_use=lineColor;
+    if(toolSelected===2){
+      rgbColor=hexToRgb(lineColor);
+      _color_to_use="rgba("+rgbColor.join()+",.5)";
+    }
+
     // save points
     _points.push({ x: _x, y: _y });
-    if (toolSelected !== "rubber") { // RUBBER OFF
-      thisFile.pages[currentPage].lines.push({
-        points: _points,
-        color: lineColor,
-        width: lineWidth,
-        rubber: false
-      });
-    } else { // RUBBER ON
-      thisFile.pages[currentPage].lines.push({
-        points: _points,
-        color: canvas.style.backgroundColor,
-        width: rubberWidth,
-        rubber: true
-      });
-    }
+    thisFile.pages[currentPage].lines.push({
+      points: _points,
+      color: _color_to_use,
+      width: (toolSelected===3) ? rubberWidth : ((toolSelected===2) ? markerWidth : lineWidth),
+      tool: toolSelected
+    });
 
     //Delete latest backstacks
     for(var i=0; i < backstack_counter; i++){
       thisFile.pages[currentPage].backstack.pop();
     }
     redo_times=1;
+
+    //loadIntoCanvas(thisFile,currentPage);
   }
   function moveDrawing(e, touch) {
     if (!isDrawing) {
@@ -281,10 +283,10 @@ document.addEventListener( "DOMContentLoaded", function() {
       return;
     }
 
-    hasMoved = true;
-    var _x, _y, _points;
+    var _x, _y;
     var _lines = thisFile.pages[currentPage].lines;
-    _points = _lines[_lines.length-1].points;
+    var _line = _lines[_lines.length-1]
+    var _points = _line.points;
 
     if (touch) {
       _x = e.changedTouches[0].clientX;
@@ -310,15 +312,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     // save points
     _points.push({ x: _x, y: _y });
 
-    //SE GOMMA
-    if (toolSelected === "rubber") {
-      clearCircle(ctx,_x,_y,rubberWidth/2);
-    }
-
-    //SE MATITA
-    else{
-      ctx.strokeStyle = _lines[_lines.length-1].color;
-      ctx.lineWidth = _lines[_lines.length-1].width;
+    if(_line.tool===3)
+        clearCircle(ctx,_x,_y,rubberWidth/2);
+    else {
+      ctx.strokeStyle = _line.color;
+      ctx.lineWidth = _line.width;
 
       var p1 = _points[_points.length-3];
       var p2 = _points[_points.length-2];
@@ -333,46 +331,12 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   }
   function endDrawing(e, touch) {
-    //Handle dots
-    if(!hasMoved && isDrawing) {
-      var _x, _y;
-      if (touch) {
-        _x = e.changedTouches[0].clientX;
-        _y = e.changedTouches[0].clientY;
-      } else {
-        _x = e.clientX;
-        _y = e.clientY;
-      }
-      if(rulerActive){
-        var newPoint = getPointOnRuler(_x,_y);
-        _x=newPoint.x;
-        _y=newPoint.y;
-      }
-
-      //gotta be responsive
-      _x-= DrawPaddingX;
-      _y-= DrawPaddingY;
-
-      var _lines = thisFile.pages[currentPage].lines;
-      var _width = _lines[_lines.length-1].width;
-
-      if(toolSelected ==="rubber"){
-        clearCircle(ctx,_x,_y,_width/2);
-      }
-      else{
-        ctx.beginPath();
-
-        ctx.fillStyle = ctx.strokeStyle = _lines[_lines.length-1].color;
-
-        ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
-        ctx.fill();
-      }
-    }
-
    //These points are already saved in startDrawing. No need to save here.
+    
     resetBackstackButtons();
     isDrawing = false;
-    hasMoved = false;
+
+    loadIntoCanvas(thisFile,currentPage);
   }
 
   function getPointOnRuler(_x,_y){
@@ -487,13 +451,16 @@ document.addEventListener( "DOMContentLoaded", function() {
   function setColor(color){
     lineColor = color;
     pencilColor.style.borderBottom = "12px solid " + lineColor;
+    markerColor.style.background = "rgba("+hexToRgb(lineColor).join()+",.5)";
+
   }
-  function setWidth(width) {
-     lineWidth = width;
-     ctx.lineWidth = width;
-  }
-  function setRubberWidth(width) {
-     rubberWidth = width;
+  function setWidth(width,tool) {
+    switch(tool)
+    {
+      case 1: lineWidth=width; break;
+      case 2: markerWidth=width*5; break;
+      case 3: rubberWidth=width*15; break;
+    }
   }
   function setBackgroundColor(color) {
     thisFile.settings.canvas.backgroundColor = color;
@@ -520,14 +487,18 @@ document.addEventListener( "DOMContentLoaded", function() {
     else{
       clearButtonSelection(allTools, "btn-tool-active");
       _tool.classList.add("btn-tool-active");
-      toolSelected = _tool.id;
+      switch(_tool.id){
+        case "pencil": toolSelected=1; break;
+        case "marker": toolSelected=2; break;
+        case "rubber": toolSelected=3; break;
+      }
     }
   }
 
-  function loadWidth(_tool){
-      clearButtonSelection(allWidths, "btn-active");
-      customWidth.classList.remove("slider-active");
-    if(_tool=="pencil") {
+  function displayWidth(_tool){
+    clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
+    if(_tool==1) {
       switch(lineWidth){
         case 1:
           smallWidth.classList.add("btn-active");
@@ -541,10 +512,29 @@ document.addEventListener( "DOMContentLoaded", function() {
         default:
           customWidth.value=lineWidth;
           customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value+"px");
           break;
       }
     }
-    else if(_tool=="rubber"){
+    else if(_tool==2) {
+      switch(markerWidth){
+        case 5:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 10:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 20:
+          bigWidth.classList.add("btn-active");
+          break;
+        default:
+          customWidth.value=markerWidth/5;
+          customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*5+"px");
+          break;
+      }
+    }
+    else if(_tool==3){
       switch(rubberWidth){
         case 15:
           smallWidth.classList.add("btn-active");
@@ -558,6 +548,7 @@ document.addEventListener( "DOMContentLoaded", function() {
         default:
           customWidth.value=rubberWidth/15;
           customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*15+"px");
           break;
       }
     }
@@ -567,12 +558,17 @@ document.addEventListener( "DOMContentLoaded", function() {
   pencil.addEventListener("click", function(e) {
     showColorButtons();
     selectTool(this);
-    loadWidth("pencil");
+    displayWidth(1);
+  });
+  marker.addEventListener("click", function(e) {
+    showColorButtons();
+    selectTool(this);
+    displayWidth(2);
   });
   rubber.addEventListener("click", function(e) {
     hideColorButtons();
     selectTool(this);
-    loadWidth("rubber");
+    displayWidth(3);
   });
   ruler.addEventListener("click", function(e) {
     selectTool(this);
@@ -606,46 +602,32 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // WIDTH
   smallWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      setRubberWidth(15);
-    else if(toolSelected=="pencil")
-      setWidth(1);
+    setWidth(1,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
     customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
   });
   mediumWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      setRubberWidth(30);
-    else if(toolSelected=="pencil")
-      setWidth(2);
+    setWidth(2,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
     customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
   });
   bigWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      setRubberWidth(60);
-    else if(toolSelected=="pencil")
-      setWidth(4);
+    setWidth(4,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
     customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
   });
   customWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      setRubberWidth(this.value*15);
-    else if(toolSelected=="pencil")
-      setWidth(this.value);
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
+    setWidth(this.value,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("slider-active");
   });
   customWidth.addEventListener("input", function() {
     this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
-    if(toolSelected=="rubber")
-      setRubberWidth(this.value*15);
-    else if(toolSelected=="pencil")
-      setWidth(this.value);
+    setWidth(this.value,toolSelected);
   });
   // BACKGROUND COLOR PICKER
   whiteBackground.addEventListener("click", function(e) {
@@ -718,6 +700,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
 
   function translate(context,x,y){
+    return;
     context.resetTransform();
     context.translate(x,y);
   }
@@ -782,27 +765,23 @@ document.addEventListener( "DOMContentLoaded", function() {
         var _line = _lines[line];
         var _points = _line.points;
 
-        if (_points.length === 1){  //draw a dot
-          var _x=_points[0].x;
-          var _y=_points[0].y;
-          if(_line.rubber==true){
+        if(_line.tool===3){
+          for(var _point = 0; _point<_points.length;_point++){
+            var _x = _points[_point].x;
+            var _y = _points[_point].y;
+            //ctx.clearRect(_x-_line.width/2,_y-_line.width/2,_line.width,_line.width);
             clearCircle(ctx,_x,_y,_line.width/2);
           }
-          else{
+        }
+        else{
+          if(_points.length===1){
+            var _x=_points[0].x;
+            var _y=_points[0].y;
             ctx.beginPath();
-            ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
+            ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
             ctx.fillStyle = _line.color;
             ctx.strokeStyle = _line.color;
             ctx.fill();
-          }
-        }
-        else {  //draw a line
-          if(_line.rubber==true){
-            for(var _point = 1; _point<_points.length;_point++){
-              var _x = _points[_point].x;
-              var _y = _points[_point].y;
-              clearCircle(ctx,_x,_y,_line.width/2);
-            }
           }
           else{
             ctx.strokeStyle = _line.color;
@@ -820,7 +799,7 @@ document.addEventListener( "DOMContentLoaded", function() {
           }
         }
       }
-    } else console.log("error loading file: " + file);
+    }
   }
 
   //RULER
