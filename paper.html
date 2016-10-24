@@ -27,13 +27,10 @@
       </div>
       <div id="ruler_right"></div>
     </div>
-    <div id="settings_container" class="hidden">
+    <section id="settings_container" class="hidden">
       <div id="settings_panel">
-        <a id="settings_panel_close" class="btn">
-          <i class="material-icons">close</i>
-        </a>
         <h1>Impostazioni</h1>
-        <ul class="settings_list">
+        <ul class="settings_list settings_small">
           <li class="settings_list_heading">File</li>
           <li class="settings_list_element" id="save">
             <i class="material-icons">save</i>
@@ -44,7 +41,7 @@
             <span>Apri...</span>
           </li>
         </ul>
-        <ul class="settings_list">
+        <ul class="settings_list settings_big">
           <li class="settings_list_heading">Colore di sfondo</li>
           <li class="settings_list_circular_picker">
             <div id="background_white"><span></span>
@@ -82,8 +79,13 @@
             </div>
           </li>
         </ul>
+        <div class="settings_footer">
+          <a id="settings_close" class="btn btn-pager btn-highlight">
+            <i class="material-icons">close</i>
+          </a>
+        </div>
       </div>
-    </div>
+    </section>
     <footer id="footer">
       <ul class="toolbar-left">
         <!-- Tool Picker -->
@@ -121,13 +123,20 @@
           </div>
         </li>
         <li class="btn-toolbar flex-container">
-          <div id="color-picker"></div>
+          <!--SEE: http://codepen.io/QUB3X/pen/EgAGXJ?editors=1100-->
+          <div class="color-picker-panel">
+            <div class="spectrum-map">
+              <button id="spectrum-cursor" class="color-cursor"></button>
+              <canvas id="spectrum-canvas"></canvas>
+            </div>
+            <div class="hue-map">
+              <button id="hue-cursor" class="color-cursor"></button>
+              <canvas id="hue-canvas"></canvas>
+            </div>
+          </div>
         </li>
         <!-- /Color Picker -->
       </ul>
-      <div class="toolbar-center">
-        <button id="settings_panel_open" class="btn btn-menu btn-flex"><i class="material-icons">settings</i><span>Menu</span></button>
-      </div>
       <ul class="toolbar-right">
         <li class="btn-pager" id="page_next">
           <i class="material-icons">arrow_forward</i>
@@ -151,39 +160,59 @@
         <li class="btn-pager" id="clear_all" data-tooltip="CANCELLERAI TUTTO!">
           <i class="material-icons">delete</i>
         </li>
+        <li class="toolbar-spacer">
+        <li class="btn-pager btn-flex btn-highlight" id="settings_toggle">
+          <i class="material-icons">settings</i><span class="btn-label">Menu</span>
+        </li>
       </ul>
 
     </footer>
     <script src="app/js/canvas.js"></script>
     <script src="app/lib/jscolor.min.js"></script>
+    <script src="app/js/colorpicker.js"></script>
     <script>
       const ipcRenderer = require('electron').ipcRenderer;
       var closeBtn = document.querySelector('#menu-close');
       var maximBtn = document.querySelector('#menu-maximize');
       var minimBtn = document.querySelector('#menu-minimize');
       var backBtn = document.querySelector('#menu-back');
-      var closeSettings = document.querySelector('#settings_panel_close');
-      var openSettings = document.querySelector('#settings_panel_open');
+      var closeSettings = document.querySelector('#settings_close');
+      var toggleSettings = document.querySelector('#settings_toggle');
+      var settingsContainer = document.getElementById('settings_container');
+      var areSettingsOpen = false;
 
-      closeBtn.addEventListener('click', function () {
+      closeBtn.addEventListener('click', function() {
         ipcRenderer.send('close-main-window');
       });
-      maximBtn.addEventListener('click', function () {
+      maximBtn.addEventListener('click', function() {
         ipcRenderer.send('maximize-main-window');
       });
-      minimBtn.addEventListener('click', function () {
+      minimBtn.addEventListener('click', function() {
         ipcRenderer.send('minimize-main-window');
       });
       backBtn.addEventListener('click', function() {
         ipcRenderer.send('back-to-main');
       });
+
       closeSettings.addEventListener('click', function() {
-        document.getElementById('settings_container').classList.add('hidden');
+        settingsContainer.classList.add('hidden');
+        areSettingsOpen = false;
       });
-      openSettings.addEventListener('click', function() {
-        document.getElementById('settings_container').classList.remove('hidden');
+      toggleSettings.addEventListener('click', function() {
+        if(areSettingsOpen) {
+          settingsContainer.classList.add('hidden');
+          areSettingsOpen = false;
+        } else {
+          settingsContainer.classList.remove('hidden');
+          areSettingsOpen = true;
+        }
       });
+      /*settingsContainer.addEventListener('click', function() {
+        this.classList.add('hidden');
+        areSettingsOpen = false;
+      });*/
       // COLOR PICKER
+      
       function updateColor(picker) {
         document.getElementById("pencil_other").setAttribute("value", "#"+picker);
       }
