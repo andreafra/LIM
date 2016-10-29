@@ -450,7 +450,6 @@ document.addEventListener( "DOMContentLoaded", function() {
         break;
       case "setTool":
         selectTool(parameters.tool);
-        console.log('Received settings for tool');
         break;
       case "undo":
         undo();

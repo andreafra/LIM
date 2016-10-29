@@ -214,6 +214,15 @@ document.addEventListener( "DOMContentLoaded", function() {
     sendTool(_tool.id);
   }
 
+  function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : null;
+  }
+
   // UNDO & REDO
   var backstack_counter=0;
   var redo_times = 1;
@@ -264,6 +273,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   function sendColor(_color){
     ipc.send('send-command', 'canvas', 'setColor', {color: _color});
+    pencilColor.style.borderBottom = "12px solid " + _color;
+    markerColor.style.background = "rgba("+hexToRgb(_color).join()+",.5)";
   }
   // this sends a JS Object containing the settings of the line
 	function sendWidth(_width, _tool){
