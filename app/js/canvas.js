@@ -328,6 +328,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     //loadIntoCanvas(thisFile,currentPage);
   }
   function endDrawing(e, touch) {
+    if(!isDrawing) return;
     //These points are already saved in startDrawing. No need to save here.
     var _lines = thisFile.pages[currentPage].lines;
     var _line = _lines[_lines.length-1]
@@ -408,13 +409,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   var allTools = [pencil, marker, rubber, ruler];
 
   var colorPicker = $ID("color_picker");
-  /*
-  var blackColor = $ID("pencil_black");
-  var blueColor = $ID("pencil_blue");
-  var redColor = $ID("pencil_red");
-  var greenColor = $ID("pencil_green");
-  var customColor = $ID("pencil_other");
-*/
+  var customColor = $ID("color_picker_canvas");
+  var eyedropper = $ID("color-picker-circle");
 
   var allColors = $CLASS("btn-toolbar-color");
 
@@ -591,23 +587,29 @@ document.addEventListener( "DOMContentLoaded", function() {
     element.addEventListener("click", function() {
       setColor(this.getAttribute("value"));
       clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.remove("eye-active");
       this.classList.add("btn-active");
     });
   }
+  (function(){
+    var isPicking = false;
 
-  /*
-  customColor.addEventListener("mouseup", function() {
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-    $ID("body").lastChild.addEventListener("mouseup", function() {
+    customColor.addEventListener("mousedown", function(event){
+        isPicking = true;
+    });
+    customColor.addEventListener("mousemove", function() {
+      if(!isPicking) return;
+      clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.add("eye-active");
       setColor(customColor.getAttribute("value"));
     });
-  });
-  customColor.addEventListener("click", function() {
-    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
-    setColor(customColor.getAttribute("value"));
-  });
-  */
+    customColor.addEventListener("mouseup", function(event){
+      clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.add("eye-active");
+      setColor(customColor.getAttribute("value"));
+      isPicking = false;
+    });
+  })();
 
   // WIDTH
   smallWidth.addEventListener("click", function() {

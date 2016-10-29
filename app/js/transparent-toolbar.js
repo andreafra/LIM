@@ -20,13 +20,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   var allTools = [pencil, marker, rubber, ruler];
 
   var colorPicker = $ID("color_picker");
-  /*
-  var blackColor = $ID("pencil_black");
-  var blueColor = $ID("pencil_blue");
-  var redColor = $ID("pencil_red");
-  var greenColor = $ID("pencil_green");
-  var customColor = $ID("pencil_other");
-*/
+  var customColor = $ID("color_picker_canvas");
+  var eyedropper = $ID("color-picker-circle");
 
   var allColors = $CLASS("btn-toolbar-color");
 
@@ -143,9 +138,29 @@ document.addEventListener( "DOMContentLoaded", function() {
     element.addEventListener("click", function() {
       sendColor(this.getAttribute("value"));
       clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.remove("eye-active");
       this.classList.add("btn-active");
     });
   }
+  (function(){
+    var isPicking = false;
+
+    customColor.addEventListener("mousedown", function(event){
+        isPicking = true;
+    });
+    customColor.addEventListener("mousemove", function() {
+      if(!isPicking) return;
+      clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.add("eye-active");
+      sendColor(customColor.getAttribute("value"));
+    });
+    customColor.addEventListener("mouseup", function(event){
+      clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.add("eye-active");
+      sendColor(customColor.getAttribute("value"));
+      isPicking = false;
+    });
+  })();
 
   // 5: MAKE SETTINGS FOR WIDTH
   smallWidth.addEventListener("click", function() {

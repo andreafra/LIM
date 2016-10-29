@@ -7,57 +7,53 @@ img.src = 'app/img/spectrum.png';
 
 // copy the image to the CPCanvas
 img.addEventListener("load", function(){
-    CPCtx.drawImage(img,0,0,125,70);
+    CPCtx.drawImage(img,0,0,120,70);
 });
 
-function rgbToHex(R,G,B) {return toHex(R)+toHex(G)+toHex(B)}
-
-function toHex(n) {
-    n = parseInt(n,10);
-    if (isNaN(n)) return "00";
-    n = Math.max(0,Math.min(n,255));
-    return "0123456789ABCDEF".charAt((n-n%16)/16)  + "0123456789ABCDEF".charAt(n%16);
+function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
+
 var eyedropper = document.getElementById("color-picker-circle");
 
-function pickColor(event) {
+function pickColor(event, callback) {
     // getting user coordinates
-    var x = event.clientX - CPCanvas.offsetLeft;
-    var y = event.clientY - (CPCanvas.offsetTop + window.innerHeight - 80);
-
-    console.log("PEPE")
+    //var x = event.clientX - CPCanvas.offsetLeft;
+    //var y = event.clientY - (CPCanvas.offsetTop + window.innerHeight - 80);
+    var rect = CPCanvas.getBoundingClientRect();
+    var x = Math.ceil(event.clientX - rect.left);
+    var y = Math.ceil(event.clientY - rect.top);
     // getting image data and RGB values
-    var img_data = CPCtx.getImageData(x, y, 1, 1).data;
+    var img_data = CPCtx.getImageData((x===0)?x:(x-1), (y===0)?y:(y-1), 1, 1).data;
     var R = img_data[0];
     var G = img_data[1];
-    var B = img_data[2];  var rgb = R + ',' + G + ',' + B;
+    var B = img_data[2];  
     // convert RGB to HEX
     var hex = rgbToHex(R,G,B);
     // making the color the value of the input
-    CPCanvas.setAttribute("value", "#"+hex);
+    CPCanvas.setAttribute("value", hex);
 
     // move the eyedropper
-    eyedropper.style.marginLeft = x+"px";
-    eyedropper.style.marginTop = y+"px";
-    eyedropper.style.backgroundColor = "#"+hex;
+    eyedropper.style.marginLeft = (x)+"px";
+    eyedropper.style.marginTop = (y)+"px";
+    eyedropper.style.backgroundColor = hex;
 
+    if(callback) callback();
 }
 var isPicking = false;
 
 
 CPCanvas.addEventListener("mousedown", function(event){
     isPicking = true;
-    pickColor(event);
 });
 CPCanvas.addEventListener("mousemove", function(event){
     if(isPicking) {
-
-        pickColor(event);
+        pickColor(event, function(){ eyedropper.classList.remove('transition'); });
     }
 });
 CPCanvas.addEventListener("mouseup", function(event){
     isPicking = false;
-    pickColor(event);
+    pickColor(event, function(){ eyedropper.classList.add('transition'); });
 });
 
 

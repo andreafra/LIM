@@ -186,3 +186,7 @@ $circle-big: 14px;
     border: 2px solid #FFFF00 !important;
     transform: scale(1.2);
 }
+.eye-active{
+  border: 2px solid #FFFF00 !important;
+  transform: scale(1.2) translate(-50%,-50%) !important;
+}

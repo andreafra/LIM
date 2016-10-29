@@ -155,12 +155,12 @@ app.on('ready', function() {
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
-    width: 800/*size.width*/,
+    width: 1100/*size.width*/,
     height: 600/*size.height*/,
     transparent:false,
     fullscreen:false,
     frame: false,
-    minWidth: 800,
+    minWidth: 1100,
     minHeight: 600
   });
 
@@ -243,7 +243,7 @@ ipcMain.on('load-menu', function(){
     mainWindow.unmaximize();
   }
 });
-const toolbarWidth = 1020;
+const toolbarWidth = 990;
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();
   var electronScreen = electron.screen;
@@ -254,10 +254,10 @@ ipcMain.on('new-transparent-window', function() {
     height: 80/*size.height*/,
     transparent:false,
     fullscreen:false,
-    resizable:false,
     frame: false,
+    resizable:false,
     skipTaskbar: true,
-    minWidth: 1010,
+    minWidth: 990,
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
