@@ -10,10 +10,10 @@
     <header id="header" style="-webkit-app-region: drag">
       <h1 id="title">LIM</h1>
       <div id="window-menu">
-        <button id="menu-back" class="btn btn-menu btn-menu-left btn-white-hover"><i class="material-icons">arrow_back</i></button>
         <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
         <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
         <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
+        <button id="menu-back" class="btn btn-menu btn-white-hover"><i class="material-icons">arrow_back</i></button>
       </div>
     </header>
     <div id="content"></div>
@@ -123,17 +123,8 @@
           </div>
         </li>
         <li class="btn-toolbar flex-container">
-          <!--SEE: http://codepen.io/QUB3X/pen/EgAGXJ?editors=1100-->
-          <div class="color-picker-panel">
-            <div class="spectrum-map">
-              <button id="spectrum-cursor" class="color-cursor"></button>
-              <canvas id="spectrum-canvas"></canvas>
-            </div>
-            <div class="hue-map">
-              <button id="hue-cursor" class="color-cursor"></button>
-              <canvas id="hue-canvas"></canvas>
-            </div>
-          </div>
+          <canvas id="color_picker_canvas" value="#000" height=70 width=120></canvas>
+          <span id="color-picker-circle"></span>
         </li>
         <!-- /Color Picker -->
       </ul>
@@ -169,7 +160,8 @@
     </footer>
     <script src="app/js/canvas.js"></script>
     <script src="app/lib/jscolor.min.js"></script>
-    <script src="app/js/colorpicker.js"></script>
+    <script src="app/js/colorpicker_2.js"></script>
+    <!--<script src="app/js/colorpicker.js"></script>-->
     <script>
       const ipcRenderer = require('electron').ipcRenderer;
       var closeBtn = document.querySelector('#menu-close');
@@ -207,10 +199,7 @@
           areSettingsOpen = true;
         }
       });
-      /*settingsContainer.addEventListener('click', function() {
-        this.classList.add('hidden');
-        areSettingsOpen = false;
-      });*/
+      
       // COLOR PICKER
       
       function updateColor(picker) {

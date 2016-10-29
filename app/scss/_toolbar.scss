@@ -64,7 +64,7 @@ footer {
   height: 100%;
 }
 
-#color-picker-container {
+/*#color-picker-container {
   align-self: center;
   background: linear-gradient(to left, $red 0%, $green 100%);
   width: 100px;
@@ -72,6 +72,12 @@ footer {
   border-radius: 15px;
   border: 2px solid $gray;
   box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+  padding-top: 5px;
+}*/
+
+#color_picker_canvas {
+  height: 70px;
+  margin-top: 1px;
 }
 
 #pencil_black {

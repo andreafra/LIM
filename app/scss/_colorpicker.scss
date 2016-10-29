@@ -1,4 +1,4 @@
-$color-ui-panel: #1F232A;
+/*$color-ui-panel: #1F232A;
 $color-swatch-border: #fff;
 $map-height: 90%;
 $window-width:140px;
@@ -93,4 +93,20 @@ $border-radius: 0px;
   width:100%;
   height:100%;
   background:#ccc;
+}*/
+#color_picker_canvas {
+  border-radius: 5px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  border: 2px solid $gray;
+}
+#color-picker-circle {
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  border: 2px solid $gray;
+  transform: translate(-50%, -50%);
+  border-radius: 24px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
 }
