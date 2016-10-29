@@ -1,26 +1,40 @@
+function $ID(__id) {
+  return document.getElementById(__id);
+}
+function $CLASS(__class) {
+  return document.getElementsByClassName(__class);
+}
+
 document.addEventListener( "DOMContentLoaded", function() {
 
 	const ipc = require('electron').ipcRenderer;
 
 	// 1: GET EVERY SINGLE OBJECT IN THE TOOLBAR
 
-	var pencil = document.getElementById("pencil");
-	var pencilColor = document.getElementById("pencil_color");
-	var rubber = document.getElementById("rubber");
-	var ruler = document.getElementById("ruler");
-	var allTools = [pencil, rubber];
+ var pencil = $ID("pencil");
+  var pencilColor = $ID("pencil_color");
+  var marker = $ID("marker");
+  var markerColor = $ID("marker_color");
+  var rubber = $ID("rubber");
+  var ruler = $ID("ruler");
+  var allTools = [pencil, marker, rubber, ruler];
 
-	var blackColor = document.getElementById("pencil_black");
-	var blueColor = document.getElementById("pencil_blue");
-	var redColor = document.getElementById("pencil_red");
-	var greenColor = document.getElementById("pencil_green");
-	var customColor = document.getElementById("pencil_other");
-	var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
+  var colorPicker = $ID("color_picker");
+  /*
+  var blackColor = $ID("pencil_black");
+  var blueColor = $ID("pencil_blue");
+  var redColor = $ID("pencil_red");
+  var greenColor = $ID("pencil_green");
+  var customColor = $ID("pencil_other");
+*/
 
-	var smallWidth = document.getElementById("stroke_small");
-	var mediumWidth = document.getElementById("stroke_medium");
-	var bigWidth = document.getElementById("stroke_big");
-	var allWidths = [smallWidth, mediumWidth, bigWidth];
+  var allColors = $CLASS("btn-toolbar-color");
+
+  var smallWidth = $ID("stroke_small");
+  var mediumWidth = $ID("stroke_medium");
+  var bigWidth = $ID("stroke_big");
+  var customWidth = $ID("stroke_slider");
+  var allWidths = [smallWidth, mediumWidth, bigWidth];
 
   var undo = document.getElementById("undo");
   var redo = document.getElementById("redo");
@@ -33,41 +47,41 @@ document.addEventListener( "DOMContentLoaded", function() {
   // 2: SET VARIABLES FOR SETTINGS
 
   //default values
-  var lineColor = "black";
+  var lineColor = "#000000";
   var lineWidth = 2;
+  var markerWidth = 10;
   var rubberWidth = 30;
 
-  var toolSelected = "pencil"; //pencil, rubber
+  var toolSelected = 1;
   var rulerActive = false;
 
   // 3: SET SUPPORT FUNCTIONS
-	function clearButtonSelection(buttons, _class) {
-		for (var i = buttons.length - 1; i >= 0; i--) {
-		  buttons[i].classList.remove(_class);
-		}
-	}
+  function clearButtonSelection(buttons, _class) {
+    for (var i = buttons.length - 1; i >= 0; i--) {
+      buttons[i].classList.remove(_class);
+    }
+  }
 
-	function showColorButtons(){
-		var j = document.getElementsByClassName("btn-toolbar-color");
-		for (var i = j.length - 1; i >= 0; i--) {
-		  allColors[i].parentElement.classList.remove("btn-hidden");
-		  allColors[i].parentElement.classList.add("btn-visible");
-		  allColors[i].style.pointerEvents = 'auto';
-		};
-	}
+  function showColorButtons(){
+    colorPicker.classList.remove("btn-hidden");
+    colorPicker.classList.add("btn-visible");
+    for (var i = allColors.length -1; i >= 0; i--) {
+      allColors[i].style.pointerEvents = 'auto';
+    }
+  }
 
-	function hideColorButtons(){
-		var j = document.getElementsByClassName("btn-toolbar-color");
-		for (var i = j.length - 1; i >= 0; i--) {
-		  allColors[i].parentElement.classList.remove("btn-visible");
-		  allColors[i].parentElement.classList.add("btn-hidden");
-		  allColors[i].style.pointerEvents = 'none';
-		};
-	}
+  function hideColorButtons(){
+    colorPicker.classList.remove("btn-visible");
+    colorPicker.classList.add("btn-hidden");
+    for (var i = allColors.length -1; i >= 0; i--) {
+      allColors[i].style.pointerEvents = 'none';
+    }
+  }
 
-  function loadWidth(_tool){
-    if(_tool=="pencil") {
-      clearButtonSelection(allWidths, "btn-active");
+  function displayWidth(_tool){
+    clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
+    if(_tool==1) {
       switch(lineWidth){
         case 1:
           smallWidth.classList.add("btn-active");
@@ -78,10 +92,32 @@ document.addEventListener( "DOMContentLoaded", function() {
         case 4:
           bigWidth.classList.add("btn-active");
           break;
+        default:
+          customWidth.value=lineWidth;
+          customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value+"px");
+          break;
       }
     }
-    else if(_tool=="rubber"){
-      clearButtonSelection(allWidths, "btn-active");
+    else if(_tool==2) {
+      switch(markerWidth){
+        case 5:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 10:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 20:
+          bigWidth.classList.add("btn-active");
+          break;
+        default:
+          customWidth.value=markerWidth/5;
+          customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*5+"px");
+          break;
+      }
+    }
+    else if(_tool==3){
       switch(rubberWidth){
         case 15:
           smallWidth.classList.add("btn-active");
@@ -92,100 +128,91 @@ document.addEventListener( "DOMContentLoaded", function() {
         case 60:
           bigWidth.classList.add("btn-active");
           break;
+        default:
+          customWidth.value=rubberWidth/15;
+          customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*15+"px");
+          break;
       }
     }
   }
 
   // 4: MAKE SETTINGS FOR COLOR PICKER
-  blackColor.addEventListener("click", function(e) {
-    lineColor = "black";
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-
-    sendLine(lineColor, lineWidth, rubberWidth);
-  });
-  blueColor.addEventListener("click", function(e) {
-    lineColor ="#2962ff";
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-
-    sendLine(lineColor, lineWidth, rubberWidth);
-  });
-  redColor.addEventListener("click", function(e) {
-    lineColor = "#f44336";
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-
-    sendLine(lineColor, lineWidth, rubberWidth);
-  });
-  greenColor.addEventListener("click", function(e) {
-    lineColor = "#4caf50";
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-
-    sendLine(lineColor, lineWidth, rubberWidth);
-  });
-  customColor.addEventListener("mouseup", function() {
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
-      lineColor = customColor.getAttribute("value");
-      sendLine(lineColor, lineWidth, rubberWidth);
+  for (var i = 0; i < $CLASS("btn-toolbar-color").length; i++) {
+    var element = $CLASS("btn-toolbar-color")[i];
+    element.addEventListener("click", function() {
+      sendColor(this.getAttribute("value"));
+      clearButtonSelection(allColors, "btn-active");
+      this.classList.add("btn-active");
     });
-  });
-  customColor.addEventListener("click", function() {
-    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
-    lineColor = customColor.getAttribute("value");
-
-    sendLine(lineColor, lineWidth, rubberWidth);
-  });
+  }
 
   // 5: MAKE SETTINGS FOR WIDTH
   smallWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      rubberWidth = 15;
-    if(toolSelected=="pencil")
-      lineWidth = 1;
+    sendWidth(1,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
-
-    sendLine(lineColor, lineWidth, rubberWidth);
   });
   mediumWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      rubberWidth = 40;
-    if(toolSelected=="pencil")
-      lineWidth = 2;
+    sendWidth(2,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
-
-    sendLine(lineColor, lineWidth, rubberWidth);
   });
   bigWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      rubberWidth = 60;
-    if(toolSelected=="pencil")
-      lineWidth = 4;
+    sendWidth(4,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
-
-    sendLine(lineColor, lineWidth, rubberWidth);
+  });
+  customWidth.addEventListener("click", function() {
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
+    sendWidth(this.value,toolSelected);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("slider-active");
+  });
+  customWidth.addEventListener("input", function() {
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
+    sendWidth(this.value,toolSelected);
   });
 
-  // SETTINGS FOR TOOLS
+  // TOOL PICKER
   pencil.addEventListener("click", function(e) {
     showColorButtons();
-    toolSelected="pencil";
-    sendTool(this);
+    selectTool(this);
+    displayWidth(1);
+  });
+  marker.addEventListener("click", function(e) {
+    showColorButtons();
+    selectTool(this);
+    displayWidth(2);
   });
   rubber.addEventListener("click", function(e) {
     hideColorButtons();
-    toolSelected="rubber";
-    sendTool(this);
+    selectTool(this);
+    displayWidth(3);
   });
   ruler.addEventListener("click", function(e) {
-    sendTool(this);
+    selectTool(this);
   });
+
+  function selectTool(_tool){
+    if(_tool.id == "ruler"){
+      rulerActive = !rulerActive;
+      if(rulerActive){
+        _tool.classList.add("btn-ruler-active");
+      }
+      else{
+        _tool.classList.remove("btn-ruler-active");
+      }
+    }
+    else{
+      clearButtonSelection(allTools, "btn-tool-active");
+      _tool.classList.add("btn-tool-active");
+    }
+    sendTool(_tool.id);
+  }
 
   // UNDO & REDO
   var backstack_counter=0;
@@ -202,8 +229,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
 
   // TOGGLE NAVBAR
+  // DA RIVEDERE!
   var isOpen = true;
-  var liArray = document.getElementById("navbar").getElementsByTagName("li");
+  var liArray = document.getElementById("footer").querySelectorAll("li:not(#toggle_navbar)");
 
   function showLi() {
     for (var i = liArray.length - 2; i >= 0; i--) {
@@ -234,32 +262,27 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
   // 6: SEND SETTINGS
 
+  function sendColor(_color){
+    ipc.send('send-command', 'canvas', 'setColor', {color: _color});
+  }
   // this sends a JS Object containing the settings of the line
-	function sendLine(_lineColor, _lineWidth, _rubberWidth) {
-    pencilColor.style.borderBottom = "12px solid " + _lineColor;
-    ipc.send('send-command', 'canvas', 'setLine', {
-      lineColor: _lineColor,
-      lineWidth: _lineWidth,
-      rubberWidth: _rubberWidth
-    });
-    console.log('Sent settings!')
+	function sendWidth(_width, _tool){
+    ipc.send('send-command', 'canvas', 'setWidth', {width:_width})
   }
 
-  function sendTool(tool){
-    if(tool.id!="ruler"){
-      clearButtonSelection(allTools, "btn-tool-active");
-      tool.classList.add("btn-tool-active");
-    }
-    else{
-      rulerActive=!rulerActive;
-      if(rulerActive)  tool.classList.add("btn-tool-active");
-      else             tool.classList.remove("btn-tool-active");
-    }
-    ipc.send('send-command', 'canvas', 'setTool', {tool: tool.id});
+  function sendTool(_tool){
+    ipc.send('send-command', 'canvas', 'setTool', {tool: _tool});
   }
 
 	ipc.on('send-command', function(e, command, parameters) {
     switch (command) {
+      case "updateTools":
+        toolSelected=parameters.tool;
+        lineWidth=parameters.line;
+        markerWidth=parameters.marker;
+        rubberWidth=parameters.rubber;
+        rulerActive=parameters.ruler;
+        break;
       case "updateBackstackButtons":
         if(parameters.redo){
           //DISABLE REDO
@@ -288,8 +311,8 @@ document.addEventListener( "DOMContentLoaded", function() {
         isOpen = false;
         hideLi();
         break;
-      case "loadWidth":
-        loadWidth(parameters.tool);
+      case "displayWidth":
+        displayWidth(parameters.tool);
         break;
       default:
         console.log("Unhandled command: " + command);

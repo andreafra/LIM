@@ -51,7 +51,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   };
 
   var content = $ID("content");
-  var header_height = document.getElementById('header').clientHeight;
   var title = $ID("title");
 
   content.style.height = canvasHeight + "px";
@@ -312,31 +311,41 @@ document.addEventListener( "DOMContentLoaded", function() {
     // save points
     _points.push({ x: _x, y: _y });
 
-    if(_line.tool===3)
-        clearCircle(ctx,_x,_y,rubberWidth/2);
-    else {
-      ctx.strokeStyle = _line.color;
-      ctx.lineWidth = _line.width;
+    ctx.strokeStyle = (_line.tool===3) ? ctx.strokeStyle=thisFile.settings.canvas.backgroundColor : _line.color;
+    ctx.lineWidth = _line.width;
 
-      var p1 = _points[_points.length-3];
-      var p2 = _points[_points.length-2];
-      var p3 = _points[_points.length-1];
-      if(!p1) p1=p2;
+    var p1 = _points[_points.length-3];
+    var p2 = _points[_points.length-2];
+    var p3 = _points[_points.length-1];
+    if(!p1) p1=p2;
 
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.lineTo(p3.x, p3.y);
-      ctx.stroke();
-    }
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y);
+    ctx.stroke();
+
+    //loadIntoCanvas(thisFile,currentPage);
   }
   function endDrawing(e, touch) {
-   //These points are already saved in startDrawing. No need to save here.
-    
+    //These points are already saved in startDrawing. No need to save here.
+    var _lines = thisFile.pages[currentPage].lines;
+    var _line = _lines[_lines.length-1]
+    var _points = _line.points;
+
+    if(_points.length===1){
+      var _x=_points[0].x;
+      var _y=_points[0].y;
+      ctx.beginPath();
+      ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
+      ctx.fill();
+    }
+
     resetBackstackButtons();
     isDrawing = false;
 
-    loadIntoCanvas(thisFile,currentPage);
+    if(_line.tool===2)
+      loadIntoCanvas(thisFile,currentPage);
   }
 
   function getPointOnRuler(_x,_y){
@@ -464,11 +473,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function setBackgroundColor(color) {
     thisFile.settings.canvas.backgroundColor = color;
-    canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+    loadIntoCanvas(thisFile,currentPage);
   }
   function setBackgroundImage(image) { // NO .PNG
-     thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
-     canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+    thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
+    loadIntoCanvas(thisFile,currentPage);
   }
 
   function selectTool(_tool){
@@ -764,39 +773,27 @@ document.addEventListener( "DOMContentLoaded", function() {
       for (var line = 0; line < _lines.length; line++) {
         var _line = _lines[line];
         var _points = _line.points;
+        ctx.fillStyle = (_line.tool===3) ? thisFile.settings.canvas.backgroundColor : _line.color;
+        ctx.strokeStyle = (_line.tool===3) ? thisFile.settings.canvas.backgroundColor : _line.color;
+        ctx.lineWidth = _line.width;
 
-        if(_line.tool===3){
-          for(var _point = 0; _point<_points.length;_point++){
-            var _x = _points[_point].x;
-            var _y = _points[_point].y;
-            //ctx.clearRect(_x-_line.width/2,_y-_line.width/2,_line.width,_line.width);
-            clearCircle(ctx,_x,_y,_line.width/2);
-          }
+        if(_points.length===1){
+          var _x=_points[0].x;
+          var _y=_points[0].y;
+          ctx.beginPath();
+          ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
+          ctx.fill();
         }
         else{
-          if(_points.length===1){
-            var _x=_points[0].x;
-            var _y=_points[0].y;
-            ctx.beginPath();
-            ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
-            ctx.fillStyle = _line.color;
-            ctx.strokeStyle = _line.color;
-            ctx.fill();
-          }
-          else{
-            ctx.strokeStyle = _line.color;
-            ctx.lineWidth = _line.width;
-            ctx.beginPath();
+          ctx.beginPath();
+          for (var i = 0; i < _points.length-1; i++) {
+              var p1 = _points[i];
+              var p2 = _points[i+1];
 
-            for (var i = 0; i < _points.length-1; i++) {
-                var p1 = _points[i];
-                var p2 = _points[i+1];
-
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
-              }
-            ctx.stroke();
-          }
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+            }
+          ctx.stroke();
         }
       }
     }

@@ -243,7 +243,7 @@ ipcMain.on('load-menu', function(){
     mainWindow.unmaximize();
   }
 });
-const toolbarWidth = 750;
+const toolbarWidth = 1020;
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();
   var electronScreen = electron.screen;
@@ -254,9 +254,10 @@ ipcMain.on('new-transparent-window', function() {
     height: 80/*size.height*/,
     transparent:false,
     fullscreen:false,
+    resizable:false,
     frame: false,
     skipTaskbar: true,
-    minWidth: 700,
+    minWidth: 1010,
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas

@@ -1,5 +1,11 @@
 var thisFile;
 
+function $ID(__id) {
+  return document.getElementById(__id);
+}
+function $CLASS(__class) {
+  return document.getElementsByClassName(__class);
+}
 document.addEventListener( "DOMContentLoaded", function() {
   //require('electron').remote.getCurrentWindow().toggleDevTools();
   const ipc = require('electron').ipcRenderer;
@@ -38,17 +44,18 @@ document.addEventListener( "DOMContentLoaded", function() {
     // }]
   };
 
-  var content = document.getElementById("content");
-  var title = document.getElementById("title");
+  var content = $ID("content");
+  var title = $ID("title");
 
   content.style.height = canvasHeight + "px";
 
   var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
-  document.getElementById("content").innerHTML = canvasToAdd;
+  $ID("content").innerHTML = canvasToAdd;
 
-  var canvas = document.getElementById("canvas");
+  var canvas = $ID("canvas");
 
   canvas.style.cursor = "crosshair";
+  canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
   canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
   var DrawPaddingX = canvas.offsetLeft;
@@ -56,25 +63,19 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var ctx = canvas.getContext('2d');
 
-  // Fixed Line Properties
-  ctx.imageSmoothingEnabled = true;
-
-  //default values - just first setup
-  var lineColor = "black";
+  //default values
+  var lineColor = "#000000";
   var lineWidth = 2;
+  var markerWidth = 10;
   var rubberWidth = 30;
+  translate(ctx,0.5,0.5);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
 
-  ctx.strokeStyle = lineColor;
-  ctx.lineWidth = lineWidth;
-  ctx.translate(0.5,0.5);
-  ctx.lineCap='round';
-  ctx.lineJoin='round';
-
-  var toolSelected = "pencil"; // can be "pencil", "rubber"
+  var toolSelected = 1; //1=pencil, 2=marker, 3=rubber
   var rulerActive = false;
 
   var isDrawing, pages = [ ];
-  var hasMoved = false;
 
   // The current page in the pages[]
   var currentPage = 0;
@@ -97,12 +98,7 @@ document.addEventListener( "DOMContentLoaded", function() {
           ignoreNextMove = false;
           return;
       }
-      if(!isDrawing && (e.which==1 || e.which==2)){
-        startDrawing(e, false);
-      }
-      else{
-        moveDrawing(e, false);
-      }
+      moveDrawing(e, false);
     }, false);
     canvas.addEventListener("mouseup", function (e) {
       ignoreNextMove = true;
@@ -114,12 +110,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     }, false);
 
     canvas.addEventListener("touchmove", function (e) {
-      if(!isDrawing){
-        startDrawing(e, true);
-      }
-      else{
-        moveDrawing(e, true);
-      }
+      moveDrawing(e, true);
     }, false);
 
     canvas.addEventListener("touchend", function (e) {
@@ -143,7 +134,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     }, false);
     //Stop drawing if cursor leaves canvas
     canvas.addEventListener("mouseleave", function (e) {
-      endDrawing(e, true);
+      if(isDrawing)
+        endDrawing(e, true);
     }, false);
     canvas.addEventListener("touchleave", function (e) {
       endDrawing(e, true);
@@ -164,19 +156,17 @@ document.addEventListener( "DOMContentLoaded", function() {
     content.style.height = canvasHeight + "px";
 
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
-    document.getElementById("content").innerHTML = canvasToAdd;
-    canvas = document.getElementById("canvas");
+    $ID("content").innerHTML = canvasToAdd;
+    canvas = $ID("canvas");
     canvas.style.cursor = "crosshair";
-    
+
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
-    ctx.strokeStyle = lineColor;
-    ctx.lineWidth = lineWidth;
-    ctx.translate(0.5,0.5);
-    ctx.lineCap="round";
-    
+    translate(ctx,0.5,0.5);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
     //Re-bind click events, since we've updated canvas object
     bindEvents();
 
@@ -219,9 +209,17 @@ document.addEventListener( "DOMContentLoaded", function() {
     };
   }
 
+  function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : null;
+  }
+
   function startDrawing(e, touch) {
     isDrawing = true;
-    hasMoved = false; //Not yet
 
     canvas.style.cursor="none";
 
@@ -248,29 +246,29 @@ document.addEventListener( "DOMContentLoaded", function() {
     _x-= DrawPaddingX;
     _y-= DrawPaddingY;
 
+    //Set transparency
+    _color_to_use=lineColor;
+    if(toolSelected===2){
+      rgbColor=hexToRgb(lineColor);
+      _color_to_use="rgba("+rgbColor.join()+",.5)";
+    }
+
     // save points
     _points.push({ x: _x, y: _y });
-    if (toolSelected !== "rubber") { // RUBBER OFF
-      thisFile.pages[currentPage].lines.push({
-        points: _points,
-        color: lineColor,
-        width: lineWidth,
-        rubber: false
-      });
-    } else { // RUBBER ON
-      thisFile.pages[currentPage].lines.push({
-        points: _points,
-        color: canvas.style.backgroundColor,
-        width: rubberWidth,
-        rubber: true
-      });
-    }
+    thisFile.pages[currentPage].lines.push({
+      points: _points,
+      color: _color_to_use,
+      width: (toolSelected===3) ? rubberWidth : ((toolSelected===2) ? markerWidth : lineWidth),
+      tool: toolSelected
+    });
 
     //Delete latest backstacks
     for(var i=0; i < backstack_counter; i++){
       thisFile.pages[currentPage].backstack.pop();
     }
     redo_times=1;
+
+    //loadIntoCanvas(thisFile,currentPage);
   }
   function moveDrawing(e, touch) {
     if (!isDrawing) {
@@ -278,10 +276,10 @@ document.addEventListener( "DOMContentLoaded", function() {
       return;
     }
 
-    hasMoved = true;
-    var _x, _y, _points;
+    var _x, _y;
     var _lines = thisFile.pages[currentPage].lines;
-    _points = _lines[_lines.length-1].points;
+    var _line = _lines[_lines.length-1]
+    var _points = _line.points;
 
     if (touch) {
       _x = e.changedTouches[0].clientX;
@@ -308,14 +306,12 @@ document.addEventListener( "DOMContentLoaded", function() {
     _points.push({ x: _x, y: _y });
 
     //SE GOMMA
-    if (toolSelected === "rubber") {
-      clearCircle(ctx,_x,_y,rubberWidth/2);
-    } 
-
-    //SE MATITA
+    if (_line.tool === 3) {
+      ctx.clearRect(_x-_line.width/2,_y-_line.width/2,_line.width,_line.width);
+    }
     else{
-      ctx.strokeStyle = _lines[_lines.length-1].color;
-      ctx.lineWidth = _lines[_lines.length-1].width;
+      ctx.strokeStyle = _line.color;
+      ctx.lineWidth = _line.width;
 
       var p1 = _points[_points.length-3];
       var p2 = _points[_points.length-2];
@@ -328,53 +324,37 @@ document.addEventListener( "DOMContentLoaded", function() {
       ctx.lineTo(p3.x, p3.y);
       ctx.stroke();
     }
+    //loadIntoCanvas(thisFile,currentPage);
   }
   function endDrawing(e, touch) {
-  	//Handle dots
-  	if(!hasMoved && isDrawing) {
-  		var _x, _y;
-  		if (touch) {
-  		  _x = e.changedTouches[0].clientX;
-  		  _y = e.changedTouches[0].clientY;
-  		} else {
-  		  _x = e.clientX;
-  		  _y = e.clientY;
-  		}
-      if(rulerActive){
-        var newPoint = getPointOnRuler(_x,_y);
-        _x=newPoint.x;
-        _y=newPoint.y;
-      }
+    //These points are already saved in startDrawing. No need to save here.
+    var _lines = thisFile.pages[currentPage].lines;
+    var _line = _lines[_lines.length-1]
+    var _points = _line.points;
 
-      //gotta be responsive
-      _x-= DrawPaddingX;
-      _y-= DrawPaddingY;
-
-      var _lines = thisFile.pages[currentPage].lines;
-      var _width = _lines[_lines.length-1].width;
-
-      if(toolSelected ==="rubber"){
-        clearCircle(ctx,_x,_y,_width/2);
+    if(_points.length===1){
+      var _x=_points[0].x;
+      var _y=_points[0].y;
+      if(_line.tool===3){
+        ctx.clearRect(_x-_line.width/2,_y-_line.width/2,_line.width,_line.width);
       }
       else{
-    		ctx.beginPath();
-
-        ctx.fillStyle = ctx.strokeStyle = _lines[_lines.length-1].color;
-
-    		ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
+        ctx.beginPath();
+        ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
         ctx.fill();
       }
-  	}
-	
-	 //These points are already saved in startDrawing. No need to save here.
+    }
+
     resetBackstackButtons();
     isDrawing = false;
-    hasMoved = false;
+
+    if(_line.tool===2)
+      loadIntoCanvas(thisFile,currentPage);
   }
 
   function getPointOnRuler(_x,_y){
-    var ruler_topLeft = document.getElementById("top_left");
-    var ruler_topRight = document.getElementById("top_right");
+    var ruler_topLeft = $ID("top_left");
+    var ruler_topRight = $ID("top_right");
     var _topLeftRect = ruler_topLeft.getBoundingClientRect();
     var _topRightRect = ruler_topRight.getBoundingClientRect();
     var _x1 = _topLeftRect.left;
@@ -420,24 +400,26 @@ document.addEventListener( "DOMContentLoaded", function() {
     context.restore();
   }
 
+
   bindEvents();
 
   // THESE SET THINGS
   function setColor(color){
-    ctx.fillStyle = ctx.strokeStyle = lineColor = color;
+    lineColor = color;
   }
   function setWidth(width) {
-     lineWidth = width;
-     ctx.lineWidth = width;
-  }
-  function setRubberWidth(width) {
-     rubberWidth = width;
+    switch(toolSelected)
+    {
+      case 1: lineWidth=width; break;
+      case 2: markerWidth=width*5; break;
+      case 3: rubberWidth=width*15; break;
+    }
   }
 
   function selectTool(_tool){ //--da dividere
     if(_tool == "ruler"){
       rulerActive = !rulerActive;
-      var rulerContainer = document.getElementById("ruler_container");
+      var rulerContainer = $ID("ruler_container");
       if(rulerActive){
         rulerContainer.style.display="flex";
       }
@@ -446,20 +428,25 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
     }
     else{
-      toolSelected = _tool;
-      ipc.send('send-command','toolbar','loadWidth',{tool:_tool});
+      switch(_tool){
+        case "pencil": toolSelected=1; break;
+        case "marker": toolSelected=2; break;
+        case "rubber": toolSelected=3; break;
+      }
+      //ipc.send('send-command','toolbar','displayWidth',{tool:_tool});
     }
+    updateToolbar(); 
   }
 
   // RECEIVE SETTINGS
 
   ipc.on('send-command', function(e, command, parameters) {
     switch (command) {
-      case "setLine":
-        setColor(parameters.lineColor);
-        setWidth(parameters.lineWidth);
-        setRubberWidth(parameters.rubberWidth);
-        console.log('Received settings for lines');
+      case "setColor":
+        setColor(parameters.color);
+        break;
+      case "setWidth":
+        setWidth(parameters.width);
         break;
       case "setTool":
         selectTool(parameters.tool);
@@ -490,7 +477,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       console.log("loading file " + file.settings.name);
       thisFile = file;
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      
+
       if (page === undefined || page === null) {
         page = 0;
       }
@@ -508,57 +495,44 @@ document.addEventListener( "DOMContentLoaded", function() {
       canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
       //DRAW
-      //When backgruond changes color, i want rubber to be re-colored to match bg color
       var _lines = thisFile.pages[currentPage].lines;
 
       for (var line = 0; line < _lines.length; line++) {
         var _line = _lines[line];
         var _points = _line.points;
+        if(_line.tool===3){
+          for(var i=0; i<=_points.length-1;i++){
+            var _x=_points[i].x;
+            var _y=_points[i].y;
+            ctx.clearRect(_x-_line.width/2,_y-_line.width/2,_line.width,_line.width);
+          }
+        }
+        else{
+          ctx.fillStyle = _line.color;
+          ctx.strokeStyle = _line.color;
+          ctx.lineWidth = _line.width;
 
-        if (_points.length === 1){  //draw a dot
-          var _x=_points[0].x;
-          var _y=_points[0].y;
-          if(_line.rubber==true){
-            clearCircle(ctx,_x,_y,_line.width/2);
+          if(_points.length===1){
+            var _x=_points[0].x;
+            var _y=_points[0].y;
+            ctx.beginPath();
+            ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
+            ctx.fill();
           }
           else{
             ctx.beginPath();
-            ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
-            ctx.fillStyle = _line.color;
-            ctx.strokeStyle = _line.color;
-            ctx.fill();
-          }
-        }
-        else {  //draw a line
-          if(_line.rubber==true){
-            for(var _point = 1; _point<_points.length;_point++){
-              var _x = _points[_point].x;
-              var _y = _points[_point].y;
-              clearCircle(ctx,_x,_y,_line.width/2);
-            }
-          }
-          else{
-            var p0 = _points[0];
+            for (var i = 0; i < _points.length-1; i++) {
+              var p1 = _points[i];
+              var p2 = _points[i+1];
 
-            ctx.strokeStyle = _line.color;
-            ctx.lineWidth = _line.width;
-
-            for (var i = 2; i <= _points.length; i++) {
-              var p1 = _points[i-3];
-              var p2 = _points[i-2];
-              var p3 = _points[i-1];
-              if(!p1) p1=p2;
-              
-              ctx.beginPath();
               ctx.moveTo(p1.x, p1.y);
               ctx.lineTo(p2.x, p2.y);
-              ctx.lineTo(p3.x, p3.y);
-              ctx.stroke();
             }
+            ctx.stroke();
           }
         }
-      }     
-    } else console.log("error loading file: " + file);
+      }
+    }
   }
 
   //RULER
@@ -609,30 +583,27 @@ document.addEventListener( "DOMContentLoaded", function() {
   function resetBackstackButtons() {
     var _lines = thisFile.pages[currentPage].lines;
     var _backstack = thisFile.pages[currentPage].backstack;
-    /*if(_backstack.length==0){
-      //DISABLE REDO
-      redo.style.pointerEvents = 'none';
-      redo.classList.add("btn-disabled");
-    }
-    else{
-      //ENABLE REDO
-      redo.style.pointerEvents = 'auto';
-      redo.classList.remove("btn-disabled");
-    }
 
-    if(_lines.length==0){
-      //DISABLE UNDO
-      undo.style.pointerEvents = 'none';
-      undo.classList.add("btn-disabled");
-    }
-    else{
-      //ENABLE REDO
-      undo.style.pointerEvents = 'auto';
-      undo.classList.remove("btn-disabled");
-    }*/
     ipc.send('send-command', 'toolbar', 'updateBackstackButtons', {
       redo: _backstack.length==0,
       undo: _lines.length==0
-    })
+    });
   }
+
+  function updateToolbar(){
+    ipc.send('send-command', 'toolbar', 'updateTools', {
+      tool: toolSelected,
+      line: lineWidth,
+      marker: markerWidth,
+      rubber: rubberWidth,
+      ruler: rulerActive
+    });
+  }
+
+  function translate(context,x,y){
+    return;
+    context.resetTransform();
+    context.translate(x,y);
+  }
+  
 }); // document.ready?
