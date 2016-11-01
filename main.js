@@ -255,7 +255,7 @@ ipcMain.on('new-transparent-window', function() {
     transparent:false,
     fullscreen:false,
     frame: false,
-    resizable:true,
+    resizable:false,
     skipTaskbar: true,
     minWidth: 100,
     minHeight: 80,
