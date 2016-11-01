@@ -251,21 +251,20 @@ document.addEventListener( "DOMContentLoaded", function() {
   clearAllBtn.addEventListener("click",function() {
     ipc.send('send-command', 'canvas', 'clearAll');
   });
-
-
   backToMainBtn.addEventListener("click", function() {
      ipc.send('back-to-main');
   });
   
   // TOGGLE NAVBAR
-  // DA RIVEDERE!
   var isOpen = true;
   var toolbar = $ID("toolbar");
-  function showLi() {
+  function showToolbar() {
     toolbar.classList.remove("hidden");
+    toolbar.parentElement.style.width="100%";
   }
-  function hideLi() {
+  function hideToolbar() {
     toolbar.classList.add("hidden");
+    toolbar.parentElement.style.width="100px";
   }
 
   toggleNavbar.addEventListener("click", function() {
@@ -273,11 +272,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     if (isOpen) {
       this.innerHTML = "<i class=\"material-icons\">mode_edit</i>";
       isOpen = false;
-      hideLi();
+      hideToolbar();
     } else {
       this.innerHTML = "<i class=\"material-icons\">visibility_off</i>";
       isOpen = true;
-      showLi();
+      showToolbar();
     }
   });
 
@@ -333,7 +332,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       case "hideLi":
         toggleNavbar.innerHTML = "<i class=\"material-icons\">arrow_back</i>";
         isOpen = false;
-        hideLi();
+        hideToolbar();
         break;
       case "displayWidth":
         displayWidth(parameters.tool);

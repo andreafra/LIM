@@ -46,7 +46,6 @@ footer {
   //width: 609px !important; // after this value there is blank space
   flex-direction: row;
   padding-left: 15px;
-  padding-right: 15px;
   padding-bottom: 3px;
   li {
     text-align: center;
@@ -98,13 +97,18 @@ footer {
 #pencil_white {
   background: #ffffff;
 }
-
+#toggle_navbar_container{
+  width:80px;
+  height:80px;
+  display: flex;
+  align-items: center;
+}
 #toggle_navbar {
   width: 48px !important;
   color: $white;
   background-color: $red;
   border-radius: 40px;
-  margin-left: 15px;
+  margin: auto;
   &:hover {
     background-color: lighten($red, 10);
   }

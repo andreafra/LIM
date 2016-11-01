@@ -228,7 +228,6 @@ footer {
   height: 80px;
   flex-direction: row;
   padding-left: 15px;
-  padding-right: 15px;
   padding-bottom: 3px; }
   .toolbar-transparent li {
     text-align: center; }
@@ -276,12 +275,18 @@ footer {
 #pencil_white {
   background: #ffffff; }
 
+#toggle_navbar_container {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center; }
+
 #toggle_navbar {
   width: 48px !important;
   color: #ffffff;
   background-color: #FF5039;
   border-radius: 40px;
-  margin-left: 15px; }
+  margin: auto; }
   #toggle_navbar:hover {
     background-color: #ff7d6c; }
 

@@ -243,7 +243,7 @@ ipcMain.on('load-menu', function(){
     mainWindow.unmaximize();
   }
 });
-const toolbarWidth = 1000;
+const toolbarWidth = 990;
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();
   var electronScreen = electron.screen;
@@ -255,9 +255,9 @@ ipcMain.on('new-transparent-window', function() {
     transparent:false,
     fullscreen:false,
     frame: false,
-    resizable:false,
+    resizable:true,
     skipTaskbar: true,
-    minWidth: 990,
+    minWidth: 100,
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
@@ -320,11 +320,10 @@ ipcMain.on('send-command', function(e, target, command, parameters) {
       break;
   }
 });
-ipcMain.on('toggle-navbar', function(e, isOpen) {
+ipcMain.on('toggle-navbar', function(e, wasOpen) {
   var electronScreen = electron.screen;
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
-    if (isOpen) {
-      //toolbarWindow.setSize(80, 80);
+    if (wasOpen) {
       toolbarWindow.setBounds({
         x: size.width - 100,
         y: size.height - 80,
@@ -333,7 +332,6 @@ ipcMain.on('toggle-navbar', function(e, isOpen) {
       });
       transparentWindow.hide()
     } else {
-      //toolbarWindow.setSize(850, 80);
       toolbarWindow.setBounds({
         x: size.width - toolbarWidth,
         y: size.height - 80,
