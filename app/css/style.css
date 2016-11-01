@@ -277,11 +277,24 @@ footer {
   background: #ffffff; }
 
 #toggle_navbar {
+  width: 48px !important;
   color: #ffffff;
   background-color: #FF5039;
-  border-radius: 40px; }
+  border-radius: 40px;
+  margin-left: 15px; }
   #toggle_navbar:hover {
     background-color: #ff7d6c; }
+
+#dragger_navbar {
+  position: relative;
+  display: flex;
+  -webkit-app-region: drag;
+  height: 100%;
+  width: 20px;
+  transition: all linear 1s;
+  text-align: center; }
+  #dragger_navbar i {
+    align-self: center; }
 
 #stroke_small {
   background: #ffffff; }

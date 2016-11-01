@@ -100,12 +100,25 @@ footer {
 }
 
 #toggle_navbar {
+  width: 48px !important;
   color: $white;
   background-color: $red;
   border-radius: 40px;
-
+  margin-left: 15px;
   &:hover {
     background-color: lighten($red, 10);
+  }
+}
+#dragger_navbar {
+  position: relative;
+  display: flex;
+  -webkit-app-region: drag;
+  height: 100%;
+  width: 20px;
+  transition: all linear 1s;
+  text-align: center;
+  i {
+    align-self: center;
   }
 }
 // altezza del cerchiolino

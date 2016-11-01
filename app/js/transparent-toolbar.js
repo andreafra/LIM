@@ -31,14 +31,14 @@ document.addEventListener( "DOMContentLoaded", function() {
   var customWidth = $ID("stroke_slider");
   var allWidths = [smallWidth, mediumWidth, bigWidth];
 
-  var undo = document.getElementById("undo");
-  var redo = document.getElementById("redo");
-  var clearAllBtn = document.getElementById("clear_all");
-  var backToMainBtn = document.getElementById("back_to_main");
+  var undo = $ID("undo");
+  var redo = $ID("redo");
+  var clearAllBtn = $ID("clear_all");
+  var backToMainBtn = $ID("back_to_main");
 
-  var rulerContainer = document.getElementById("ruler_container");
+  var rulerContainer = $ID("ruler_container");
 
-  var toggleNavbar = document.getElementById("toggle_navbar");
+  var toggleNavbar = $ID("toggle_navbar");
   // 2: SET VARIABLES FOR SETTINGS
 
   //default values
@@ -252,20 +252,20 @@ document.addEventListener( "DOMContentLoaded", function() {
     ipc.send('send-command', 'canvas', 'clearAll');
   });
 
+
+  backToMainBtn.addEventListener("click", function() {
+     ipc.send('back-to-main');
+  });
+  
   // TOGGLE NAVBAR
   // DA RIVEDERE!
   var isOpen = true;
-  var liArray = document.getElementById("footer").querySelectorAll("li:not(#toggle_navbar)");
-
+  var toolbar = $ID("toolbar");
   function showLi() {
-    for (var i = liArray.length - 2; i >= 0; i--) {
-      liArray[i].classList.remove("hidden");
-    };
+    toolbar.classList.remove("hidden");
   }
   function hideLi() {
-    for (var i = liArray.length - 2; i >= 0; i--) {
-      liArray[i].classList.add("hidden");
-    };
+    toolbar.classList.add("hidden");
   }
 
   toggleNavbar.addEventListener("click", function() {
@@ -273,17 +273,15 @@ document.addEventListener( "DOMContentLoaded", function() {
     if (isOpen) {
       this.innerHTML = "<i class=\"material-icons\">mode_edit</i>";
       isOpen = false;
-      hideLi()
+      hideLi();
     } else {
       this.innerHTML = "<i class=\"material-icons\">visibility_off</i>";
       isOpen = true;
-      showLi()
+      showLi();
     }
   });
 
-  backToMainBtn.addEventListener("click", function() {
-     ipc.send('back-to-main');
-  });
+  
   // 6: SEND SETTINGS
 
   function sendColor(_color){

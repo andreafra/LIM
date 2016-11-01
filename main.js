@@ -243,7 +243,7 @@ ipcMain.on('load-menu', function(){
     mainWindow.unmaximize();
   }
 });
-const toolbarWidth = 990;
+const toolbarWidth = 1000;
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();
   var electronScreen = electron.screen;
@@ -292,9 +292,9 @@ ipcMain.on('new-transparent-window', function() {
     setImmediate(function() {
       if(toolbarWindow==null || toolbarWindow.isFocused()) return;
       toolbarWindow.setBounds({
-        x: size.width - 80,
+        x: size.width - 100,
         y: size.height - 80,
-        width: 80,
+        width: 100,
         height: 80
       });
       transparentWindow.hide();
@@ -326,9 +326,9 @@ ipcMain.on('toggle-navbar', function(e, isOpen) {
     if (isOpen) {
       //toolbarWindow.setSize(80, 80);
       toolbarWindow.setBounds({
-        x: size.width - 80,
+        x: size.width - 100,
         y: size.height - 80,
-        width: 80,
+        width: 100,
         height: 80
       });
       transparentWindow.hide()
