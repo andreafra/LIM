@@ -1,7 +1,7 @@
 {
   "name": "LIM",
   "license": "SEE LICENSE IN NOLICENSE.md",
-  "version": "0.7",
+  "version": "0.7.0",
   "description": "An easy software for Interactive Blackboards for dumb teachers.",
   "private": true,
   "main": "main.js",
@@ -29,6 +29,5 @@
     "grunt": "^0.4.5",
     "grunt-electron": "^2.0.1",
     "grunt-electron-installer": "^1.2.1",
-    "tinycolor2": "^1.4.1"
   }
 }
