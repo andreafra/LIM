@@ -44,8 +44,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   //default values
   var lineColor = "#000000";
   var lineWidth = 2;
-  var markerWidth = 10;
+  var markerWidth = 6;
   var rubberWidth = 30;
+
+  var markerMultiplier=3;
+  var rubberMultiplier=15;
 
   var toolSelected = 1;
   var rulerActive = false;
@@ -96,37 +99,37 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
     else if(_tool==2) {
       switch(markerWidth){
-        case 5:
+        case 1*markerMultiplier:
           smallWidth.classList.add("btn-active");
           break;
-        case 10:
+        case 2*markerMultiplier:
           mediumWidth.classList.add("btn-active");
           break;
-        case 20:
+        case 4*markerMultiplier:
           bigWidth.classList.add("btn-active");
           break;
         default:
-          customWidth.value=markerWidth/5;
+          customWidth.value=markerWidth/markerMultiplier;
           customWidth.classList.add("slider-active");
-          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*5+"px");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*markerMultiplier+"px");
           break;
       }
     }
     else if(_tool==3){
       switch(rubberWidth){
-        case 15:
+        case 1*rubberMultiplier:
           smallWidth.classList.add("btn-active");
           break;
-        case 30:
+        case 2*rubberMultiplier:
           mediumWidth.classList.add("btn-active");
           break;
-        case 60:
+        case 3*rubberMultiplier:
           bigWidth.classList.add("btn-active");
           break;
         default:
-          customWidth.value=rubberWidth/15;
+          customWidth.value=rubberWidth/rubberMultiplier;
           customWidth.classList.add("slider-active");
-          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*15+"px");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*rubberMultiplier+"px");
           break;
       }
     }
@@ -182,14 +185,16 @@ document.addEventListener( "DOMContentLoaded", function() {
     this.classList.add("btn-active");
   });
   customWidth.addEventListener("click", function() {
-    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value*(toolSelected===3?rubberMultiplier:(toolSelected===2?markerMultiplier:1))+"px");
     sendWidth(this.value,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("slider-active");
   });
   customWidth.addEventListener("input", function() {
-    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value*(toolSelected===3?rubberMultiplier:(toolSelected===2?markerMultiplier:1))+"px");
     sendWidth(this.value,toolSelected);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("slider-active");
   });
 
   // TOOL PICKER

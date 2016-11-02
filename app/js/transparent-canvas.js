@@ -66,11 +66,14 @@ document.addEventListener( "DOMContentLoaded", function() {
   //default values
   var lineColor = "#000000";
   var lineWidth = 2;
-  var markerWidth = 10;
+  var markerWidth = 6;
   var rubberWidth = 30;
   translate(ctx,0.5,0.5);
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
+
+  var markerMultiplier=3;
+  var rubberMultiplier=15;
 
   var toolSelected = 1; //1=pencil, 2=marker, 3=rubber
   var rulerActive = false;
@@ -249,7 +252,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     //Set transparency
     _color_to_use=lineColor;
     if(toolSelected===2){
-      rgbColor=hexToRgb(lineColor);
+      var rgbColor=hexToRgb(lineColor);
       _color_to_use="rgba("+rgbColor.join()+",.5)";
     }
 
@@ -261,6 +264,10 @@ document.addEventListener( "DOMContentLoaded", function() {
       width: (toolSelected===3) ? rubberWidth : ((toolSelected===2) ? markerWidth : lineWidth),
       tool: toolSelected
     });
+
+    if(toolSelected===3){
+      clearCircle(ctx,_x,_y,rubberWidth/2);
+    }
 
     //Delete latest backstacks
     for(var i=0; i < backstack_counter; i++){
@@ -307,7 +314,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     //SE GOMMA
     if (_line.tool === 3) {
-      ctx.clearRect(_x-_line.width/2,_y-_line.width/2,_line.width,_line.width);
+      clearCircle(ctx,_x,_y,_line.width/2);
     }
     else{
       ctx.strokeStyle = _line.color;
@@ -327,22 +334,18 @@ document.addEventListener( "DOMContentLoaded", function() {
     //loadIntoCanvas(thisFile,currentPage);
   }
   function endDrawing(e, touch) {
+    if(!isDrawing) return;
     //These points are already saved in startDrawing. No need to save here.
     var _lines = thisFile.pages[currentPage].lines;
     var _line = _lines[_lines.length-1]
     var _points = _line.points;
 
-    if(_points.length===1){
+    if(_line.tool !== 3 && _points.length===1){
       var _x=_points[0].x;
       var _y=_points[0].y;
-      if(_line.tool===3){
-        ctx.clearRect(_x-_line.width/2,_y-_line.width/2,_line.width,_line.width);
-      }
-      else{
-        ctx.beginPath();
-        ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
-        ctx.fill();
-      }
+      ctx.beginPath();
+      ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
+      ctx.fill();
     }
 
     resetBackstackButtons();
@@ -410,9 +413,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   function setWidth(width) {
     switch(toolSelected)
     {
-      case 1: lineWidth=width; break;
-      case 2: markerWidth=width*5; break;
-      case 3: rubberWidth=width*15; break;
+      case 1: lineWidth=width*1; break;
+      case 2: markerWidth=width*markerMultiplier; break;
+      case 3: rubberWidth=width*rubberMultiplier; break;
     }
   }
 
@@ -503,7 +506,7 @@ document.addEventListener( "DOMContentLoaded", function() {
           for(var i=0; i<=_points.length-1;i++){
             var _x=_points[i].x;
             var _y=_points[i].y;
-            ctx.clearRect(_x-_line.width/2,_y-_line.width/2,_line.width,_line.width);
+            clearCircle(ctx,_x,_y,_line.width/2);
           }
         }
         else{
@@ -515,7 +518,7 @@ document.addEventListener( "DOMContentLoaded", function() {
             var _x=_points[0].x;
             var _y=_points[0].y;
             ctx.beginPath();
-            ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
+            ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
             ctx.fill();
           }
           else{

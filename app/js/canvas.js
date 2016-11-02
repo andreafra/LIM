@@ -72,11 +72,14 @@ document.addEventListener( "DOMContentLoaded", function() {
   //default values
   var lineColor = "#000000";
   var lineWidth = 2;
-  var markerWidth = 10;
+  var markerWidth = 6;
   var rubberWidth = 30;
   translate(ctx,0.5,0.5);
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
+
+  var markerMultiplier=3;
+  var rubberMultiplier=15;
 
   var toolSelected = 1; //1=pencil, 2=marker, 3=rubber
   var rulerActive = false;
@@ -255,7 +258,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     //Set transparency
     _color_to_use=lineColor;
     if(toolSelected===2){
-      rgbColor=hexToRgb(lineColor);
+      var rgbColor=hexToRgb(lineColor);
       _color_to_use="rgba("+rgbColor.join()+",.5)";
     }
 
@@ -267,6 +270,10 @@ document.addEventListener( "DOMContentLoaded", function() {
       width: (toolSelected===3) ? rubberWidth : ((toolSelected===2) ? markerWidth : lineWidth),
       tool: toolSelected
     });
+
+    if(toolSelected===3){
+      clearCircle(ctx,_x,_y,rubberWidth/2);
+    }
 
     //Delete latest backstacks
     for(var i=0; i < backstack_counter; i++){
@@ -311,19 +318,25 @@ document.addEventListener( "DOMContentLoaded", function() {
     // save points
     _points.push({ x: _x, y: _y });
 
-    ctx.strokeStyle = (_line.tool===3) ? ctx.strokeStyle=thisFile.settings.canvas.backgroundColor : _line.color;
-    ctx.lineWidth = _line.width;
+    //SE GOMMA
+    if (_line.tool === 3) {
+      clearCircle(ctx,_x,_y,_line.width/2);
+    }
+    else{
+      ctx.strokeStyle = _line.color;
+      ctx.lineWidth = _line.width;
 
-    var p1 = _points[_points.length-3];
-    var p2 = _points[_points.length-2];
-    var p3 = _points[_points.length-1];
-    if(!p1) p1=p2;
+      var p1 = _points[_points.length-3];
+      var p2 = _points[_points.length-2];
+      var p3 = _points[_points.length-1];
+      if(!p1) p1=p2;
 
-    ctx.beginPath();
-    ctx.moveTo(p1.x, p1.y);
-    ctx.lineTo(p2.x, p2.y);
-    ctx.lineTo(p3.x, p3.y);
-    ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineTo(p3.x, p3.y);
+      ctx.stroke();
+    }
 
     //loadIntoCanvas(thisFile,currentPage);
   }
@@ -334,11 +347,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     var _line = _lines[_lines.length-1]
     var _points = _line.points;
 
-    if(_points.length===1){
+    if(_line.tool!==3 && _points.length===1){
       var _x=_points[0].x;
       var _y=_points[0].y;
       ctx.beginPath();
-      ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
+      ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
       ctx.fill();
     }
 
@@ -462,9 +475,9 @@ document.addEventListener( "DOMContentLoaded", function() {
   function setWidth(width,tool) {
     switch(tool)
     {
-      case 1: lineWidth=width; break;
-      case 2: markerWidth=width*5; break;
-      case 3: rubberWidth=width*15; break;
+      case 1: lineWidth=width*1; break;
+      case 2: markerWidth=width*markerMultiplier; break;
+      case 3: rubberWidth=width*rubberMultiplier; break;
     }
   }
   function setBackgroundColor(color) {
@@ -503,7 +516,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   function displayWidth(_tool){
     clearButtonSelection(allWidths, "btn-active");
     customWidth.classList.remove("slider-active");
-    if(_tool==1) {
+    if(_tool===1) {
+      console.log(lineWidth);
       switch(lineWidth){
         case 1:
           smallWidth.classList.add("btn-active");
@@ -521,39 +535,39 @@ document.addEventListener( "DOMContentLoaded", function() {
           break;
       }
     }
-    else if(_tool==2) {
+    else if(_tool===2) {
       switch(markerWidth){
-        case 5:
+        case 1*markerMultiplier:
           smallWidth.classList.add("btn-active");
           break;
-        case 10:
+        case 2*markerMultiplier:
           mediumWidth.classList.add("btn-active");
           break;
-        case 20:
+        case 4*markerMultiplier:
           bigWidth.classList.add("btn-active");
           break;
         default:
-          customWidth.value=markerWidth/5;
+          customWidth.value=markerWidth/markerMultiplier;
           customWidth.classList.add("slider-active");
-          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*5+"px");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*markerMultiplier+"px");
           break;
       }
     }
-    else if(_tool==3){
+    else if(_tool===3){
       switch(rubberWidth){
-        case 15:
+        case 1*rubberMultiplier:
           smallWidth.classList.add("btn-active");
           break;
-        case 30:
+        case 2*rubberMultiplier:
           mediumWidth.classList.add("btn-active");
           break;
-        case 60:
+        case 4*rubberMultiplier:
           bigWidth.classList.add("btn-active");
           break;
         default:
-          customWidth.value=rubberWidth/15;
+          customWidth.value=rubberWidth/rubberMultiplier;
           customWidth.classList.add("slider-active");
-          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*15+"px");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*rubberMultiplier+"px");
           break;
       }
     }
@@ -631,14 +645,16 @@ document.addEventListener( "DOMContentLoaded", function() {
     this.classList.add("btn-active");
   });
   customWidth.addEventListener("click", function() {
-    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value*(toolSelected===3?rubberMultiplier:(toolSelected===2?markerMultiplier:1))+"px");
     setWidth(this.value,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
     this.classList.add("slider-active");
   });
   customWidth.addEventListener("input", function() {
-    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value+"px");
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value*(toolSelected===3?rubberMultiplier:(toolSelected===2?markerMultiplier:1))+"px");
     setWidth(this.value,toolSelected);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("slider-active");
   });
   // BACKGROUND COLOR PICKER
   whiteBackground.addEventListener("click", function(e) {
@@ -775,27 +791,36 @@ document.addEventListener( "DOMContentLoaded", function() {
       for (var line = 0; line < _lines.length; line++) {
         var _line = _lines[line];
         var _points = _line.points;
-        ctx.fillStyle = (_line.tool===3) ? thisFile.settings.canvas.backgroundColor : _line.color;
-        ctx.strokeStyle = (_line.tool===3) ? thisFile.settings.canvas.backgroundColor : _line.color;
-        ctx.lineWidth = _line.width;
-
-        if(_points.length===1){
-          var _x=_points[0].x;
-          var _y=_points[0].y;
-          ctx.beginPath();
-          ctx.arc(_x, _y, _line.width/1.5, 0, 2 * Math.PI, false);
-          ctx.fill();
+        if(_line.tool===3){
+          for(var i=0; i<=_points.length-1;i++){
+            var _x=_points[i].x;
+            var _y=_points[i].y;
+            clearCircle(ctx,_x,_y,_line.width/2);
+          }
         }
         else{
-          ctx.beginPath();
-          for (var i = 0; i < _points.length-1; i++) {
+          ctx.fillStyle = _line.color;
+          ctx.strokeStyle = _line.color;
+          ctx.lineWidth = _line.width;
+
+          if(_points.length===1){
+            var _x=_points[0].x;
+            var _y=_points[0].y;
+            ctx.beginPath();
+            ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
+            ctx.fill();
+          }
+          else{
+            ctx.beginPath();
+            for (var i = 0; i < _points.length-1; i++) {
               var p1 = _points[i];
               var p2 = _points[i+1];
 
               ctx.moveTo(p1.x, p1.y);
               ctx.lineTo(p2.x, p2.y);
             }
-          ctx.stroke();
+            ctx.stroke();
+          }
         }
       }
     }
