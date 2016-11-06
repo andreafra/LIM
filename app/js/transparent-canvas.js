@@ -101,7 +101,12 @@ document.addEventListener( "DOMContentLoaded", function() {
           ignoreNextMove = false;
           return;
       }
-      moveDrawing(e, false);
+      if(!isDrawing && (e.which==1 || e.which==2)){
+        startDrawing(e, false);
+      }
+      else{
+        moveDrawing(e, false);
+      }
     }, false);
     canvas.addEventListener("mouseup", function (e) {
       ignoreNextMove = true;
@@ -113,7 +118,12 @@ document.addEventListener( "DOMContentLoaded", function() {
     }, false);
 
     canvas.addEventListener("touchmove", function (e) {
-      moveDrawing(e, true);
+      if(!isDrawing){
+        startDrawing(e, true);
+      }
+      else{
+        moveDrawing(e, true);
+      }
     }, false);
 
     canvas.addEventListener("touchend", function (e) {
@@ -137,8 +147,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     }, false);
     //Stop drawing if cursor leaves canvas
     canvas.addEventListener("mouseleave", function (e) {
-      if(isDrawing)
-        endDrawing(e, true);
+      endDrawing(e, true);
     }, false);
     canvas.addEventListener("touchleave", function (e) {
       endDrawing(e, true);
