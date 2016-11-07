@@ -9,10 +9,8 @@ function $CLASS(__class) {
 document.addEventListener( "DOMContentLoaded", function() {
 
   const ipc = require('electron').ipcRenderer;
-  ipc.on('save-file', function(event,arg1){
-    var saveFile = require('./app/js/save');
-    saveFile.SaveAs(thisFile,rename,arg1);
-  });
+  const {dialog} = require('electron').remote;
+  var remote = require('electron').remote;
 
 // function to setup a new canvas for drawing
 // Thanks to http://perfectionkills.com/exploring-canvas-drawing-techniques/
@@ -948,4 +946,61 @@ document.addEventListener( "DOMContentLoaded", function() {
   // Run once at start
   updateNavButtons();
 
+  //UPDATER
+  var arrow = $ID("arrow");
+  var bar = $ID("bar");
+  var tick = $ID("tick");
+  var text = $ID("download-text");
+
+  ipc.on('show-downloading', function(){
+    downloading();
+  });
+  ipc.on('show-download-complete', function(){
+    downloaded();
+  });
+
+  function downloading(){
+    arrow.style.display="block";
+    bar.style.display="block";
+    tick.style.display="none";
+    text.style.display="none";
+  }
+
+  function downloaded(){
+    arrow.style.display="none";
+    bar.style.display="none";
+    tick.style.display="flex";
+    text.style.display="flex";
+  }
+
+  function promptUpdate(){
+    dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Salva e riavvia', 'Non ora'], cancelId: 2, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
+    function(response) {
+      switch(response) {
+        case 0:
+          ipc.send('update');
+          break;
+        case 1:
+          var saveFile = require('./app/js/save');
+          saveFile.SaveAs(thisFile,rename,'update');
+          break;
+        case 2:
+          break;
+      }
+    });
+  }
+
+  tick.onclick=promptUpdate;
+  text.onclick=promptUpdate;
+
+  switch(remote.getGlobal('updateStatus')){
+    case 0:
+      break;
+    case 1:
+      downloading();
+      break;
+    case 2:
+      downloaded();
+      break;
+  }
 }); // document.ready?

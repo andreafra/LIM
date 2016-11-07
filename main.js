@@ -85,32 +85,26 @@ var options = {
 
 const updater = new GhReleases(options);
 
+global.updateStatus = 0;
 // Check for updates
 // `status` returns true if there is a new update available
 updater.check((err, status) => {
   if (!err && status) {
     // Download the update
-    updater.download()
+    global.updateStatus=1;
+    updater.download();
+    if(mainWindow != null && ((mainWindow.webContents.getURL().indexOf('index.html')>-1)||(mainWindow.webContents.getURL().indexOf('paper.html')>-1))){
+      mainWindow.webContents.send('show-downloading');
+    }
   }
 });
 
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
+  global.updateStatus=2;
   // Restart the app and install the update
-  if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
-    dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Salva e riavvia', 'Non ora'], cancelId: 2, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
-    function(response) {
-      switch(response) {
-        case 0:
-          updater.install();
-          break;
-        case 1:
-          mainWindow.webContents.send('save-file', 'update'); //send request to canvas.js
-          break;
-        case 2:
-          break;
-      }
-    });
+  if(mainWindow != null && ((mainWindow.webContents.getURL().indexOf('index.html')>-1)||(mainWindow.webContents.getURL().indexOf('paper.html')>-1))){
+    mainWindow.webContents.send('show-download-complete');
   }
   else{
     dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Non ora'], cancelId: 1, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
@@ -129,9 +123,6 @@ updater.on('update-downloaded', (info) => {
 ipcMain.on('update',function(){
   updater.install();
 });
-
-// Access electrons autoUpdater
-updater.autoUpdater
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

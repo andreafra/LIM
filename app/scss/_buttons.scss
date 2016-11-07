@@ -40,6 +40,8 @@
 .btn-menu-left {
     margin-left: $header_height/8;
     float: left;
+    -webkit-app-region: no-drag;
+    cursor: default;
 }
 
 .btn-toolbar {

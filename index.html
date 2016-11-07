@@ -35,6 +35,12 @@
         <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
         <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
         <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
+        <div id="download" class="btn-menu-left">
+          <div id="arrow"><span id="custom-arrow"></span></div>
+          <div id="bar"></div>
+          <div id="tick"><i class="material-icons">done</i></div>
+        </div>
+        <div id="download-text" class="btn-menu-left"><p>Fare click per aggiornare</p></div>
       </div>
     </header>
     <div class="welcome-content">
@@ -68,6 +74,9 @@
 
     <script>
       const ipcRenderer = require('electron').ipcRenderer;
+      const {dialog} = require('electron').remote;
+      var remote = require('electron').remote;  
+
       var closeBtn = document.querySelector('#menu-close');
       var maximBtn = document.querySelector('#menu-maximize');
       var minimBtn = document.querySelector('#menu-minimize');
@@ -113,6 +122,60 @@
           shell.openExternal(this.href);
         });
       });
+
+      //UPDATER
+      var arrow = document.getElementById("arrow");
+      var bar = document.getElementById("bar");
+      var tick = document.getElementById("tick");
+      var text = document.getElementById("download-text");
+
+      ipcRenderer.on('show-downloading', function(){
+        downloading();
+      });
+      ipcRenderer.on('show-download-complete', function(){
+        downloaded();
+      });
+
+      function downloading(){
+        arrow.style.display="block";
+        bar.style.display="block";
+        tick.style.display="none";
+        text.style.display="none";
+      }
+
+      function downloaded(){
+        arrow.style.display="none";
+        bar.style.display="none";
+        tick.style.display="flex";
+        text.style.display="flex";
+      }
+
+      function promptUpdate(){
+        dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Non ora'], cancelId: 1, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
+        function(response) {
+          switch(response) {
+            case 0:
+              ipcRenderer.send('update');
+              break;
+            case 1:
+              break;
+          }
+        });
+      }
+
+      tick.onclick=promptUpdate;
+      text.onclick=promptUpdate;
+
+      switch(remote.getGlobal('updateStatus')){
+        case 0:
+          break;
+        case 1:
+          downloading();
+          break;
+        case 2:
+          downloaded();
+          break;
+      }
     </script>
   </body>
 </html>

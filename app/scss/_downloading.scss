@@ -1,9 +1,36 @@
-#downloading {
+#download {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#tick {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: #82CA9D;
+  color: white;
+  border-radius: 100%;
+  line-height: 30px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+#download-text{
+  height: 40px;
+  align-items: center;
+  color: #82CA9D;
+  display: none;
+}
+#arrow {
   width: 30px;
   height: 32px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
+  display: none;
 }
 #custom-arrow {
   width: 14px;
@@ -12,12 +39,12 @@
   top: 0;
   left: 50%;
   margin-left: -7px;
-  background-color: #aaa;
+  background-color: #82CA9D;
 
-  -webkit-animation-name: downloading;
+  -webkit-animation-name: arrow;
   -webkit-animation-duration: 1.5s;
   -webkit-animation-iteration-count: infinite;
-  animation-name: downloading;
+  animation-name: arrow;
   animation-duration: 1.5s;
   animation-iteration-count: infinite;
 
@@ -25,7 +52,7 @@
     content: ''; position: absolute; display: block;
     top: 100%;
     left: -9px;
-    border-top: 15px solid #aaa;
+    border-top: 15px solid #82CA9D;
     border-left: 16px solid transparent;
     border-right: 16px solid transparent;
   }
@@ -33,11 +60,12 @@
 #bar {
   width: 30px;
   height: 4px;
-  background-color: #aaa;
+  background-color: #82CA9D;
   margin: 0 auto;
+  display: none;
 }
 
-@-webkit-keyframes downloading {
+@-webkit-keyframes arrow {
   0% {
     top: 0;
     opacity: 1;
@@ -55,7 +83,7 @@
     opacity: 1;
   }
 }
-@keyframes downloading {
+@keyframes arrow {
   0% {
     top: 0;
     opacity: 1;
