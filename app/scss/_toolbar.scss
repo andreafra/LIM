@@ -1,0 +1,209 @@
+footer {
+  height: $header_height * 2;
+  position: absolute;
+  display: flex;
+  text-align: center;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 800;
+  justify-content: space-between; // Auto-size between blocks
+  box-shadow: 0 -2px 2px 0 rgba(0, 0, 0, 0.14), 0 -1px 5px 0 rgba(0, 0, 0, 0.12), 0 -3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar-left {
+  position: relative;
+  display: flex;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  padding-left: 20px;
+}
+.toolbar-right {
+  position: relative;
+  display: flex;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding-right: 20px;
+  flex-direction: row-reverse;
+}
+.toolbar-transparent {
+  position: relative;
+  display: flex;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  right: 0;
+  top: 0;
+  height: $header_height*2;
+  //width: 609px !important; // after this value there is blank space
+  flex-direction: row;
+  padding-left: 15px;
+  padding-bottom: 3px;
+  li {
+    text-align: center;
+  }
+}
+.toolbar-spacer {
+    margin-left: 15px;
+    margin-right: 15px;
+    border-left: 1px solid darken($gray, 10);
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.flex-container {
+  display: flex;
+  height: 100%;
+}
+
+/*#color-picker-container {
+  align-self: center;
+  background: linear-gradient(to left, $red 0%, $green 100%);
+  width: 100px;
+  height: 75%;
+  border-radius: 15px;
+  border: 2px solid $gray;
+  box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+  padding-top: 5px;
+}*/
+
+#color_picker_canvas {
+  height: 70px;
+  margin-top: 1px;
+}
+
+#pencil_black {
+  background: black;
+}
+#pencil_blue {
+  background: #2962ff;
+}
+#pencil_red {
+  background: #f44336;
+}
+#pencil_green {
+  background: #4caf50;
+}
+#pencil_yellow {
+  background: #ffdd00;
+}
+#pencil_white {
+  background: #ffffff;
+}
+#toggle_navbar_container{
+  width:80px;
+  height:80px;
+  display: flex;
+  align-items: center;
+}
+#toggle_navbar {
+  width: 48px !important;
+  color: $white;
+  background-color: $red;
+  border-radius: 40px;
+  margin: auto;
+  &:hover {
+    background-color: lighten($red, 10);
+  }
+}
+#dragger_navbar {
+  position: relative;
+  display: flex;
+  -webkit-app-region: drag;
+  height: 100%;
+  width: 20px;
+  transition: all linear 1s;
+  text-align: center;
+  i {
+    align-self: center;
+  }
+}
+// altezza del cerchiolino
+$circle-height: 24px;
+$circle-small: 6px;
+$circle-medium: 10px;
+$circle-big: 14px;
+#stroke_small {
+  background: $white;
+  &:after {
+    content: "";
+    display: block;
+    position: relative;
+    height: $circle-small;
+    width: $circle-small;
+    border-radius: $circle-small;
+    background: black;
+    margin: ($circle-height - $circle-small)/2;
+  }
+}
+#stroke_medium {
+  background: $white;
+  &:after {
+    content: "";
+    display: block;
+    position: relative;
+    height: $circle-medium;
+    width: $circle-medium;
+    border-radius: $circle-medium;
+    background: black;
+    margin: ($circle-height - $circle-medium)/2;
+  }
+}
+#stroke_big {
+  background: $white;
+  &:after {
+    content: "";
+    display: block;
+    position: relative;
+    height: $circle-big;
+    width: $circle-big;
+    border-radius: $circle-big;
+    background: black;
+    margin: ($circle-height - $circle-big)/2;
+  }
+}
+#stroke_slider {
+  &[type=range] {
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    background: transparent; /* Otherwise white in Chrome */
+    width: 102px;
+    outline: none;
+  }
+  &[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 2px solid $gray;
+    height: 28px;
+    width: 28px;
+    border-radius: 100px;
+    background: $black;
+    cursor: pointer;
+    margin-top:-10px;
+    box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  &[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 12px;
+    border: 2px solid $gray;
+    margin-left: 4px;
+    align-self: center;
+    background: $white;
+    border-radius: 15px;
+    box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
+  }
+}
+.slider-active::-webkit-slider-thumb {
+    border: 2px solid #FFFF00 !important;
+    transform: scale(1.2);
+}
+.eye-active{
+  border: 2px solid #FFFF00 !important;
+  transform: scale(1.2) translate(-50%,-50%) !important;
+}

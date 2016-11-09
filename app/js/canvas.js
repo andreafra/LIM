@@ -1,12 +1,16 @@
 var thisFile;
 
+function $ID(__id) {
+  return document.getElementById(__id);
+}
+function $CLASS(__class) {
+  return document.getElementsByClassName(__class);
+}
 document.addEventListener( "DOMContentLoaded", function() {
 
   const ipc = require('electron').ipcRenderer;
-  ipc.on('save-file', function(event,arg1){
-    var saveFile = require('./app/js/save');
-    saveFile.SaveAs(thisFile,rename,arg1);
-  });
+  const {dialog} = require('electron').remote;
+  var remote = require('electron').remote;
 
 // function to setup a new canvas for drawing
 // Thanks to http://perfectionkills.com/exploring-canvas-drawing-techniques/
@@ -14,8 +18,8 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   //define and resize canvas
 
-  var header = document.getElementById("header");
-  var footer = document.getElementById("footer");
+  var header = $ID("header");
+  var footer = $ID("footer");
   var canvasWidth = window.innerWidth;
   var canvasHeight = window.innerHeight - footer.clientHeight - header.clientHeight;
 
@@ -37,23 +41,22 @@ document.addEventListener( "DOMContentLoaded", function() {
     // pages: [{
     //   lines: [
     //     {points: [{x:0,y:0}],
-    //      color: "#fff", width: 4, rubber: true}],
+    //      color: "#fff", width: 4, tool: 1}],
     //    backstack: [
     //      {points: [{x:0,y:0}],
-    //      color: "#fff", width: 4, rubber: true}]
+    //      color: "#fff", width: 4, tool: 1}]
     // }]
   };
 
-  var content = document.getElementById("content");
-  var header_height = document.getElementById('header').clientHeight;
-  var title = document.getElementById("title");
+  var content = $ID("content");
+  var title = $ID("title");
 
   content.style.height = canvasHeight + "px";
 
   var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
-  document.getElementById("content").innerHTML = canvasToAdd;
+  $ID("content").innerHTML = canvasToAdd;
 
-  var canvas = document.getElementById("canvas");
+  var canvas = $ID("canvas");
 
   canvas.style.cursor = "crosshair";
   canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
@@ -64,25 +67,22 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var ctx = canvas.getContext('2d');
 
-  // Fixed Line Properties
-  ctx.imageSmoothingEnabled = true;
-
   //default values
-  var lineColor = "black";
+  var lineColor = "#000000";
   var lineWidth = 2;
+  var markerWidth = 6;
   var rubberWidth = 30;
-  ctx.strokeStyle = lineColor;
-  ctx.lineWidth = lineWidth;
-  ctx.translate(0.5,0.5);
-  ctx.lineCap="round";
+  translate(ctx,0.5,0.5);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
 
-  var toolSelected = "pencil"; // can be "pencil", "rubber"
+  var markerMultiplier=3;
+  var rubberMultiplier=15;
+
+  var toolSelected = 1; //1=pencil, 2=marker, 3=rubber
   var rulerActive = false;
 
-  var drawingMethod = "linear";
-
   var isDrawing, pages = [ ];
-  var hasMoved = false;
 
   // The current page in the pages[]
   var currentPage = 0;
@@ -141,7 +141,8 @@ document.addEventListener( "DOMContentLoaded", function() {
     }, false);
     //Stop drawing if cursor leaves canvas
     canvas.addEventListener("mouseleave", function (e) {
-      endDrawing(e, true);
+      if(isDrawing)
+        endDrawing(e, true);
     }, false);
     canvas.addEventListener("touchleave", function (e) {
       endDrawing(e, true);
@@ -162,22 +163,16 @@ document.addEventListener( "DOMContentLoaded", function() {
     content.style.height = canvasHeight + "px";
 
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
-    document.getElementById("content").innerHTML = canvasToAdd;
-    canvas = document.getElementById("canvas");
+    $ID("content").innerHTML = canvasToAdd;
+    canvas = $ID("canvas");
     canvas.style.cursor = "crosshair";
 
     DrawPaddingX = canvas.offsetLeft;
     DrawPaddingY = canvas.offsetTop;
     ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
-    ctx.strokeStyle = lineColor;
-    ctx.lineWidth = lineWidth;
-    ctx.lineCap="round";
-
-    if(drawingMethod=="linear")
-      translate(ctx,0.5,0.5);
-    else if(drawingMethod=="quadratic")
-      translate(ctx,0.0,0.0);
+    translate(ctx,0.5,0.5);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
 
     //Re-bind click events, since we've updated canvas object
     bindEvents();
@@ -221,10 +216,17 @@ document.addEventListener( "DOMContentLoaded", function() {
     };
   }
 
+  function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : null;
+  }
 
   function startDrawing(e, touch) {
     isDrawing = true;
-    hasMoved = false; //Not yet
 
     canvas.style.cursor="none";
 
@@ -251,22 +253,24 @@ document.addEventListener( "DOMContentLoaded", function() {
     _x-= DrawPaddingX;
     _y-= DrawPaddingY;
 
+    //Set transparency
+    _color_to_use=lineColor;
+    if(toolSelected===2){
+      var rgbColor=hexToRgb(lineColor);
+      _color_to_use="rgba("+rgbColor.join()+",.5)";
+    }
+
     // save points
     _points.push({ x: _x, y: _y });
-    if (toolSelected !== "rubber") { // RUBBER OFF
-      thisFile.pages[currentPage].lines.push({
-        points: _points,
-        color: lineColor,
-        width: lineWidth,
-        rubber: false
-      });
-    } else { // RUBBER ON
-      thisFile.pages[currentPage].lines.push({
-        points: _points,
-        color: canvas.style.backgroundColor,
-        width: rubberWidth,
-        rubber: true
-      });
+    thisFile.pages[currentPage].lines.push({
+      points: _points,
+      color: _color_to_use,
+      width: (toolSelected===3) ? rubberWidth : ((toolSelected===2) ? markerWidth : lineWidth),
+      tool: toolSelected
+    });
+
+    if(toolSelected===3){
+      clearCircle(ctx,_x,_y,rubberWidth/2);
     }
 
     //Delete latest backstacks
@@ -274,6 +278,8 @@ document.addEventListener( "DOMContentLoaded", function() {
       thisFile.pages[currentPage].backstack.pop();
     }
     redo_times=1;
+
+    //loadIntoCanvas(thisFile,currentPage);
   }
   function moveDrawing(e, touch) {
     if (!isDrawing) {
@@ -281,10 +287,10 @@ document.addEventListener( "DOMContentLoaded", function() {
       return;
     }
 
-    hasMoved = true;
-    var _x, _y, _points;
+    var _x, _y;
     var _lines = thisFile.pages[currentPage].lines;
-    _points = _lines[_lines.length-1].points;
+    var _line = _lines[_lines.length-1]
+    var _points = _line.points;
 
     if (touch) {
       _x = e.changedTouches[0].clientX;
@@ -311,96 +317,52 @@ document.addEventListener( "DOMContentLoaded", function() {
     _points.push({ x: _x, y: _y });
 
     //SE GOMMA
-    if (toolSelected === "rubber") {
-      clearCircle(ctx,_x,_y,rubberWidth/2);
+    if (_line.tool === 3) {
+      clearCircle(ctx,_x,_y,_line.width/2);
     }
-
-    //SE MATITA
     else{
-      ctx.strokeStyle = _lines[_lines.length-1].color;
-      ctx.lineWidth = _lines[_lines.length-1].width;
+      ctx.strokeStyle = _line.color;
+      ctx.lineWidth = _line.width;
 
-      if(drawingMethod == "linear"){
-        var p1 = _points[_points.length-3];
-        var p2 = _points[_points.length-2];
-        var p3 = _points[_points.length-1];
-        if(!p1) p1=p2;
+      var p1 = _points[_points.length-3];
+      var p2 = _points[_points.length-2];
+      var p3 = _points[_points.length-1];
+      if(!p1) p1=p2;
 
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.lineTo(p3.x, p3.y);
-        ctx.stroke();
-      }
-
-      else if(drawingMethod == "quadratic"){
-        ctx.beginPath();
-        ctx.moveTo(_points[0].x, _points[0].y);
-
-        for (var i = 0; i < _points.length - 2; i++) {
-          var c = (_points[i].x + _points[i + 1].x) / 2;
-          var d = (_points[i].y + _points[i + 1].y) / 2;
-
-          ctx.quadraticCurveTo(_points[i].x, _points[i].y, c, d);
-        }
-
-        // For the last 2 points
-        ctx.quadraticCurveTo(
-            _points[i].x,
-            _points[i].y,
-            _points[i + 1].x,
-            _points[i + 1].y
-        );
-        ctx.stroke();
-      }
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineTo(p3.x, p3.y);
+      ctx.stroke();
     }
+
+    //loadIntoCanvas(thisFile,currentPage);
   }
   function endDrawing(e, touch) {
-    //Handle dots
-    if(!hasMoved && isDrawing) {
-      var _x, _y;
-      if (touch) {
-        _x = e.changedTouches[0].clientX;
-        _y = e.changedTouches[0].clientY;
-      } else {
-        _x = e.clientX;
-        _y = e.clientY;
-      }
-      if(rulerActive){
-        var newPoint = getPointOnRuler(_x,_y);
-        _x=newPoint.x;
-        _y=newPoint.y;
-      }
+    if(!isDrawing) return;
+    //These points are already saved in startDrawing. No need to save here.
+    var _lines = thisFile.pages[currentPage].lines;
+    var _line = _lines[_lines.length-1]
+    var _points = _line.points;
 
-      //gotta be responsive
-      _x-= DrawPaddingX;
-      _y-= DrawPaddingY;
-
-      var _lines = thisFile.pages[currentPage].lines;
-      var _width = _lines[_lines.length-1].width;
-
-      if(toolSelected ==="rubber"){
-        clearCircle(ctx,_x,_y,_width/2);
-      }
-      else{
-        ctx.beginPath();
-
-        ctx.fillStyle = ctx.strokeStyle = _lines[_lines.length-1].color;
-
-        ctx.arc(_x, _y, _width, 0, 2 * Math.PI, false);
-        ctx.fill();
-      }
+    if(_line.tool!==3 && _points.length===1){
+      var _x=_points[0].x;
+      var _y=_points[0].y;
+      ctx.beginPath();
+      ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
+      ctx.fill();
     }
 
-   //These points are already saved in startDrawing. No need to save here.
     resetBackstackButtons();
     isDrawing = false;
-    hasMoved = false;
+
+    if(_line.tool===2)
+      loadIntoCanvas(thisFile,currentPage);
   }
 
   function getPointOnRuler(_x,_y){
-    var ruler_topLeft = document.getElementById("top_left");
-    var ruler_topRight = document.getElementById("top_right");
+    var ruler_topLeft = $ID("top_left");
+    var ruler_topRight = $ID("top_right");
     var _topLeftRect = ruler_topLeft.getBoundingClientRect();
     var _topRightRect = ruler_topRight.getBoundingClientRect();
     var _x1 = _topLeftRect.left;
@@ -449,87 +411,86 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   bindEvents();
 
-  var pencil = document.getElementById("pencil");
-  var pencilColor = document.getElementById("pencil_color");
-  var rubber = document.getElementById("rubber");
-  var ruler = document.getElementById("ruler");
-  var allTools = [pencil, rubber, ruler];
+  var pencil = $ID("pencil");
+  var pencilColor = $ID("pencil_color");
+  var marker = $ID("marker");
+  var markerColor = $ID("marker_color");
+  var rubber = $ID("rubber");
+  var ruler = $ID("ruler");
+  var allTools = [pencil, marker, rubber, ruler];
 
-  var blackColor = document.getElementById("pencil_black");
-  var blueColor = document.getElementById("pencil_blue");
-  var redColor = document.getElementById("pencil_red");
-  var greenColor = document.getElementById("pencil_green");
-  var customColor = document.getElementById("pencil_other");
-  var allColors = [blackColor, blueColor, redColor, greenColor, customColor];
+  var colorPicker = $ID("color_picker");
+  var customColor = $ID("color_picker_canvas");
+  var eyedropper = $ID("color-picker-circle");
 
-  var smallWidth = document.getElementById("stroke_small");
-  var mediumWidth = document.getElementById("stroke_medium");
-  var bigWidth = document.getElementById("stroke_big");
+  var allColors = $CLASS("btn-toolbar-color");
+
+  var smallWidth = $ID("stroke_small");
+  var mediumWidth = $ID("stroke_medium");
+  var bigWidth = $ID("stroke_big");
+  var customWidth = $ID("stroke_slider");
   var allWidths = [smallWidth, mediumWidth, bigWidth];
 
-  var whiteBackground = document.getElementById("background_white");
-  var blackBackground = document.getElementById("background_black");
-  var greenBackground = document.getElementById("background_green");
-  var customBackground = document.getElementById("background_custom");
+  var whiteBackground = $ID("background_white");
+  var blackBackground = $ID("background_black");
+  var greenBackground = $ID("background_green");
+  var customBackground = $ID("background_custom");
 
-  var noneBackground = document.getElementById("background_none");
-  var squaredBackground = document.getElementById("background_squared");
-  var squaredMarkedBackground = document.getElementById("background_squared_marked");
-  var linesBackground = document.getElementById("background_lines");
-  var dotsBackground = document.getElementById("background_dots");
-
-  var drawingLinear = document.getElementById("drawing_linear");
-  var drawingQuadratic = document.getElementById("drawing_quadratic");
+  var noneBackground = $ID("background_none");
+  var squaredBackground = $ID("background_squared");
+  var squaredMarkedBackground = $ID("background_squared_marked");
+  var linesBackground = $ID("background_lines");
+  var dotsBackground = $ID("background_dots");
 
   function clearButtonSelection(buttons, _class) {
-    var colors = buttons;
-    for (var i = colors.length - 1; i >= 0; i--) {
-      colors[i].classList.remove(_class);
+    for (var i = buttons.length - 1; i >= 0; i--) {
+      buttons[i].classList.remove(_class);
     }
   }
 
   function showColorButtons(){
-    var j = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = j.length - 1; i >= 0; i--) {
-      allColors[i].parentElement.classList.remove("btn-hidden");
-      allColors[i].parentElement.classList.add("btn-visible");
+    colorPicker.classList.remove("btn-hidden");
+    colorPicker.classList.add("btn-visible");
+    for (var i = allColors.length -1; i >= 0; i--) {
       allColors[i].style.pointerEvents = 'auto';
-    };
+    }
   }
 
   function hideColorButtons(){
-    var j = document.getElementsByClassName("btn-toolbar-color");
-    for (var i = j.length - 1; i >= 0; i--) {
-      allColors[i].parentElement.classList.remove("btn-visible");
-      allColors[i].parentElement.classList.add("btn-hidden");
+    colorPicker.classList.remove("btn-visible");
+    colorPicker.classList.add("btn-hidden");
+    for (var i = allColors.length -1; i >= 0; i--) {
       allColors[i].style.pointerEvents = 'none';
-    };
+    }
   }
 
   function setColor(color){
     lineColor = color;
     pencilColor.style.borderBottom = "12px solid " + lineColor;
+    markerColor.style.background = "rgba("+hexToRgb(lineColor).join()+",.5)";
+
   }
-  function setWidth(width) {
-     lineWidth = width;
-     ctx.lineWidth = width;
-  }
-  function setRubberWidth(width) {
-     rubberWidth = width;
+  function setWidth(width,tool) {
+    switch(tool)
+    {
+      case 1: lineWidth=width*1; break;
+      case 2: markerWidth=width*markerMultiplier; break;
+      case 3: rubberWidth=width*rubberMultiplier; break;
+    }
   }
   function setBackgroundColor(color) {
     thisFile.settings.canvas.backgroundColor = color;
-    canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
+    loadIntoCanvas(thisFile,currentPage);
   }
   function setBackgroundImage(image) { // NO .PNG
-     thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
-     canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+    thisFile.settings.canvas.backgroundImage = "url('app/img/grid/"+image+".png')";
+    loadIntoCanvas(thisFile,currentPage);
   }
 
   function selectTool(_tool){
     if(_tool.id == "ruler"){
       rulerActive = !rulerActive;
-      var rulerContainer = document.getElementById("ruler_container");
+      var rulerContainer = $ID("ruler_container");
       if(rulerActive){
         rulerContainer.style.display="flex";
         _tool.classList.add("btn-ruler-active");
@@ -542,13 +503,19 @@ document.addEventListener( "DOMContentLoaded", function() {
     else{
       clearButtonSelection(allTools, "btn-tool-active");
       _tool.classList.add("btn-tool-active");
-      toolSelected = _tool.id;
+      switch(_tool.id){
+        case "pencil": toolSelected=1; break;
+        case "marker": toolSelected=2; break;
+        case "rubber": toolSelected=3; break;
+      }
     }
   }
 
-  function loadWidth(_tool){
-    if(_tool=="pencil") {
-      clearButtonSelection(allWidths, "btn-active");
+  function displayWidth(_tool){
+    clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
+    if(_tool===1) {
+      console.log(lineWidth);
       switch(lineWidth){
         case 1:
           smallWidth.classList.add("btn-active");
@@ -559,19 +526,46 @@ document.addEventListener( "DOMContentLoaded", function() {
         case 4:
           bigWidth.classList.add("btn-active");
           break;
+        default:
+          customWidth.value=lineWidth;
+          customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value+"px");
+          break;
       }
     }
-    else if(_tool=="rubber"){
-      clearButtonSelection(allWidths, "btn-active");
-      switch(rubberWidth){
-        case 15:
+    else if(_tool===2) {
+      switch(markerWidth){
+        case 1*markerMultiplier:
           smallWidth.classList.add("btn-active");
           break;
-        case 30:
+        case 2*markerMultiplier:
           mediumWidth.classList.add("btn-active");
           break;
-        case 60:
+        case 4*markerMultiplier:
           bigWidth.classList.add("btn-active");
+          break;
+        default:
+          customWidth.value=markerWidth/markerMultiplier;
+          customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*markerMultiplier+"px");
+          break;
+      }
+    }
+    else if(_tool===3){
+      switch(rubberWidth){
+        case 1*rubberMultiplier:
+          smallWidth.classList.add("btn-active");
+          break;
+        case 2*rubberMultiplier:
+          mediumWidth.classList.add("btn-active");
+          break;
+        case 4*rubberMultiplier:
+          bigWidth.classList.add("btn-active");
+          break;
+        default:
+          customWidth.value=rubberWidth/rubberMultiplier;
+          customWidth.classList.add("slider-active");
+          customWidth.setAttribute("data-tooltip","DIMENSIONE: "+customWidth.value*rubberMultiplier+"px");
           break;
       }
     }
@@ -581,73 +575,84 @@ document.addEventListener( "DOMContentLoaded", function() {
   pencil.addEventListener("click", function(e) {
     showColorButtons();
     selectTool(this);
-    loadWidth("pencil");
+    displayWidth(1);
+  });
+  marker.addEventListener("click", function(e) {
+    showColorButtons();
+    selectTool(this);
+    displayWidth(2);
   });
   rubber.addEventListener("click", function(e) {
     hideColorButtons();
     selectTool(this);
-    loadWidth("rubber");
+    displayWidth(3);
   });
   ruler.addEventListener("click", function(e) {
     selectTool(this);
   });
+
+
   // COLOR PICKER
-  blackColor.addEventListener("click", function(e) {
-    setColor("black");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  blueColor.addEventListener("click", function(e) {
-    setColor("#2962ff");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  redColor.addEventListener("click", function(e) {
-    setColor("#f44336");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  greenColor.addEventListener("click", function(e) {
-    setColor("#4caf50");
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-  });
-  customColor.addEventListener("mouseup", function() {
-    clearButtonSelection(allColors, "btn-active");
-    this.classList.add("btn-active");
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
+
+  for (var i = 0; i < $CLASS("btn-toolbar-color").length; i++) {
+    var element = $CLASS("btn-toolbar-color")[i];
+    element.addEventListener("click", function() {
+      setColor(this.getAttribute("value"));
+      clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.remove("eye-active");
+      this.classList.add("btn-active");
+    });
+  }
+  (function(){
+    var isPicking = false;
+
+    customColor.addEventListener("mousedown", function(event){
+        isPicking = true;
+    });
+    customColor.addEventListener("mousemove", function() {
+      if(!isPicking) return;
+      clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.add("eye-active");
       setColor(customColor.getAttribute("value"));
     });
-  });
-  customColor.addEventListener("click", function() {
-    //Voglio che il colore venga settato all'ultimo colore scelto quanto clicco
-    setColor(customColor.getAttribute("value"));
-  });
+    customColor.addEventListener("mouseup", function(event){
+      clearButtonSelection(allColors, "btn-active");
+      eyedropper.classList.add("eye-active");
+      setColor(customColor.getAttribute("value"));
+      isPicking = false;
+    });
+  })();
 
   // WIDTH
   smallWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      setRubberWidth(15);
-    else if(toolSelected=="pencil")
-      setWidth(1);
+    setWidth(1,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
   });
   mediumWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      setRubberWidth(30);
-    else if(toolSelected=="pencil")
-      setWidth(2);
+    setWidth(2,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
   });
   bigWidth.addEventListener("click", function() {
-    if(toolSelected=="rubber")
-      setRubberWidth(60);
-    else if(toolSelected=="pencil")
-      setWidth(4);
+    setWidth(4,toolSelected);
     clearButtonSelection(allWidths, "btn-active");
+    customWidth.classList.remove("slider-active");
     this.classList.add("btn-active");
+  });
+  customWidth.addEventListener("click", function() {
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value*(toolSelected===3?rubberMultiplier:(toolSelected===2?markerMultiplier:1))+"px");
+    setWidth(this.value,toolSelected);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("slider-active");
+  });
+  customWidth.addEventListener("input", function() {
+    this.setAttribute("data-tooltip","DIMENSIONE: "+this.value*(toolSelected===3?rubberMultiplier:(toolSelected===2?markerMultiplier:1))+"px");
+    setWidth(this.value,toolSelected);
+    clearButtonSelection(allWidths, "btn-active");
+    this.classList.add("slider-active");
   });
   // BACKGROUND COLOR PICKER
   whiteBackground.addEventListener("click", function(e) {
@@ -660,7 +665,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     setBackgroundColor("#567E3A");
   });
   customBackground.addEventListener("mouseup", function() {
-    document.getElementById("body").lastChild.addEventListener("mouseup", function() {
+    $ID("body").lastChild.addEventListener("mouseup", function() {
       setBackgroundColor(customBackground.getAttribute("value"));
     });
   });
@@ -719,26 +724,14 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   });
 
-  //Change drawing method
-  drawingLinear.addEventListener("click", function() {
-    drawingMethod = "linear";
-    translate(ctx,0.5,0.5);
-    loadIntoCanvas(thisFile, currentPage);
-  });
-
-  drawingQuadratic.addEventListener("click", function() {
-    drawingMethod = "quadratic";
-    translate(ctx,0.0,0.0);
-    loadIntoCanvas(thisFile, currentPage);
-  });
-
   function translate(context,x,y){
+    return;
     context.resetTransform();
     context.translate(x,y);
   }
 
   //SAVE
-  var saveButton = document.getElementById("save");
+  var saveButton = $ID("save");
 
   var saveFile = require('./app/js/save');
 
@@ -754,11 +747,11 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   function rename(fileName){
     thisFile.settings.name == fileName;
-    document.getElementById("title").innerHTML=thisFile.settings.name.split("\\").pop();
+    $ID("title").innerHTML=thisFile.settings.name.split("\\").pop();
   }
 
   //LOAD
-  var loadButton = document.getElementById("load");
+  var loadButton = $ID("load");
   var loadFile = require('./app/js/load');
 
   loadButton.addEventListener("click", function(){
@@ -791,87 +784,44 @@ document.addEventListener( "DOMContentLoaded", function() {
       title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
-      //When backgruond changes color, i want rubber to be re-colored to match bg color
-      for(var i = 0; i < thisFile.pages[currentPage].lines.length; i++) {
-        if(thisFile.pages[currentPage].lines[i].rubber)
-        {
-          thisFile.pages[currentPage].lines[i].color = thisFile.settings.canvas.backgroundColor;
-        }
-      }
       var _lines = thisFile.pages[currentPage].lines;
 
       for (var line = 0; line < _lines.length; line++) {
         var _line = _lines[line];
         var _points = _line.points;
-
-        if (_points.length === 1){  //draw a dot
-          var _x=_points[0].x;
-          var _y=_points[0].y;
-          if(_line.rubber==true){
+        if(_line.tool===3){
+          for(var i=0; i<=_points.length-1;i++){
+            var _x=_points[i].x;
+            var _y=_points[i].y;
             clearCircle(ctx,_x,_y,_line.width/2);
+          }
+        }
+        else{
+          ctx.fillStyle = _line.color;
+          ctx.strokeStyle = _line.color;
+          ctx.lineWidth = _line.width;
+
+          if(_points.length===1){
+            var _x=_points[0].x;
+            var _y=_points[0].y;
+            ctx.beginPath();
+            ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
+            ctx.fill();
           }
           else{
             ctx.beginPath();
-            ctx.arc(_x, _y, _line.width, 0, 2 * Math.PI, false);
-            ctx.fillStyle = _line.color;
-            ctx.strokeStyle = _line.color;
-            ctx.fill();
-          }
-        }
-        else {  //draw a line
-          if(_line.rubber==true){
-            for(var _point = 1; _point<_points.length;_point++){
-              var _x = _points[_point].x;
-              var _y = _points[_point].y;
-              clearCircle(ctx,_x,_y,_line.width/2);
+            for (var i = 0; i < _points.length-1; i++) {
+              var p1 = _points[i];
+              var p2 = _points[i+1];
+
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
             }
-          }
-          else{
-            var p0 = _points[0];
-
-            ctx.strokeStyle = _line.color;
-            ctx.lineWidth = _line.width;
-
-            for (var i = 2; i <= _points.length; i++) {
-
-              if(drawingMethod == "linear"){
-                var p1 = _points[i-3];
-                var p2 = _points[i-2];
-                var p3 = _points[i-1];
-                if(!p1) p1=p2;
-
-                ctx.beginPath();
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
-                ctx.lineTo(p3.x, p3.y);
-                ctx.stroke();
-              }
-
-              else if(drawingMethod == "quadratic"){
-                ctx.beginPath();
-                ctx.moveTo(_points[0].x, _points[0].y);
-
-                for (var p = 0; p < i - 2; p++) {
-                  var c = (_points[p].x + _points[p + 1].x) / 2;
-                  var d = (_points[p].y + _points[p + 1].y) / 2;
-
-                  ctx.quadraticCurveTo(_points[p].x, _points[p].y, c, d);
-                }
-
-                // For the last 2 points
-                ctx.quadraticCurveTo(
-                    _points[p].x,
-                    _points[p].y,
-                    _points[p + 1].x,
-                    _points[p + 1].y
-                );
-                ctx.stroke();
-              }
-            }
+            ctx.stroke();
           }
         }
       }
-    } else console.log("error loading file: " + file);
+    }
   }
 
   //RULER
@@ -879,8 +829,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   rulerLoader.LoadRuler();
 
   //UNDO & REDO
-  var undo = document.getElementById("undo");
-  var redo = document.getElementById("redo");
+  var undo = $ID("undo");
+  var redo = $ID("redo");
   var backstack_counter=0;
   var redo_times = 1;
   //On load
@@ -910,7 +860,7 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   // CLEAR ALL
 
-  var clearAllBtn = document.getElementById("clear_all")
+  var clearAllBtn = $ID("clear_all")
   clearAllBtn.addEventListener("mousedown", function() {
     var _lines = thisFile.pages[currentPage].lines;
     redo_times=0; //was most likely 1 before, so let's set it to 0 before increasing it
@@ -952,9 +902,9 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   //PAGES
 
-  var pageCounter = document.getElementById("page_counter");
-  var pageNextBtn = document.getElementById("page_next");
-  var pagePrevBtn = document.getElementById("page_prev");
+  var pageCounter = $ID("page_counter");
+  var pageNextBtn = $ID("page_next");
+  var pagePrevBtn = $ID("page_prev");
 
   function pageNext(){
     loadIntoCanvas(thisFile,currentPage+1);
@@ -996,4 +946,61 @@ document.addEventListener( "DOMContentLoaded", function() {
   // Run once at start
   updateNavButtons();
 
+  //UPDATER
+  var arrow = $ID("arrow");
+  var bar = $ID("bar");
+  var tick = $ID("tick");
+  var text = $ID("download-text");
+
+  ipc.on('show-downloading', function(){
+    downloading();
+  });
+  ipc.on('show-download-complete', function(){
+    downloaded();
+  });
+
+  function downloading(){
+    arrow.style.display="block";
+    bar.style.display="block";
+    tick.style.display="none";
+    text.style.display="none";
+  }
+
+  function downloaded(){
+    arrow.style.display="none";
+    bar.style.display="none";
+    tick.style.display="flex";
+    text.style.display="flex";
+  }
+
+  function promptUpdate(){
+    dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Salva e riavvia', 'Non ora'], cancelId: 2, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
+    function(response) {
+      switch(response) {
+        case 0:
+          ipc.send('update');
+          break;
+        case 1:
+          var saveFile = require('./app/js/save');
+          saveFile.SaveAs(thisFile,rename,'update');
+          break;
+        case 2:
+          break;
+      }
+    });
+  }
+
+  tick.onclick=promptUpdate;
+  text.onclick=promptUpdate;
+
+  switch(remote.getGlobal('updateStatus')){
+    case 0:
+      break;
+    case 1:
+      downloading();
+      break;
+    case 2:
+      downloaded();
+      break;
+  }
 }); // document.ready?

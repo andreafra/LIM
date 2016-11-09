@@ -7,12 +7,16 @@
     <link rel="stylesheet" href="app/css/style.css" type="text/css">
   </head>
   <body id="body">
-    <div id="footer">
-      <ul class="toolbar-transparent" id="navbar">
+    <footer id="footer">
+      <ul id="toolbar" class="toolbar-transparent">
         <!-- Tool Picker -->
         <li class="btn-toolbar btn-toolbar-tool btn-tool-active" id="pencil">
           <img src="app/img/pencil.png">
           <span id="pencil_color"></span>
+        </li>
+        <li class="btn-toolbar btn-toolbar-tool" id="marker">
+          <img src="app/img/marker.png"><!--TEMP-->
+          <span id="marker_color"></span>
         </li>
         <li class="btn-toolbar btn-toolbar-tool" id="rubber">
           <img src="app/img/rubber.png">
@@ -25,43 +29,54 @@
         <!-- Color Picker -->
         <li class="btn-toolbar btn-container">
           <div class="btn-row" id="color_picker">
-            <span class="btn-circular btn-toolbar-color btn-active" id="pencil_black"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_blue"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_red"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_green"></span>
-            <input class="btn-circular jscolor {padding: 5, position:'right', height:60, width:140, onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
+            <span class="btn-circular btn-toolbar-color btn-active" value="#000000" id="pencil_black"></span>
+            <span class="btn-circular btn-toolbar-color" value="#2979FF" id="pencil_blue"></span>
+            <span class="btn-circular btn-toolbar-color" value="#F44336" id="pencil_red"></span>
+            <span class="btn-circular btn-toolbar-color" value="#00C853" id="pencil_green"></span>
+            <span class="btn-circular btn-toolbar-color" value="#FFD600" id="pencil_yellow"></span>
+            <span class="btn-circular btn-toolbar-color" value="#FFFFFF" id="pencil_white"></span>
           </div>
           <div class="btn-row" id="width_picker">
             <span class="btn-circular" id="stroke_small"></span>
             <span class="btn-circular btn-active" id="stroke_medium"></span>
             <span class="btn-circular" id="stroke_big"></span>
+            <input id="stroke_slider" type="range" min="1" max="30" value="10" data-tooltip="DIMENSIONE: 10px"></input>
+          </div>
+        </li>
+        <li class="btn-toolbar flex-container">
+          <div id="color_picker_container">
+            <span id="color-picker-circle" class="transition"></span>
+            <canvas id="color_picker_canvas" value="#000" height=70 width=120></canvas>
           </div>
         </li>
         <!-- /Color Picker -->
+        <li class="btn-pager" id="clear_all" data-tooltip="CANCELLERAI TUTTO!">
+          <i class="material-icons">delete</i>
+        </li>
         <li class="toolbar-spacer"></li>
-
         <li class="btn-pager" id="undo">
           <i class="material-icons">undo</i>
         </li>
         <li class="btn-pager" id="redo">
           <i class="material-icons">redo</i>
         </li>
-        <li class="btn-pager" id="clear_all" data-tooltip="CANCELLERAI TUTTO!">
-          <i class="material-icons">delete</i>
-        </li>
-        <li class="toolbar-spacer"></li>
+        </li><li class="toolbar-spacer"></li>
         <li class="btn-pager btn-flex" id="back_to_main">
           <i class="material-icons" style="transform: scale(-1,1)">open_in_new</i>
           <span> Esci</span>
-        </li>
-        <li class="toolbar-spacer"></li>
-        <li class="btn-pager" id="toggle_navbar">
-          <i class="material-icons">visibility_off</i>
-        </li>
+        </li>  
       </ul>
-    </div>
+      <div id="toggle_navbar_container">
+        <div class="btn-pager" id="toggle_navbar">
+            <i class="material-icons">visibility_off</i>
+        </div>
+      </div>
+      <div id="dragger_navbar">
+          <i class="material-icons">more_vert</i>
+      </div>
+    </footer>
     <script src="app/js/transparent-toolbar.js"></script>
-    <script src="app/lib/jscolor.min.js"></script>
+    <script src="app/js/colorpicker_2.js"></script>
     <script>
       // COLOR PICKER
       function updateColor(picker) {

@@ -8,16 +8,21 @@
   </head>
   <body id="body" class="background">
     <header id="header" style="-webkit-app-region: drag">
-      <h1 id="title">unnamed</h1>
+      <h1 id="title">LIM</h1>
       <div id="window-menu">
-        <button id="menu-back" class="btn btn-menu btn-menu-left btn-white-hover"><i class="material-icons">arrow_back</i></button>
         <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
         <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
         <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
+        <button id="menu-back" class="btn btn-menu btn-white-hover"><i class="material-icons">arrow_back</i></button>
+        <div id="download" class="btn-menu-left">
+          <div id="arrow"><span id="custom-arrow"></span></div>
+          <div id="bar"></div>
+          <div id="tick"><i class="material-icons">done</i></div>
+        </div>
+        <div id="download-text" class="btn-menu-left"><p>Fare click per aggiornare</p></div>
       </div>
     </header>
-    <div id="content">
-    </div>
+    <div id="content"></div>
     <div id="ruler_container">
       <div id="top_left"></div>
       <div id="top_right"></div>
@@ -28,13 +33,10 @@
       </div>
       <div id="ruler_right"></div>
     </div>
-    <div id="settings_container" class="hidden">
+    <section id="settings_container" class="hidden">
       <div id="settings_panel">
-        <a id="settings_panel_close" class="btn">
-          <i class="material-icons">close</i>
-        </a>
         <h1>Impostazioni</h1>
-        <ul class="settings_list">
+        <ul class="settings_list settings_small">
           <li class="settings_list_heading">File</li>
           <li class="settings_list_element" id="save">
             <i class="material-icons">save</i>
@@ -44,13 +46,8 @@
             <i class="material-icons">folder</i>
             <span>Apri...</span>
           </li>
-          <li class="settings_list_heading">Metodo di disegno</li>
-          <li class="settings_list_picker">
-            <button class="btn btn-option" id="drawing_linear">Lineare</button>
-            <button class="btn btn-option" id="drawing_quadratic">Quadratica</button>
-          </li>
         </ul>
-        <ul class="settings_list">
+        <ul class="settings_list settings_big">
           <li class="settings_list_heading">Colore di sfondo</li>
           <li class="settings_list_circular_picker">
             <div id="background_white"><span></span>
@@ -65,7 +62,7 @@
             <div id="background_transparent"><span></span>
               <h6>Trasparente</h6>
             </div>
-            <div id="background_custom"><input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff">
+            <div id="background_custom" value="#ffffff"><input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff">
               <h6>Personalizzato</h6>
             </div>
           </li>
@@ -88,14 +85,23 @@
             </div>
           </li>
         </ul>
+        <div class="settings_footer">
+          <a id="settings_close" class="btn btn-pager btn-highlight">
+            <i class="material-icons">close</i>
+          </a>
+        </div>
       </div>
-    </div>
+    </section>
     <footer id="footer">
       <ul class="toolbar-left">
         <!-- Tool Picker -->
         <li class="btn-toolbar btn-toolbar-tool btn-tool-active" id="pencil">
           <img src="app/img/pencil.png">
           <span id="pencil_color"></span>
+        </li>
+        <li class="btn-toolbar btn-toolbar-tool" id="marker">
+          <img src="app/img/marker.png"><!--TEMP-->
+          <span id="marker_color"></span>
         </li>
         <li class="btn-toolbar btn-toolbar-tool" id="rubber">
           <img src="app/img/rubber.png">
@@ -108,23 +114,28 @@
         <!-- Color Picker -->
         <li class="btn-toolbar btn-container">
           <div class="btn-row" id="color_picker">
-            <span class="btn-circular btn-toolbar-color btn-active" id="pencil_black"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_blue"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_red"></span>
-            <span class="btn-circular btn-toolbar-color" id="pencil_green"></span>
-            <input class="btn-circular jscolor {onFineChange:'updateColor(this)'}" value="#ffffff" id="pencil_other">
+            <span class="btn-circular btn-toolbar-color btn-active" value="#000000" id="pencil_black"></span>
+            <span class="btn-circular btn-toolbar-color" value="#2979FF" id="pencil_blue"></span>
+            <span class="btn-circular btn-toolbar-color" value="#F44336" id="pencil_red"></span>
+            <span class="btn-circular btn-toolbar-color" value="#00C853" id="pencil_green"></span>
+            <span class="btn-circular btn-toolbar-color" value="#FFD600" id="pencil_yellow"></span>
+            <span class="btn-circular btn-toolbar-color" value="#FFFFFF" id="pencil_white"></span>
           </div>
           <div class="btn-row" id="width_picker">
             <span class="btn-circular" id="stroke_small"></span>
             <span class="btn-circular btn-active" id="stroke_medium"></span>
             <span class="btn-circular" id="stroke_big"></span>
+            <input id="stroke_slider" type="range" min="1" max="30" value="10" data-tooltip="DIMENSIONE: 10px"></input>
+          </div>
+        </li>
+        <li class="btn-toolbar flex-container">
+          <div id="color_picker_container">
+            <span id="color-picker-circle" class="transition"></span>
+            <canvas id="color_picker_canvas" value="#000" height=70 width=120></canvas>
           </div>
         </li>
         <!-- /Color Picker -->
       </ul>
-      <div class="toolbar-center">
-        <button id="settings_panel_open" class="btn btn-menu btn-flex"><i class="material-icons">settings</i><span>Menu</span></button>
-      </div>
       <ul class="toolbar-right">
         <li class="btn-pager" id="page_next">
           <i class="material-icons">arrow_forward</i>
@@ -148,39 +159,57 @@
         <li class="btn-pager" id="clear_all" data-tooltip="CANCELLERAI TUTTO!">
           <i class="material-icons">delete</i>
         </li>
+        <li class="toolbar-spacer">
+        <li class="btn-pager btn-flex btn-highlight" id="settings_toggle">
+          <i class="material-icons">settings</i><span class="btn-label">Menu</span>
+        </li>
       </ul>
 
     </footer>
     <script src="app/js/canvas.js"></script>
     <script src="app/lib/jscolor.min.js"></script>
+    <script src="app/js/colorpicker_2.js"></script>
+    <!--<script src="app/js/colorpicker.js"></script>-->
     <script>
       const ipcRenderer = require('electron').ipcRenderer;
       var closeBtn = document.querySelector('#menu-close');
       var maximBtn = document.querySelector('#menu-maximize');
       var minimBtn = document.querySelector('#menu-minimize');
       var backBtn = document.querySelector('#menu-back');
-      var closeSettings = document.querySelector('#settings_panel_close');
-      var openSettings = document.querySelector('#settings_panel_open');
+      var closeSettings = document.querySelector('#settings_close');
+      var toggleSettings = document.querySelector('#settings_toggle');
+      var settingsContainer = document.getElementById('settings_container');
+      var areSettingsOpen = false;
 
-      closeBtn.addEventListener('click', function () {
+      closeBtn.addEventListener('click', function() {
         ipcRenderer.send('close-main-window');
       });
-      maximBtn.addEventListener('click', function () {
+      maximBtn.addEventListener('click', function() {
         ipcRenderer.send('maximize-main-window');
       });
-      minimBtn.addEventListener('click', function () {
+      minimBtn.addEventListener('click', function() {
         ipcRenderer.send('minimize-main-window');
       });
       backBtn.addEventListener('click', function() {
         ipcRenderer.send('back-to-main');
       });
+
       closeSettings.addEventListener('click', function() {
-        document.getElementById('settings_container').classList.add('hidden');
+        settingsContainer.classList.add('hidden');
+        areSettingsOpen = false;
       });
-      openSettings.addEventListener('click', function() {
-        document.getElementById('settings_container').classList.remove('hidden');
+      toggleSettings.addEventListener('click', function() {
+        if(areSettingsOpen) {
+          settingsContainer.classList.add('hidden');
+          areSettingsOpen = false;
+        } else {
+          settingsContainer.classList.remove('hidden');
+          areSettingsOpen = true;
+        }
       });
+      
       // COLOR PICKER
+      
       function updateColor(picker) {
         document.getElementById("pencil_other").setAttribute("value", "#"+picker);
       }

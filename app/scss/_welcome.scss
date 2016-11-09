@@ -1,0 +1,62 @@
+// WELCOME STUFF
+.welcome-content {
+  position: fixed;
+  display: block;
+  top: $header_height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  -webkit-app-region: no-drag;
+  .welcome-choose {
+    display: flex;
+
+    .btn-full {
+      flex-grow: 1;
+      text-decoration: none !important;
+      text-align: center;
+      font: 1.5em $font-stack;
+      color: black;
+      padding-top: 2em;
+      padding-bottom: 2em;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      &:hover {
+        background-color: darken($white, 10)
+      }
+      img {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
+      span {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30px;
+        width: 75%;
+      }
+    }
+  }
+  .welcome-footer {
+    position: absolute;
+    display: block;
+    width: 100%;
+    bottom: 0;
+    ul {
+      padding: 0;
+      display: flex;
+      li {
+        flex-grow: 1;
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+        a {
+          padding: 3px;
+          font: 1em $font-stack;
+          color: black;
+          padding-top: 2em;
+        }
+      }
+    }
+  }
+}

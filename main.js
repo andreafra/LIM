@@ -85,32 +85,26 @@ var options = {
 
 const updater = new GhReleases(options);
 
+global.updateStatus = 0;
 // Check for updates
 // `status` returns true if there is a new update available
 updater.check((err, status) => {
   if (!err && status) {
     // Download the update
-    updater.download()
+    global.updateStatus=1;
+    updater.download();
+    if(mainWindow != null && ((mainWindow.webContents.getURL().indexOf('index.html')>-1)||(mainWindow.webContents.getURL().indexOf('paper.html')>-1))){
+      mainWindow.webContents.send('show-downloading');
+    }
   }
 });
 
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
+  global.updateStatus=2;
   // Restart the app and install the update
-  if(mainWindow != null && mainWindow.webContents.getURL().indexOf('paper.html')>-1){
-    dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Salva e riavvia', 'Non ora'], cancelId: 2, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
-    function(response) {
-      switch(response) {
-        case 0:
-          updater.install();
-          break;
-        case 1:
-          mainWindow.webContents.send('save-file', 'update'); //send request to canvas.js
-          break;
-        case 2:
-          break;
-      }
-    });
+  if(mainWindow != null && ((mainWindow.webContents.getURL().indexOf('index.html')>-1)||(mainWindow.webContents.getURL().indexOf('paper.html')>-1))){
+    mainWindow.webContents.send('show-download-complete');
   }
   else{
     dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Non ora'], cancelId: 1, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
@@ -129,9 +123,6 @@ updater.on('update-downloaded', (info) => {
 ipcMain.on('update',function(){
   updater.install();
 });
-
-// Access electrons autoUpdater
-updater.autoUpdater
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -155,12 +146,12 @@ app.on('ready', function() {
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
-    width: 800/*size.width*/,
+    width: 1100/*size.width*/,
     height: 600/*size.height*/,
     transparent:false,
     fullscreen:false,
     frame: false,
-    minWidth: 800,
+    minWidth: 1100,
     minHeight: 600
   });
 
@@ -243,7 +234,7 @@ ipcMain.on('load-menu', function(){
     mainWindow.unmaximize();
   }
 });
-const toolbarWidth = 750;
+const toolbarWidth = 990;
 ipcMain.on('new-transparent-window', function() {
   mainWindow.hide();
   var electronScreen = electron.screen;
@@ -255,8 +246,9 @@ ipcMain.on('new-transparent-window', function() {
     transparent:false,
     fullscreen:false,
     frame: false,
+    resizable:false,
     skipTaskbar: true,
-    minWidth: 700,
+    minWidth: 100,
     minHeight: 80,
     maxHeight: 80,
     alwaysOnTop: true, // keep the toolbar ver the canvas
@@ -291,9 +283,9 @@ ipcMain.on('new-transparent-window', function() {
     setImmediate(function() {
       if(toolbarWindow==null || toolbarWindow.isFocused()) return;
       toolbarWindow.setBounds({
-        x: size.width - 80,
+        x: size.width - 100,
         y: size.height - 80,
-        width: 80,
+        width: 100,
         height: 80
       });
       transparentWindow.hide();
@@ -319,20 +311,18 @@ ipcMain.on('send-command', function(e, target, command, parameters) {
       break;
   }
 });
-ipcMain.on('toggle-navbar', function(e, isOpen) {
+ipcMain.on('toggle-navbar', function(e, wasOpen) {
   var electronScreen = electron.screen;
   var size = electronScreen.getPrimaryDisplay().workAreaSize;
-    if (isOpen) {
-      //toolbarWindow.setSize(80, 80);
+    if (wasOpen) {
       toolbarWindow.setBounds({
-        x: size.width - 80,
+        x: size.width - 100,
         y: size.height - 80,
-        width: 80,
+        width: 100,
         height: 80
       });
       transparentWindow.hide()
     } else {
-      //toolbarWindow.setSize(850, 80);
       toolbarWindow.setBounds({
         x: size.width - toolbarWidth,
         y: size.height - 80,

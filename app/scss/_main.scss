@@ -1,0 +1,52 @@
+body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  transform: translateZ(0);
+  overflow: hidden;
+  -webkit-user-select: none;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  touch-action: none;
+}
+
+img {
+  -webkit-user-drag: none !important;
+}
+
+
+.background {
+  background-color: #fff;
+}
+.hidden {
+  display: none !important;
+  opacity: 0;
+}
+
+#window-menu {
+  display: block;
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+#content {
+  text-align: center;
+  -webkit-app-region: no-drag;
+  #grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: $header_height;
+    pointer-events: none; // allows click-thru
+  }
+}
+#canvas {
+  position: relative;
+  align-self: center;
+  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
+  background-repeat: repeat;
+}

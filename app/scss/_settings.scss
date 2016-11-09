@@ -1,0 +1,162 @@
+// SETTINGS
+$menu-text-padding: 50px;
+$menu-circle: 25px;
+#settings_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($black, 0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  #settings_panel {
+    position: absolute;
+    height: 60vh;
+    width: 80vh;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: $white;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    border-radius: 24px;
+    font-size: 0;
+    padding-top: 40px;
+    h1 {
+      margin: 0;
+      widows: 100%;
+      font-size: 1.7rem;
+      padding: 0.5em  $menu-text-padding 0.5em;
+      border-bottom: 1px solid $gray;
+    }
+    
+    .settings_list {
+      display: inline-block;
+      padding: 0;
+      list-style: none;
+      font-size: 1rem;
+      vertical-align: top;
+      margin: 0;
+
+      .settings_list_heading {
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+      .settings_list_element {
+        padding: 0.5em  $menu-text-padding 0.5em;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        i, span {
+          vertical-align: text-bottom;
+        }
+        &:hover, &:active {
+          box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);       
+        }
+      }
+      .settings_list_circular_picker {
+        padding: 0.5em 0 0.5em;
+        width: 90%;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1em;
+        & > div {
+          display: inline-block;
+          flex-grow: 1;
+          text-align: center;
+          flex-basis: 0;
+          border-radius: 2px;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          padding: 0.5em;
+          & > span, input {
+            border-radius: 15px;
+            border: 3px solid $gray;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            margin: auto;
+            padding: 0;
+            display: block;
+            height: $menu-circle;
+            width: $menu-circle;
+          }
+          h6 {
+            margin: 0.5em 0 0 0;
+          }
+        
+          &:hover, &:active {
+            box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);       
+          }
+        }
+      }
+    }
+    .settings_big {
+      width: 60%;
+      .settings_list_heading {
+        text-align: center;
+        width: 90%;
+        padding: 0.5em 0 0.5em;
+      }
+    }
+    .settings_small {
+      width: 40%;
+      .settings_list_heading {
+        padding: 0.5em  $menu-text-padding 0.5em;
+      }
+    }
+    .settings_footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      padding: 1em;
+      a {
+        position: relative;
+        margin: auto;
+        bottom: 10px;
+      }
+    }
+  }
+}
+
+#background_white span {
+  background-color: $white;
+}
+#background_black span {
+  background-color: $black;
+}
+#background_green span{
+  background-color: #567E3A;
+}
+#background_transparent span {
+  background: white;
+  background-image: url("../img/nocolor.png");
+}
+#background_custom span {
+  background: white;
+  background-image: url("../img/colors.png");
+  background-position: center;
+  background-clip: border-box;
+}
+#background_none span {
+  background-image: none;
+}
+#background_squared span {
+  background: white;
+  background-image: url("../img/grid/squared-dark.png");
+  background-position: 15px 15px;
+  background-size: 48px 48px;
+}
+#background_squared_marked span {
+  background: white;
+  background-image: url("../img/grid/squared-marked-dark.png");
+  background-position: 15px 15px;
+  background-size: 48px 48px;
+}
+#background_lines span {
+  background: white;
+  background-image: url("../img/grid/lines-dark.png");
+  background-position: 15px 15px;
+  background-size: 12px 12px;
+}
+#background_dots span {
+  background: white;
+  background-image: url("../img/grid/dots-dark.png");
+}
