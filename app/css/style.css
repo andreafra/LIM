@@ -253,10 +253,6 @@ footer {
   box-shadow: 0 1px 1.5px 0 rgba(0,0,0,0.12),0 1px 1px 0 rgba(0,0,0,0.24);
   padding-top: 5px;
 }*/
-#color_picker_canvas {
-  height: 70px;
-  margin-top: 1px; }
-
 #pencil_black {
   background: black; }
 
@@ -395,7 +391,6 @@ footer {
     padding-top: 40px; }
     #settings_container #settings_panel h1 {
       margin: 0;
-      widows: 100%;
       font-size: 1.7rem;
       padding: 0.5em 50px 0.5em;
       border-bottom: 1px solid #eeeeee; }
@@ -464,6 +459,13 @@ footer {
         position: relative;
         margin: auto;
         bottom: 10px; }
+
+.dark header, .dark footer, .dark ul, .dark :not(#ruler_container) > div:not(.settings_footer):not(#download):not(#window-menu) {
+  background: #333 !important; }
+.dark :not(button):not(.btn-highlight) > li:not(.btn-highlight), .dark :not(button):not(.btn-highlight) > i, .dark :not(button):not(.btn-highlight) > h1 {
+  color: #fff; }
+.dark .btn-disabled > i {
+  color: #666 !important; }
 
 #background_white span {
   background-color: #ffffff; }
@@ -902,13 +904,14 @@ $border-radius: 0px;
   width: 120px;
   height: 70px;
   border: 2px solid #eeeeee;
-  border-radius: 5px;
+  border-radius: 8px;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
 
 #color_picker_canvas {
   border-radius: 5px; }
 
 #color-picker-circle {
+  display: none;
   position: absolute;
   height: 14px;
   width: 14px;

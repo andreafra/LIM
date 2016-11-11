@@ -24,7 +24,6 @@ $menu-circle: 25px;
     padding-top: 40px;
     h1 {
       margin: 0;
-      widows: 100%;
       font-size: 1.7rem;
       padding: 0.5em  $menu-text-padding 0.5em;
       border-bottom: 1px solid $gray;
@@ -115,6 +114,19 @@ $menu-circle: 25px;
     }
   }
 }
+
+.dark {
+  header, footer, ul, :not(#ruler_container) > div:not(.settings_footer):not(#download):not(#window-menu) {
+    background: #333 !important;
+  }
+  :not(button):not(.btn-highlight) > li:not(.btn-highlight), :not(button):not(.btn-highlight) > i, :not(button):not(.btn-highlight) > h1{
+      color: #fff;
+  }
+  .btn-disabled > i{
+    color: #666 !important;
+  }
+}
+
 
 #background_white span {
   background-color: $white;

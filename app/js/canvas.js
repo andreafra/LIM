@@ -30,7 +30,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       canvas: {
         x: canvasWidth,
         y: canvasHeight,
-        backgroundColor: "#fff",
+        backgroundColor: "#ffffff",
         backgroundImage: "none"
       }
     },
@@ -442,6 +442,10 @@ document.addEventListener( "DOMContentLoaded", function() {
   var linesBackground = $ID("background_lines");
   var dotsBackground = $ID("background_dots");
 
+  var darkmodeOn = $ID("darkmode_on");
+  var darkmodeOff = $ID("darkmode_off");
+  var darkmodeAuto = $ID("darkmode_auto");
+
   function clearButtonSelection(buttons, _class) {
     for (var i = buttons.length - 1; i >= 0; i--) {
       buttons[i].classList.remove(_class);
@@ -674,8 +678,10 @@ document.addEventListener( "DOMContentLoaded", function() {
     setBackgroundColor(customBackground.getAttribute("value"));
   });
 
-  function isDark (color) {
-    var c = color.substring(1);      // strip #
+  var tinycolor = require("tinycolor2");
+  function isDark (_color) {
+    /*
+    var c = _color.substring(1);      // strip #
     var rgb = parseInt(c, 16);   // convert rrggbb to decimal
     var r = (rgb >> 16) & 0xff;  // extract red
     var g = (rgb >>  8) & 0xff;  // extract green
@@ -683,11 +689,13 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
 
-    if (luma > 40) {
+    if (luma < 40) {
       return true;
     } else {
       return false;
     }
+    */
+    return tinycolor(_color).isDark();
   }
 
   noneBackground.addEventListener("click", function() {
@@ -699,10 +707,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     } else {
       setBackgroundImage("squared-dark");
     }
-    console.log(canvas.style.backgroundColor)
-    console.log(isDark(canvas.style.backgroundColor))
   });
   squaredMarkedBackground.addEventListener("click", function() {
+    console.log(isDark(thisFile.settings.canvas.backgroundColor));
     if(isDark(canvas.style.backgroundColor)) {
       setBackgroundImage("squared-marked-light");
     } else {
@@ -724,11 +731,34 @@ document.addEventListener( "DOMContentLoaded", function() {
     }
   });
 
-  function translate(context,x,y){
-    return;
-    context.resetTransform();
-    context.translate(x,y);
-  }
+  //DARKMODE
+  darkmodeOn.addEventListener("click", function() {
+    thisFile.settings.canvas.unwatch('backgroundColor');
+    body.classList.add("dark");
+  });
+  darkmodeOff.addEventListener("click", function() {
+    thisFile.settings.canvas.unwatch('backgroundColor');
+    body.classList.remove("dark");
+  });
+  darkmodeAuto.addEventListener("click", function() {
+    if(isDark(thisFile.settings.canvas.backgroundColor)){
+      body.classList.add("dark");
+    }
+    else{
+      body.classList.remove("dark");
+    }
+
+    thisFile.settings.canvas.watch('backgroundColor',
+    function (id, oldval, newval) {
+      if(isDark(newval)){
+        body.classList.add("dark");
+      }
+      else{
+        body.classList.remove("dark");
+      }
+      return newval;
+    });
+  });
 
   //SAVE
   var saveButton = $ID("save");
@@ -928,6 +958,12 @@ document.addEventListener( "DOMContentLoaded", function() {
       updateNavButtons();
     }
   });
+
+  function translate(context,x,y){
+    return;
+    context.resetTransform();
+    context.translate(x,y);
+  }
 
   function updateNavButtons() {
     if (currentPage === 0) { // we cant go back to prev page

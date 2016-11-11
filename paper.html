@@ -8,7 +8,7 @@
   </head>
   <body id="body" class="background">
     <header id="header" style="-webkit-app-region: drag">
-      <h1 id="title">LIM</h1>
+      <h1 id="title">unnamed</h1>
       <div id="window-menu">
         <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
         <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
@@ -50,38 +50,47 @@
         <ul class="settings_list settings_big">
           <li class="settings_list_heading">Colore di sfondo</li>
           <li class="settings_list_circular_picker">
-            <div id="background_white"><span></span>
+            <div class ="setting" id="background_white"><span></span>
               <h6>Bianco</h6>
             </div>
-            <div id="background_black"><span></span>
+            <div class ="setting" id="background_black"><span></span>
               <h6>Nero</h6>
             </div>
-            <div id="background_green"><span></span>
+            <div class ="setting" id="background_green"><span></span>
               <h6>Verde</h6>
             </div>
-            <div id="background_transparent"><span></span>
-              <h6>Trasparente</h6>
-            </div>
-            <div id="background_custom" value="#ffffff"><input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff">
+            <div class ="setting" id="background_custom" value="#ffffff"><input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff">
               <h6>Personalizzato</h6>
             </div>
           </li>
           <li class="settings_list_heading">Tipo di sfondo</li>
           <li class="settings_list_circular_picker">
-            <div id="background_none"><span></span>
+            <div class ="setting" id="background_none"><span></span>
               <h6>Nessuno</h6>
             </div>
-            <div id="background_squared"><span></span>
+            <div class ="setting" id="background_squared"><span></span>
               <h6>Quadretti</h6>
             </div>
-            <div id="background_squared_marked"><span></span>
+            <div class ="setting" id="background_squared_marked"><span></span>
               <h6>Quadretti 2</h6>
             </div>
-            <div id="background_lines"><span></span>
+            <div class ="setting" id="background_lines"><span></span>
               <h6>Linee</h6>
             </div>
-            <div id="background_dots"><span></span>
+            <div class ="setting" id="background_dots"><span></span>
               <h6>Punti</h6>
+            </div>
+          </li>
+          <li class="settings_list_heading">Modalità scura</li>
+          <li class="settings_list_circular_picker">
+            <div class ="setting" id="darkmode_on"><i class="material-icons">brightness_low</i>
+              <h6>Attivata</h6>
+            </div>
+            <div class ="setting" id="darkmode_off"><i class="material-icons">brightness_high</i>
+              <h6>Disattivata</h6>
+            </div>
+            <div class ="setting" id="darkmode_auto"><i class="material-icons">brightness_auto</i>
+              <h6>Automatica</h6>
             </div>
           </li>
         </ul>
@@ -166,6 +175,7 @@
       </ul>
 
     </footer>
+    <script src="app/js/object-watch.js"></script>
     <script src="app/js/canvas.js"></script>
     <script src="app/lib/jscolor.min.js"></script>
     <script src="app/js/colorpicker_2.js"></script>
