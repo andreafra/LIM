@@ -1,6 +1,7 @@
 header, footer {
   background-color: $gray;
   z-index: 1000;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.8, 1);
 }
 header {
   height: $header_height;

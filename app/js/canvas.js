@@ -442,14 +442,11 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var whiteBackground = $ID("background_white");
   var blackBackground = $ID("background_black");
-  var greenBackground = $ID("background_green");
   var customBackground = $ID("background_custom");
 
   var noneBackground = $ID("background_none");
   var squaredBackground = $ID("background_squared");
-  var squaredMarkedBackground = $ID("background_squared_marked");
   var linesBackground = $ID("background_lines");
-  var dotsBackground = $ID("background_dots");
 
   var darkmodeOn = $ID("darkmode_on");
   var darkmodeOff = $ID("darkmode_off");
@@ -674,9 +671,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   blackBackground.addEventListener("click", function(e) {
     setBackgroundColor("#000000");
   });
-  greenBackground.addEventListener("click", function(e) {
-    setBackgroundColor("#567E3A");
-  });
   customBackground.addEventListener("mouseup", function() {
     $ID("body").lastChild.addEventListener("mouseup", function() {
       setBackgroundColor(customBackground.getAttribute("value"));
@@ -717,26 +711,11 @@ document.addEventListener( "DOMContentLoaded", function() {
       setBackgroundImage("squared-dark");
     }
   });
-  squaredMarkedBackground.addEventListener("click", function() {
-    console.log(isDark(thisFile.settings.canvas.backgroundColor));
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("squared-marked-light");
-    } else {
-      setBackgroundImage("squared-marked-dark");
-    }
-  });
   linesBackground.addEventListener("click", function() {
     if(isDark(canvas.style.backgroundColor)) {
       setBackgroundImage("lines-light");
     } else {
       setBackgroundImage("lines-dark");
-    }
-  });
-  dotsBackground.addEventListener("click", function() {
-    if(isDark(canvas.style.backgroundColor)) {
-      setBackgroundImage("dots-light");
-    } else {
-      setBackgroundImage("dots-dark");
     }
   });
 

@@ -36,7 +36,7 @@
     <section id="settings_container" class="hidden">
       <div id="settings_panel">
         <h1>Impostazioni</h1>
-        <ul class="settings_list settings_small">
+        <ul class="settings_list">
           <li class="settings_list_heading">File</li>
           <li class="settings_list_element" id="save">
             <i class="material-icons">save</i>
@@ -47,7 +47,7 @@
             <span>Apri...</span>
           </li>
         </ul>
-        <ul class="settings_list settings_big">
+        <ul class="settings_list">
           <li class="settings_list_heading">Colore di sfondo</li>
           <li class="settings_list_circular_picker">
             <div class ="setting" id="background_white"><span></span>
@@ -55,9 +55,6 @@
             </div>
             <div class ="setting" id="background_black"><span></span>
               <h6>Nero</h6>
-            </div>
-            <div class ="setting" id="background_green"><span></span>
-              <h6>Verde</h6>
             </div>
             <div class ="setting" id="background_custom" value="#ffffff"><input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff">
               <h6>Personalizzato</h6>
@@ -71,14 +68,8 @@
             <div class ="setting" id="background_squared"><span></span>
               <h6>Quadretti</h6>
             </div>
-            <div class ="setting" id="background_squared_marked"><span></span>
-              <h6>Quadretti 2</h6>
-            </div>
             <div class ="setting" id="background_lines"><span></span>
               <h6>Linee</h6>
-            </div>
-            <div class ="setting" id="background_dots"><span></span>
-              <h6>Punti</h6>
             </div>
           </li>
           <li class="settings_list_heading">Modalità scura</li>

@@ -50,3 +50,16 @@ img {
   box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
   background-repeat: repeat;
 }
+
+// NIGHT MODE
+.dark {
+  header, footer, #settings_panel /*, :not(#ruler_container) > div:not(.settings_footer):not(#download):not(#window-menu)*/ {
+    background: #333 !important;
+  }
+  :not(button):not(.btn-highlight) > li:not(.btn-highlight), :not(button):not(.btn-highlight) > i, :not(button):not(.btn-highlight) > h1{
+      color: #fff;
+  }
+  .btn-disabled > i{
+    color: #666 !important;
+  }
+}
