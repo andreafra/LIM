@@ -13,7 +13,10 @@
         <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
         <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
         <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
-        <button id="menu-back" class="btn btn-menu btn-white-hover"><i class="material-icons">arrow_back</i></button>
+        <button id="menu-back" class="btn btn-menu btn-white-hover btn-back">
+          <i class="material-icons">arrow_back</i>
+          <span>Menu Principale</span>
+        </button>
         <div id="download" class="btn-menu-left">
           <div id="arrow"><span id="custom-arrow"></span></div>
           <div id="bar"></div>
@@ -33,7 +36,7 @@
       </div>
       <div id="ruler_right"></div>
     </div>
-    <section id="settings_container" class="hidden">
+    <section id="settings_container" class="settings-hidden hidden">
       <div id="settings_panel">
         <h1>Impostazioni</h1>
         <ul class="settings_list">
@@ -85,11 +88,6 @@
             </div>
           </li>
         </ul>
-        <div class="settings_footer">
-          <a id="settings_close" class="btn btn-pager btn-highlight">
-            <i class="material-icons">close</i>
-          </a>
-        </div>
       </div>
     </section>
     <footer id="footer">
@@ -177,8 +175,9 @@
       var maximBtn = document.querySelector('#menu-maximize');
       var minimBtn = document.querySelector('#menu-minimize');
       var backBtn = document.querySelector('#menu-back');
-      var closeSettings = document.querySelector('#settings_close');
       var toggleSettings = document.querySelector('#settings_toggle');
+      var settingsBtnIcon = document.querySelector('#settings_toggle > .material-icons');
+      var settingsBtnText = document.querySelector('#settings_toggle > span');
       var settingsContainer = document.getElementById('settings_container');
       var areSettingsOpen = false;
 
@@ -195,20 +194,33 @@
         ipcRenderer.send('back-to-main');
       });
 
-      closeSettings.addEventListener('click', function() {
-        settingsContainer.classList.add('hidden');
-        areSettingsOpen = false;
-      });
       toggleSettings.addEventListener('click', function() {
+        toggleSettings.classList.remove('spin-out');
+        toggleSettings.classList.add('spin-in');
         if(areSettingsOpen) {
-          settingsContainer.classList.add('hidden');
+          settingsContainer.classList.add('settings-hidden');
+          toggleSettings.classList.remove('open');
           areSettingsOpen = false;
         } else {
           settingsContainer.classList.remove('hidden');
+          settingsContainer.classList.remove('settings-hidden');
+          toggleSettings.classList.add('open');
           areSettingsOpen = true;
         }
       });
       
+      settingsBtnIcon.addEventListener('animationend', function() {
+        toggleSettings.classList.remove('spin-in');
+        if(areSettingsOpen) {
+          this.innerHTML = 'close';
+          settingsBtnText.innerHTML = 'CHIUDI'
+        } else {
+          this.innerHTML = 'settings';
+          settingsBtnText.innerHTML = 'MENU'
+        }
+        toggleSettings.classList.add('spin-out');
+      });
+
       // COLOR PICKER
       
       function updateColor(picker) {
