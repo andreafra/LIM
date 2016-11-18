@@ -208,8 +208,7 @@ header {
   header #title {
     display: block;
     position: relative;
-    margin: 0;
-    margin-left: 1em;
+    margin: 0 auto;
     align-self: center;
     font-size: 1rem;
     font-weight: normal; }
@@ -267,7 +266,7 @@ footer {
 .toolbar-spacer {
   margin-left: 15px;
   margin-right: 15px;
-  border-left: 1px solid #d5d5d5;
+  border-left: 1px solid #d4d4d4;
   margin-top: 20px;
   margin-bottom: 20px; }
 
