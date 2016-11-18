@@ -95,19 +95,20 @@ img {
 
 #content {
   text-align: center;
-  -webkit-app-region: no-drag; }
+  -webkit-app-region: no-drag;
+  position: relative; }
   #content #grid {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 40px;
     pointer-events: none; }
-
-#canvas {
-  position: relative;
-  align-self: center;
-  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
-  background-repeat: repeat; }
+  #content canvas {
+    position: absolute;
+    align-self: center;
+    background-repeat: repeat;
+    top: 0;
+    left: 0; }
 
 .dark header, .dark footer, .dark #settings_panel {
   background: #333 !important; }
@@ -243,7 +244,7 @@ footer {
 .toolbar-spacer {
   margin-left: 15px;
   margin-right: 15px;
-  border-left: 1px solid #d5d5d5;
+  border-left: 1px solid #d4d4d4;
   margin-top: 20px;
   margin-bottom: 20px; }
 

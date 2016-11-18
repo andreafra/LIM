@@ -49,18 +49,20 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   content.style.height = canvasHeight + "px";
 
-  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
+  var canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><canvas id="tmp_canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
   $ID("content").innerHTML = canvasToAdd;
 
+  var tmp_canvas = $ID("tmp_canvas");
   var canvas = $ID("canvas");
 
-  canvas.style.cursor = "crosshair";
+  tmp_canvas.style.cursor = "crosshair";
   canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
   canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
-  var DrawPaddingX = canvas.offsetLeft;
-  var DrawPaddingY = canvas.offsetTop;
+  var DrawPaddingX = content.offsetLeft;
+  var DrawPaddingY = content.offsetTop;
 
+  var tmp_ctx = tmp_canvas.getContext('2d');
   var ctx = canvas.getContext('2d');
 
   //default values
@@ -68,7 +70,10 @@ document.addEventListener( "DOMContentLoaded", function() {
   var lineWidth = 2;
   var markerWidth = 6;
   var rubberWidth = 30;
+  translate(tmp_ctx,0.5,0.5);
   translate(ctx,0.5,0.5);
+  tmp_ctx.lineJoin = 'round';
+  tmp_ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
 
@@ -91,10 +96,10 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
 
   function bindEvents(){
-    canvas.addEventListener("mousedown", function (e) {
+    tmp_canvas.addEventListener("mousedown", function (e) {
       startDrawing(e, false);
     }, false);
-    canvas.addEventListener("mousemove", function (e) {
+    tmp_canvas.addEventListener("mousemove", function (e) {
       //FIX FUCKING CHROMIUM BUG
       if(ignoreNextMove)
       {
@@ -108,16 +113,16 @@ document.addEventListener( "DOMContentLoaded", function() {
         moveDrawing(e, false);
       }
     }, false);
-    canvas.addEventListener("mouseup", function (e) {
+    tmp_canvas.addEventListener("mouseup", function (e) {
       ignoreNextMove = true;
       endDrawing(e, false);
     }, false);
     // TOUCH SUPPORT
-    canvas.addEventListener("touchstart", function (e) {
+    tmp_canvas.addEventListener("touchstart", function (e) {
       startDrawing(e, true);
     }, false);
 
-    canvas.addEventListener("touchmove", function (e) {
+    tmp_canvas.addEventListener("touchmove", function (e) {
       if(!isDrawing){
         startDrawing(e, true);
       }
@@ -126,30 +131,30 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
     }, false);
 
-    canvas.addEventListener("touchend", function (e) {
+    tmp_canvas.addEventListener("touchend", function (e) {
       endDrawing(e, true);
     }, false);
     // Prevent scrolling when touching the canvas
     document.body.addEventListener("touchstart", function (e) {
-      if (e.target == canvas) {
+      if (e.target == tmp_canvas) {
         e.preventDefault();
       }
     }, false);
     document.body.addEventListener("touchend", function (e) {
-      if (e.target == canvas) {
+      if (e.target == tmp_canvas) {
         e.preventDefault();
       }
     }, false);
     document.body.addEventListener("touchmove", function (e) {
-      if (e.target == canvas) {
+      if (e.target == tmp_canvas) {
         e.preventDefault();
       }
     }, false);
     //Stop drawing if cursor leaves canvas
-    canvas.addEventListener("mouseleave", function (e) {
+    tmp_canvas.addEventListener("mouseleave", function (e) {
       endDrawing(e, true);
     }, false);
-    canvas.addEventListener("touchleave", function (e) {
+    tmp_canvas.addEventListener("touchleave", function (e) {
       endDrawing(e, true);
     }, false);
   }
@@ -167,15 +172,20 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     content.style.height = canvasHeight + "px";
 
-    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
+    canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><canvas id="tmp_canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
     $ID("content").innerHTML = canvasToAdd;
     canvas = $ID("canvas");
-    canvas.style.cursor = "crosshair";
+    tmp_canvas = $ID("tmp_canvas");
+    tmp_canvas.style.cursor = "crosshair";
 
-    DrawPaddingX = canvas.offsetLeft;
-    DrawPaddingY = canvas.offsetTop;
+    DrawPaddingX = content.offsetLeft;
+    DrawPaddingY = content.offsetTop;
+    tmp_ctx = tmp_canvas.getContext('2d');
     ctx = canvas.getContext('2d');
+    translate(tmp_ctx,0.5,0.5);
     translate(ctx,0.5,0.5);
+    tmp_ctx.lineJoin = 'round';
+    tmp_ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
 
@@ -233,7 +243,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   function startDrawing(e, touch) {
     isDrawing = true;
 
-    canvas.style.cursor="none";
+    tmp_canvas.style.cursor="none";
 
     if(thisFile.pages[currentPage] === undefined)
       thisFile.pages[currentPage] = {lines: [], backstack: []};
@@ -288,9 +298,11 @@ document.addEventListener( "DOMContentLoaded", function() {
   }
   function moveDrawing(e, touch) {
     if (!isDrawing) {
-      canvas.style.cursor="crosshair";
+      tmp_canvas.style.cursor="crosshair";
       return;
     }
+
+    tmp_ctx.clearRect(0,0,canvas.width,canvas.height);
 
     var _x, _y;
     var _lines = thisFile.pages[currentPage].lines;
@@ -326,20 +338,9 @@ document.addEventListener( "DOMContentLoaded", function() {
       clearCircle(ctx,_x,_y,_line.width/2);
     }
     else{
-      ctx.strokeStyle = _line.color;
-      ctx.lineWidth = _line.width;
-
-      var p1 = _points[_points.length-3];
-      var p2 = _points[_points.length-2];
-      var p3 = _points[_points.length-1];
-      if(!p1) p1=p2;
-
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.lineTo(p3.x, p3.y);
-      ctx.stroke();
+      drawOnCanvas(tmp_ctx,_line);
     }
+
     //loadIntoCanvas(thisFile,currentPage);
   }
   function endDrawing(e, touch) {
@@ -349,19 +350,54 @@ document.addEventListener( "DOMContentLoaded", function() {
     var _line = _lines[_lines.length-1]
     var _points = _line.points;
 
-    if(_line.tool !== 3 && _points.length===1){
+    if(_line.tool!==3 && _points.length===1){
       var _x=_points[0].x;
       var _y=_points[0].y;
-      ctx.beginPath();
-      ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
-      ctx.fill();
+      tmp_ctx.beginPath();
+      tmp_ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
+      tmp_ctx.fill();
     }
+
+    tmp_ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawOnCanvas(ctx, _line);
 
     resetBackstackButtons();
     isDrawing = false;
+  }
 
-    if(_line.tool===2)
-      loadIntoCanvas(thisFile,currentPage);
+  function drawOnCanvas(_ctx, _line){
+    var _points = _line.points;
+    if(_line.tool===3){
+      for(var i=0; i<=_points.length-1;i++){
+        var _x=_points[i].x;
+        var _y=_points[i].y;
+        clearCircle(_ctx,_x,_y,_line.width/2);
+      }
+    }
+    else{
+      _ctx.fillStyle = _line.color;
+      _ctx.strokeStyle = _line.color;
+      _ctx.lineWidth = _line.width;
+
+      if(_points.length===1){
+        var _x=_points[0].x;
+        var _y=_points[0].y;
+        _ctx.beginPath();
+        _ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
+        _ctx.fill();
+      }
+      else{
+        _ctx.beginPath();
+        for (var i = 0; i < _points.length-1; i++) {
+          var p1 = _points[i];
+          var p2 = _points[i+1];
+
+          _ctx.moveTo(p1.x, p1.y);
+          _ctx.lineTo(p2.x, p2.y);
+        }
+        _ctx.stroke();
+      }
+    }
   }
 
   function getPointOnRuler(_x,_y){
@@ -487,6 +523,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     if (file !== null && file !== undefined) {
       console.log("loading file " + file.settings.name);
       thisFile = file;
+      tmp_ctx.clearRect(0,0,canvas.width,canvas.height);
       ctx.clearRect(0,0,canvas.width,canvas.height);
 
       if (page === undefined || page === null) {
@@ -494,6 +531,7 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
 
       currentPage = page;
+      pageCounter.innerHTML = currentPage+1;
 
       if (thisFile.pages[currentPage] === undefined) {
         thisFile.pages[currentPage] = {lines: [], backstack: []};
@@ -501,47 +539,18 @@ document.addEventListener( "DOMContentLoaded", function() {
 
       resizeCanvas(false);
       resetBackstackButtons();
+      updateNavButtons();
 
       canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
       canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
+      title.innerHTML=thisFile.settings.name.split("\\").pop();
 
       //DRAW
       var _lines = thisFile.pages[currentPage].lines;
 
       for (var line = 0; line < _lines.length; line++) {
         var _line = _lines[line];
-        var _points = _line.points;
-        if(_line.tool===3){
-          for(var i=0; i<=_points.length-1;i++){
-            var _x=_points[i].x;
-            var _y=_points[i].y;
-            clearCircle(ctx,_x,_y,_line.width/2);
-          }
-        }
-        else{
-          ctx.fillStyle = _line.color;
-          ctx.strokeStyle = _line.color;
-          ctx.lineWidth = _line.width;
-
-          if(_points.length===1){
-            var _x=_points[0].x;
-            var _y=_points[0].y;
-            ctx.beginPath();
-            ctx.arc(_x, _y, _line.width/2, 0, 2 * Math.PI, false);
-            ctx.fill();
-          }
-          else{
-            ctx.beginPath();
-            for (var i = 0; i < _points.length-1; i++) {
-              var p1 = _points[i];
-              var p2 = _points[i+1];
-
-              ctx.moveTo(p1.x, p1.y);
-              ctx.lineTo(p2.x, p2.y);
-            }
-            ctx.stroke();
-          }
-        }
+        drawOnCanvas(ctx,_line);
       }
     }
   }
