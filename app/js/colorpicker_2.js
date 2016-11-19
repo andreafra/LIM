@@ -34,6 +34,7 @@ function pickColor(event, callback) {
     CPCanvas.setAttribute("value", hex);
 
     // move the eyedropper
+    eyedropper.style.display="block";
     eyedropper.style.marginLeft = (x)+"px";
     eyedropper.style.marginTop = (y)+"px";
     eyedropper.style.backgroundColor = hex;

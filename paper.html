@@ -8,12 +8,15 @@
   </head>
   <body id="body" class="background">
     <header id="header" style="-webkit-app-region: drag">
-      <h1 id="title">LIM</h1>
+      <h1 id="title">unnamed</h1>
       <div id="window-menu">
         <button id="menu-close" class="btn btn-menu btn-red-hover"><i class="material-icons">close</i></button>
         <button id="menu-maximize" class="btn btn-menu btn-white-hover"><i class="material-icons">web_asset</i></button>
         <button id="menu-minimize" class="btn btn-menu btn-white-hover"><i class="material-icons">remove</i></button>
-        <button id="menu-back" class="btn btn-menu btn-white-hover"><i class="material-icons">arrow_back</i></button>
+        <button id="menu-back" class="btn btn-menu btn-white-hover btn-back">
+          <i class="material-icons">arrow_back</i>
+          <span>Menu Principale</span>
+        </button>
         <div id="download" class="btn-menu-left">
           <div id="arrow"><span id="custom-arrow"></span></div>
           <div id="bar"></div>
@@ -33,10 +36,10 @@
       </div>
       <div id="ruler_right"></div>
     </div>
-    <section id="settings_container" class="hidden">
+    <section id="settings_container" class="settings-hidden hidden">
       <div id="settings_panel">
         <h1>Impostazioni</h1>
-        <ul class="settings_list settings_small">
+        <ul class="settings_list">
           <li class="settings_list_heading">File</li>
           <li class="settings_list_element" id="save">
             <i class="material-icons">save</i>
@@ -47,49 +50,44 @@
             <span>Apri...</span>
           </li>
         </ul>
-        <ul class="settings_list settings_big">
+        <ul class="settings_list">
           <li class="settings_list_heading">Colore di sfondo</li>
           <li class="settings_list_circular_picker">
-            <div id="background_white"><span></span>
+            <div class ="setting" id="background_white"><span></span>
               <h6>Bianco</h6>
             </div>
-            <div id="background_black"><span></span>
+            <div class ="setting" id="background_black"><span></span>
               <h6>Nero</h6>
             </div>
-            <div id="background_green"><span></span>
-              <h6>Verde</h6>
-            </div>
-            <div id="background_transparent"><span></span>
-              <h6>Trasparente</h6>
-            </div>
-            <div id="background_custom" value="#ffffff"><input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff">
+            <div class ="setting" id="background_custom" value="#ffffff"><input class="btn-circular jscolor {onFineChange:'updateBackgroundColor(this)'}" value="#ffffff">
               <h6>Personalizzato</h6>
             </div>
           </li>
           <li class="settings_list_heading">Tipo di sfondo</li>
           <li class="settings_list_circular_picker">
-            <div id="background_none"><span></span>
+            <div class ="setting" id="background_none"><span></span>
               <h6>Nessuno</h6>
             </div>
-            <div id="background_squared"><span></span>
+            <div class ="setting" id="background_squared"><span></span>
               <h6>Quadretti</h6>
             </div>
-            <div id="background_squared_marked"><span></span>
-              <h6>Quadretti 2</h6>
-            </div>
-            <div id="background_lines"><span></span>
+            <div class ="setting" id="background_lines"><span></span>
               <h6>Linee</h6>
             </div>
-            <div id="background_dots"><span></span>
-              <h6>Punti</h6>
+          </li>
+          <li class="settings_list_heading">Modalità scura</li>
+          <li class="settings_list_circular_picker">
+            <div class ="setting" id="darkmode_on"><i class="material-icons">brightness_low</i>
+              <h6>Attivata</h6>
+            </div>
+            <div class ="setting" id="darkmode_off"><i class="material-icons">brightness_high</i>
+              <h6>Disattivata</h6>
+            </div>
+            <div class ="setting" id="darkmode_auto"><i class="material-icons">brightness_auto</i>
+              <h6>Automatica</h6>
             </div>
           </li>
         </ul>
-        <div class="settings_footer">
-          <a id="settings_close" class="btn btn-pager btn-highlight">
-            <i class="material-icons">close</i>
-          </a>
-        </div>
       </div>
     </section>
     <footer id="footer">
@@ -166,6 +164,7 @@
       </ul>
 
     </footer>
+    <script src="app/lib/object-watch.js"></script>
     <script src="app/js/canvas.js"></script>
     <script src="app/lib/jscolor.min.js"></script>
     <script src="app/js/colorpicker_2.js"></script>
@@ -176,8 +175,9 @@
       var maximBtn = document.querySelector('#menu-maximize');
       var minimBtn = document.querySelector('#menu-minimize');
       var backBtn = document.querySelector('#menu-back');
-      var closeSettings = document.querySelector('#settings_close');
       var toggleSettings = document.querySelector('#settings_toggle');
+      var settingsBtnIcon = document.querySelector('#settings_toggle > .material-icons');
+      var settingsBtnText = document.querySelector('#settings_toggle > span');
       var settingsContainer = document.getElementById('settings_container');
       var areSettingsOpen = false;
 
@@ -194,20 +194,33 @@
         ipcRenderer.send('back-to-main');
       });
 
-      closeSettings.addEventListener('click', function() {
-        settingsContainer.classList.add('hidden');
-        areSettingsOpen = false;
-      });
       toggleSettings.addEventListener('click', function() {
+        toggleSettings.classList.remove('spin-out');
+        toggleSettings.classList.add('spin-in');
         if(areSettingsOpen) {
-          settingsContainer.classList.add('hidden');
+          settingsContainer.classList.add('settings-hidden');
+          toggleSettings.classList.remove('open');
           areSettingsOpen = false;
         } else {
           settingsContainer.classList.remove('hidden');
+          settingsContainer.classList.remove('settings-hidden');
+          toggleSettings.classList.add('open');
           areSettingsOpen = true;
         }
       });
       
+      settingsBtnIcon.addEventListener('animationend', function() {
+        toggleSettings.classList.remove('spin-in');
+        if(areSettingsOpen) {
+          this.innerHTML = 'close';
+          settingsBtnText.innerHTML = 'CHIUDI'
+        } else {
+          this.innerHTML = 'settings';
+          settingsBtnText.innerHTML = 'MENU'
+        }
+        toggleSettings.classList.add('spin-out');
+      });
+
       // COLOR PICKER
       
       function updateColor(picker) {

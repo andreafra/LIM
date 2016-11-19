@@ -36,6 +36,7 @@ img {
 #content {
   text-align: center;
   -webkit-app-region: no-drag;
+  position: relative;
   #grid {
     position: absolute;
     width: 100%;
@@ -43,10 +44,25 @@ img {
     top: $header_height;
     pointer-events: none; // allows click-thru
   }
+  canvas {
+    position: absolute;
+    align-self: center;
+    background-repeat: repeat;
+    top: 0;
+    left: 0;
+  }
 }
-#canvas {
-  position: relative;
-  align-self: center;
-  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, .2);
-  background-repeat: repeat;
+
+
+// NIGHT MODE
+.dark {
+  header, footer, #settings_panel /*, :not(#ruler_container) > div:not(.settings_footer):not(#download):not(#window-menu)*/ {
+    background: #333 !important;
+  }
+  :not(button):not(.btn-highlight) > li:not(.btn-highlight), :not(button):not(.btn-highlight) > i, :not(button):not(.btn-highlight) > h1{
+      color: #fff;
+  }
+  .btn-disabled > i{
+    color: #666 !important;
+  }
 }

@@ -1,6 +1,8 @@
 header, footer {
   background-color: $gray;
   z-index: 1000;
+  // dark mode
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.8, 1);
 }
 header {
   height: $header_height;
@@ -14,9 +16,7 @@ header {
   #title {
     display: block;
     position: relative;
-    margin: 0;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
     align-self: center;
     font-size: 1rem;
     font-weight: normal;

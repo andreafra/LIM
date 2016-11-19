@@ -22,6 +22,44 @@
     display: block;
   } 
 }
+
+@keyframes menu-show {
+  0% {
+    transform: translateY(100%);
+    opacity: 0
+  }
+  100% {
+    transform: translateY(0%);
+    opacity: 1
+  }
+}
+@keyframes menu-hide {
+  0% {
+    transform: translateY(0%);
+    opacity: 1
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes spin-in {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  100% {
+    transform: rotate(180deg) scale(0.1);
+  }
+}
+@keyframes spin-out {
+  0% {
+    transform: rotate(180deg) scale(0.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
 /*@keyframes btn-jump {
   0% {
     margin-top: 0;
