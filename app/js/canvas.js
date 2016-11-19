@@ -815,38 +815,41 @@ document.addEventListener( "DOMContentLoaded", function() {
   });
 
   function loadIntoCanvas(file, page){ /*page is optional. if not set, page will be 0*/
-    if (file !== null && file !== undefined) {
-      console.log("loading file " + file.settings.name);
-      thisFile = file;
-      tmp_ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.clearRect(0,0,canvas.width,canvas.height);
+    if (file === null || file === undefined) return;
 
-      if (page === undefined || page === null) {
-        page = 0;
-      }
+    console.log("loading file " + file.settings.name);
+    thisFile = file;
+    tmp_ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-      currentPage = page;
-      pageCounter.innerHTML = currentPage+1;
+    if (page === undefined || page === null) {
+      page = 0;
+    }
 
-      if (thisFile.pages[currentPage] === undefined) {
-        thisFile.pages[currentPage] = {lines: [], backstack: []};
-      }
+    currentPage = page;
+    pageCounter.innerHTML = currentPage+1;
 
-      resizeCanvas(false);
-      resetBackstackButtons();
-      updateNavButtons();
+    if (thisFile.pages[currentPage] === undefined) {
+      thisFile.pages[currentPage] = {lines: [], backstack: []};
+    }
 
-      canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
-      canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
-      title.innerHTML=thisFile.settings.name.split("\\").pop();
+    resizeCanvas(false);
+    resetBackstackButtons();
+    updateNavButtons();
 
-      //DRAW
-      var _lines = thisFile.pages[currentPage].lines;
+    console.log(thisFile.settings.canvas.backgroundImage);
+    canvas.style.backgroundColor=thisFile.settings.canvas.backgroundColor;
+    canvas.style.backgroundImage=isDark(thisFile.settings.canvas.backgroundColor)?
+      thisFile.settings.canvas.backgroundImage.split("-")[0]+"-light.png')":
+      thisFile.settings.canvas.backgroundImage.split("-")[0]+"-dark.png')";
+    title.innerHTML=thisFile.settings.name.split("\\").pop();
 
-      for (var line = 0; line < _lines.length; line++) {
-        var _line = _lines[line];
-        drawOnCanvas(ctx,_line);
-      }
+    //DRAW
+    var _lines = thisFile.pages[currentPage].lines;
+
+    for (var line = 0; line < _lines.length; line++) {
+      var _line = _lines[line];
+      drawOnCanvas(ctx,_line);
     }
   }
 
