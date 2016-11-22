@@ -102,11 +102,19 @@ updater.check((err, status) => {
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
   global.updateStatus=2;
-  // Restart the app and install the update
+  var updateNotification = new Notification("Aggiornamento scaricato",  {
+    title: "Aggiornamento scaricaton",
+    body: "Clicca per aggiornare",
+    icon: path.join(__dirname, 'icon.ico')
+  });
+  updateNotification.onclick = function(e){
+    updater.install();
+  }
+  
   if(mainWindow != null && ((mainWindow.webContents.getURL().indexOf('index.html')>-1)||(mainWindow.webContents.getURL().indexOf('paper.html')>-1))){
     mainWindow.webContents.send('show-download-complete');
   }
-  else{
+  /*else{
     dialog.showMessageBox({ type: 'info', buttons: ['Riavvia', 'Non ora'], cancelId: 1, message: "E' stato scaricato un aggiornamento. Vuoi riavviare il programma per installarlo?"},
     function(response) {
       switch(response) {
@@ -117,7 +125,7 @@ updater.on('update-downloaded', (info) => {
           break;
       }
     });
-  }
+  }*/
 });
 
 ipcMain.on('update',function(){
