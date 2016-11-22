@@ -890,7 +890,7 @@ document.addEventListener( "DOMContentLoaded", function() {
   // CLEAR ALL
 
   var clearAllBtn = $ID("clear_all")
-  clearAllBtn.addEventListener("mousedown", function() {
+  clearAllBtn.addEventListener("click", function() {
     var _lines = thisFile.pages[currentPage].lines;
     redo_times=0; //was most likely 1 before, so let's set it to 0 before increasing it
     for (var i = _lines.length - 1; i >= 0; i--) {
