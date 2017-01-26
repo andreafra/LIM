@@ -792,7 +792,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   var saveFile = require('./app/js/save');
 
   ipc.on('save-file', function(event,arg1){
-    var saveFile = require('./app/js/save');
     saveFile.SaveAs(thisFile,rename,arg1);
   });
 
