@@ -791,6 +791,11 @@ document.addEventListener( "DOMContentLoaded", function() {
 
   var saveFile = require('./app/js/save');
 
+  ipc.on('save-file', function(event,arg1){
+    var saveFile = require('./app/js/save');
+    saveFile.SaveAs(thisFile,rename,arg1);
+  });
+
   saveButton.addEventListener("click", function() {
     if (thisFile.settings.name=="unnamed") {
       saveFile.SaveAs(thisFile, rename);
@@ -837,7 +842,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     resetBackstackButtons();
     updateNavButtons();
 
-    console.log(thisFile.settings.canvas.backgroundImage);
     canvas.style.backgroundColor=thisFile.settings.canvas.backgroundColor;
     canvas.style.backgroundImage=isDark(thisFile.settings.canvas.backgroundColor)?
       thisFile.settings.canvas.backgroundImage.split("-")[0]+"-light.png')":
