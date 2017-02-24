@@ -55,7 +55,8 @@ document.addEventListener( "DOMContentLoaded", function() {
   var tmp_canvas = $ID("tmp_canvas");
   var canvas = $ID("canvas");
 
-  tmp_canvas.style.cursor = "crosshair";
+  tmp_canvas.style.cursor = "none";
+  canvas.style.cursor = "none";
   canvas.style.backgroundColor = thisFile.settings.canvas.backgroundColor;
   canvas.style.backgroundImage = thisFile.settings.canvas.backgroundImage;
 
@@ -88,9 +89,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   // The current page in the pages[]
   var currentPage = 0;
 
-  //FIX FUCKING CHROMIUM BUG
-  var ignoreNextMove = false;
-
   window.onresize = function() {
     resizeCanvas(true);
   }
@@ -100,12 +98,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       startDrawing(e, false);
     }, false);
     tmp_canvas.addEventListener("mousemove", function (e) {
-      //FIX FUCKING CHROMIUM BUG
-      if(ignoreNextMove)
-      {
-          ignoreNextMove = false;
-          return;
-      }
       if(!isDrawing && (e.which==1 || e.which==2)){
         startDrawing(e, false);
       }
@@ -114,7 +106,6 @@ document.addEventListener( "DOMContentLoaded", function() {
       }
     }, false);
     tmp_canvas.addEventListener("mouseup", function (e) {
-      ignoreNextMove = true;
       endDrawing(e, false);
     }, false);
     // TOUCH SUPPORT
@@ -175,8 +166,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     canvasToAdd = '<canvas id="canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas><canvas id="tmp_canvas" width="'+canvasWidth+'" height="'+canvasHeight+'"></canvas>';
     $ID("content").innerHTML = canvasToAdd;
     canvas = $ID("canvas");
+    canvas.style.cursor = "none";
     tmp_canvas = $ID("tmp_canvas");
-    tmp_canvas.style.cursor = "crosshair";
+    tmp_canvas.style.cursor = "none";
 
     DrawPaddingX = content.offsetLeft;
     DrawPaddingY = content.offsetTop;
@@ -243,8 +235,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   function startDrawing(e, touch) {
     isDrawing = true;
 
-    tmp_canvas.style.cursor="none";
-
     if(thisFile.pages[currentPage] === undefined)
       thisFile.pages[currentPage] = {lines: [], backstack: []};
 
@@ -297,10 +287,7 @@ document.addEventListener( "DOMContentLoaded", function() {
     //loadIntoCanvas(thisFile,currentPage);
   }
   function moveDrawing(e, touch) {
-    if (!isDrawing) {
-      tmp_canvas.style.cursor="crosshair";
-      return;
-    }
+    if (!isDrawing) return;
 
     tmp_ctx.clearRect(0,0,canvas.width,canvas.height);
 
