@@ -102,14 +102,16 @@ updater.check((err, status) => {
 // When an update has been downloaded
 updater.on('update-downloaded', (info) => {
   global.updateStatus=2;
-  var updateNotification = new Notification("Aggiornamento scaricato",  {
-    title: "Aggiornamento scaricaton",
-    body: "Clicca per aggiornare",
-    icon: path.join(__dirname, 'icon.ico')
-  });
-  updateNotification.onclick = function(e){
-    updater.install();
-  }
+  try{
+    var updateNotification = new Notification("Aggiornamento scaricato",  {
+      title: "Aggiornamento scaricaton",
+      body: "Clicca per aggiornare",
+      icon: path.join(__dirname, 'icon.ico')
+    });
+    updateNotification.onclick = function(e){
+      updater.install();
+    }
+  } catch(err) {}
   
   if(mainWindow != null && ((mainWindow.webContents.getURL().indexOf('index.html')>-1)||(mainWindow.webContents.getURL().indexOf('paper.html')>-1))){
     mainWindow.webContents.send('show-download-complete');
