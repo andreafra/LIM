@@ -282,6 +282,10 @@ document.addEventListener( "DOMContentLoaded", function() {
 
     if(toolSelected===3){
       clearCircle(ctx,_x,_y,rubberWidth/2);
+
+      // Rubber Size Preview Positioning
+      rubberPreview.style.top = _y - 3 - rubberWidth/2 + header.clientHeight + "px";
+      rubberPreview.style.left = _x - 3 - rubberWidth/2 + "px";
     }
 
     //Delete latest backstacks
@@ -483,8 +487,6 @@ document.addEventListener( "DOMContentLoaded", function() {
   rubberPreview.style.display = "none";
   rubberPreview.style.width = rubberWidth + "px";
   rubberPreview.style.height = rubberWidth + "px";
-  rubberPreview.style.top = canvasHeight * 0.75 + "px";
-  rubberPreview.style.left = canvasWidth / 2 + "px";
   document.body.insertBefore(rubberPreview, content);
 
 
@@ -492,8 +494,6 @@ document.addEventListener( "DOMContentLoaded", function() {
     for (var i = buttons.length - 1; i >= 0; i--) {
       buttons[i].classList.remove(_class);
     }
-    rubberPreview.style.left = customWidth.offsetLeft - rubberWidth/2 + "px";
-    rubberPreview.style.top = canvasHeight - (footer.clientHeight + 30) - rubberWidth/2 + "px";
   }
 
   function showColorButtons(){
@@ -523,11 +523,15 @@ document.addEventListener( "DOMContentLoaded", function() {
     {
       case 1: lineWidth=width*1; break;
       case 2: markerWidth=width*markerMultiplier; break;
-      case 3: rubberWidth=width*rubberMultiplier;
-              // set rubber preview style
-              rubberPreview.style.height = rubberWidth + "px";
-              rubberPreview.style.width = rubberWidth + "px";
-      break;
+      case 3: // set rubber preview style
+              console.log(rubberPreview.style.getPropertyValue('top'));
+              rubberPreview.style.height = width*rubberMultiplier + "px";
+              rubberPreview.style.width = width*rubberMultiplier + "px";
+              rubberPreview.style.top = parseFloat(rubberPreview.style.getPropertyValue('top')) + (rubberWidth-(width*rubberMultiplier))/2 + "px"
+              rubberPreview.style.left = parseFloat(rubberPreview.style.getPropertyValue('left')) + (rubberWidth-(width*rubberMultiplier))/2 + "px"
+              // update size
+              rubberWidth=width*rubberMultiplier;
+              break;
     }
   }
   function setBackgroundColor(color) {
@@ -569,6 +573,8 @@ document.addEventListener( "DOMContentLoaded", function() {
         case "rubber":
           toolSelected=3;
           rubberPreview.style.display = "block";
+          rubberPreview.style.left = rubber.offsetLeft + rubber.getBoundingClientRect().width/2 - rubberWidth/2 + "px";
+          rubberPreview.style.top = canvasHeight - (footer.clientHeight + 30) - rubberWidth/2 + "px";
           break;
       }
     }
