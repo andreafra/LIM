@@ -329,6 +329,9 @@ document.addEventListener( "DOMContentLoaded", function() {
     //SE GOMMA
     if (_line.tool === 3) {
       clearCircle(ctx,_x,_y,_line.width/2);
+      // Rubber Size Preview Positioning
+      rubberPreview.style.top = _y - 3 - _line.width/2 + header.clientHeight + "px";
+      rubberPreview.style.left = _x - 3 - _line.width/2 + "px";
     }
     else{
       drawOnCanvas(tmp_ctx,_line);
@@ -474,10 +477,23 @@ document.addEventListener( "DOMContentLoaded", function() {
   var darkmodeOff = $ID("darkmode_off");
   var darkmodeAuto = $ID("darkmode_auto");
 
+  // Rubber Size Preview
+  var rubberPreview = document.createElement("div");
+  rubberPreview.setAttribute("id", "rubber_preview");
+  rubberPreview.style.display = "none";
+  rubberPreview.style.width = rubberWidth + "px";
+  rubberPreview.style.height = rubberWidth + "px";
+  rubberPreview.style.top = canvasHeight * 0.75 + "px";
+  rubberPreview.style.left = canvasWidth / 2 + "px";
+  document.body.insertBefore(rubberPreview, content);
+
+
   function clearButtonSelection(buttons, _class) {
     for (var i = buttons.length - 1; i >= 0; i--) {
       buttons[i].classList.remove(_class);
     }
+    rubberPreview.style.left = customWidth.offsetLeft - rubberWidth/2 + "px";
+    rubberPreview.style.top = canvasHeight - (footer.clientHeight + 30) - rubberWidth/2 + "px";
   }
 
   function showColorButtons(){
@@ -507,7 +523,11 @@ document.addEventListener( "DOMContentLoaded", function() {
     {
       case 1: lineWidth=width*1; break;
       case 2: markerWidth=width*markerMultiplier; break;
-      case 3: rubberWidth=width*rubberMultiplier; break;
+      case 3: rubberWidth=width*rubberMultiplier;
+              // set rubber preview style
+              rubberPreview.style.height = rubberWidth + "px";
+              rubberPreview.style.width = rubberWidth + "px";
+      break;
     }
   }
   function setBackgroundColor(color) {
@@ -535,10 +555,21 @@ document.addEventListener( "DOMContentLoaded", function() {
     else{
       clearButtonSelection(allTools, "btn-tool-active");
       _tool.classList.add("btn-tool-active");
+
+      // temp fix -- tidy code
+      rubberPreview.style.display = "none";
+
       switch(_tool.id){
-        case "pencil": toolSelected=1; break;
-        case "marker": toolSelected=2; break;
-        case "rubber": toolSelected=3; break;
+        case "pencil": 
+          toolSelected=1;
+          break;
+        case "marker":
+          toolSelected=2; 
+          break;
+        case "rubber":
+          toolSelected=3;
+          rubberPreview.style.display = "block";
+          break;
       }
     }
   }

@@ -202,3 +202,13 @@ $circle-big: 14px;
   border: 2px solid #FFFF00 !important;
   transform: scale(1.2) translate(-50%,-50%) !important;
 }
+
+#rubber_preview {
+  border: 3px dashed aqua;
+  border-radius: 5000px;
+  position: absolute;
+  z-index: 3000;
+  background: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  animation: spin infinite 5s linear;
+}
