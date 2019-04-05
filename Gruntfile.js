@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         options: {
           name: "LIM",
           dir: '.',
-          ignore: "(build|Installer|build-lim.bat|package-lim.bat|publish-lim.bat)",
+          ignore: "(build|Installer)",
           icon: 'icon',
           overwrite: true,
           out: 'build/',
